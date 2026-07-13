@@ -39,6 +39,7 @@ import indicators
 import curriculum_mapping
 import governance
 import faculty_data
+import sheets_sync
 
 logger = logging.getLogger(__name__)
 
@@ -686,6 +687,26 @@ def api_indicators_add_log(indicator_id: int, body: LoopLogEntryCreate):
     if result is None:
         raise HTTPException(status_code=404, detail="Indicator not found")
     return result
+
+
+class SheetSyncRequest(BaseModel):
+    sheet_url: str
+
+
+@app.post("/api/indicators/sync-sheet")
+def api_indicators_sync_sheet(body: SheetSyncRequest):
+    """Pull status/responsible/evidence/due-date (and official wording) from
+    the team's shared Google Sheet into the indicators tracker. The sheet
+    must be shared as "Anyone with the link can view"."""
+    if not body.sheet_url or not body.sheet_url.strip():
+        raise HTTPException(status_code=422, detail="sheet_url is required")
+    try:
+        return sheets_sync.sync_from_sheet(body.sheet_url)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.exception("Google Sheet sync failed")
+        raise HTTPException(status_code=502, detail=f"Sheet sync failed: {exc}") from exc
 
 
 # ---------------------------------------------------------------------------

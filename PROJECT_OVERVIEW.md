@@ -37,6 +37,8 @@ backend/            FastAPI application (Python)
   db.py                   Shared SQLite connection helper for accreditation-support data
   indicators.py           Standard 7 (Quality Assurance & Program Evaluation) indicators tracker —
                           status/evidence per accreditation indicator + append-only closing-the-loop log
+  sheets_sync.py           Pulls status/responsible/evidence/due-date from a shared Google Sheet
+                          (public XLSX export, no credentials) into the indicators tracker
   curriculum_mapping.py   Standard 2 (Program Design) curriculum mapping — ILOs CRUD, course list
                           (manual or de-duplicated Excel import via course_matching.py), coverage matrix,
                           zero/low-coverage and heavy-duplication analysis
@@ -56,7 +58,8 @@ frontend/            Static web UI served by the backend
   course-report.html     Course-level report viewer
   program-report.html    Program-level report viewer
   qa-chat.html            Chatbot interface
-  indicators-tracker.html Accreditation indicators tracker (Standard 7), grouped by standard, inline-editable
+  indicators-tracker.html Accreditation indicators tracker (Standard 7), grouped by standard, inline-editable,
+                          with a "Sync from Google Sheet" button
   curriculum-mapping.html Curriculum mapping (Standard 2): ILOs, course list/import, coverage matrix, findings
   governance.html         Governance (Standard 1): mission version history, document register, stakeholder log
   faculty-dashboard.html  Faculty dashboard (Standard 5): roster, teaching load, publications, load/gap flags
@@ -95,3 +98,5 @@ This is slow, error-prone, and hard to repeat consistently across semesters. Thi
 Core pipeline (upload → quality checks → academic analytics → charts → reports) is implemented per [ARCHITECTURE.md](ARCHITECTURE.md). Per [TODO.md](TODO.md), the course-name normalization/matching layer is implemented and live-verified against real uploaded files (2026-07-13).
 
 The app is being extended to support Egypt's NAQAAE-style 7-standard accreditation process (see "Accreditation Support" in [ARCHITECTURE.md](ARCHITECTURE.md)). Phase 1 (Standard 7 — the indicators tracker) is done: `backend/indicators.py` + `frontend/indicators-tracker.html`, backed by a new SQLite persistence layer (`backend/db.py`) since accreditation data needs to survive restarts unlike the core analytics pipeline. Phase 2 (Standard 2 — curriculum mapping) is also done: `backend/curriculum_mapping.py` + `frontend/curriculum-mapping.html`, which imports a de-duplicated course list straight from an uploaded grades workbook (reusing `course_matching.py`), lets staff mark a courses x ILOs coverage matrix, and can mark the relevant Standard 2 indicator complete in the Phase 1 tracker with the exported DOCX as evidence. Phase 3 (Standard 1 — governance) is done: `backend/governance.py` + `frontend/governance.html`, a document-register-style page (not analytics-heavy) for versioned mission/goals text, council/committee meeting minutes, and a stakeholder-consultation log, wired into the Phase 1 tracker the same way. Phase 4 (Standard 5 — faculty data) is done: `backend/faculty_data.py` + `frontend/faculty-dashboard.html`, tracking the faculty roster, teaching load, and publications, with load-imbalance and specialization-gap flags computed using the same z-score/normalization patterns as the core `quality.py` and `course_matching.py` modules. Every later accreditation phase (resources, alumni) will register its evidence against indicators the same way.
+
+The indicators tracker also syncs against a team-facing Google Sheet (`backend/sheets_sync.py`): team members fill in status/evidence/responsible/due-date per indicator in a shared Sheet (one tab per standard), and the coordinator clicks "Sync from Google Sheet" on the tracker page to pull it in — the coordinator only ever needs to look at the site's roll-up progress view, not the raw Sheet. The sync also replaced the tracker's English placeholder indicator text with the real official Arabic wording the team had already written into the Sheet.

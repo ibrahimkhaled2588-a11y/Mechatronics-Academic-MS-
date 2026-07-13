@@ -310,11 +310,44 @@ function initAddIndicatorForm() {
     });
 }
 
+const SHEET_URL_STORAGE_KEY = 'indicatorsTrackerSheetUrl';
+
+function initSheetSync() {
+    const input = document.getElementById('sheet-url-input');
+    const statusEl = document.getElementById('sync-status-text');
+    const saved = localStorage.getItem(SHEET_URL_STORAGE_KEY);
+    if (saved) input.value = saved;
+
+    document.getElementById('sync-sheet-btn').addEventListener('click', async () => {
+        const url = input.value.trim();
+        if (!url) {
+            alert('Paste the Google Sheet link first.');
+            return;
+        }
+        localStorage.setItem(SHEET_URL_STORAGE_KEY, url);
+        statusEl.textContent = 'Syncing...';
+        try {
+            const result = await fetchJson(`${apiUrl}/api/indicators/sync-sheet`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sheet_url: url }),
+            });
+            statusEl.textContent = `Synced: ${result.updated} updated, ${result.added} added` +
+                (result.skipped_tabs.length ? `, skipped tabs: ${result.skipped_tabs.join(', ')}` : '') +
+                (result.warnings.length ? `. Warnings: ${result.warnings.join('; ')}` : '');
+            await Promise.all([loadIndicators(), loadSummary()]);
+        } catch (err) {
+            statusEl.textContent = `Sync failed: ${err.message}`;
+        }
+    });
+}
+
 async function init() {
     await loadStandards();
     await Promise.all([loadSummary(), loadIndicators()]);
     initFilters();
     initAddIndicatorForm();
+    initSheetSync();
 }
 
 document.addEventListener('DOMContentLoaded', init);
