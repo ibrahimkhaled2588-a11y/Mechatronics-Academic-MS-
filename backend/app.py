@@ -38,6 +38,7 @@ from chatbot import answer_question
 import indicators
 import curriculum_mapping
 import governance
+import faculty_data
 
 logger = logging.getLogger(__name__)
 
@@ -915,6 +916,96 @@ def api_governance_add_stakeholder_entry(body: StakeholderEntryCreate):
         )
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+# ---------------------------------------------------------------------------
+# Accreditation — Standard 5 Faculty & Supporting Staff
+# ---------------------------------------------------------------------------
+class FacultyCreate(BaseModel):
+    name: str
+    specialization: str | None = None
+    degree: str | None = None
+    rank: str | None = None
+
+
+class TeachingLoadCreate(BaseModel):
+    faculty_id: int
+    semester: str
+    course_name: str
+    hours: float
+
+
+class PublicationCreate(BaseModel):
+    faculty_id: int
+    title: str
+    venue: str | None = None
+    year: int | None = None
+    pub_type: str | None = None
+
+
+@app.get("/api/faculty/members")
+def api_faculty_list_members():
+    return faculty_data.list_faculty()
+
+
+@app.post("/api/faculty/members")
+def api_faculty_create_member(body: FacultyCreate):
+    try:
+        return faculty_data.create_faculty(body.name, body.specialization, body.degree, body.rank)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.delete("/api/faculty/members/{faculty_id}")
+def api_faculty_delete_member(faculty_id: int):
+    if not faculty_data.delete_faculty(faculty_id):
+        raise HTTPException(status_code=404, detail="Faculty member not found")
+    return {"deleted": True}
+
+
+@app.get("/api/faculty/teaching-load")
+def api_faculty_list_load(semester: str | None = None):
+    return faculty_data.list_teaching_load(semester=semester)
+
+
+@app.post("/api/faculty/teaching-load")
+def api_faculty_create_load(body: TeachingLoadCreate):
+    try:
+        return faculty_data.create_teaching_load(body.faculty_id, body.semester, body.course_name, body.hours)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.delete("/api/faculty/teaching-load/{load_id}")
+def api_faculty_delete_load(load_id: int):
+    if not faculty_data.delete_teaching_load(load_id):
+        raise HTTPException(status_code=404, detail="Teaching load entry not found")
+    return {"deleted": True}
+
+
+@app.get("/api/faculty/publications")
+def api_faculty_list_publications():
+    return faculty_data.list_publications()
+
+
+@app.post("/api/faculty/publications")
+def api_faculty_create_publication(body: PublicationCreate):
+    try:
+        return faculty_data.create_publication(body.faculty_id, body.title, body.venue, body.year, body.pub_type)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.delete("/api/faculty/publications/{pub_id}")
+def api_faculty_delete_publication(pub_id: int):
+    if not faculty_data.delete_publication(pub_id):
+        raise HTTPException(status_code=404, detail="Publication not found")
+    return {"deleted": True}
+
+
+@app.get("/api/faculty/dashboard")
+def api_faculty_dashboard():
+    return faculty_data.get_dashboard_summary()
 
 
 # ---------------------------------------------------------------------------

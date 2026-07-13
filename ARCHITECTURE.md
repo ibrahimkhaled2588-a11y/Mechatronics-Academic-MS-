@@ -110,10 +110,12 @@ The system monitors **data quality**, detects **anomalies**, evaluates **reliabi
 - `backend/curriculum_mapping.py` – Standard 2 curriculum mapping: ILOs CRUD, course list (manual entry or de-duplicated import via `course_matching.py`), courses x ILOs coverage matrix, and coverage-gap/duplication analysis.  
 - `backend/curriculum_map_report.py` – Curriculum map DOCX export (matrix + findings), built from scratch with python-docx following `course_report_docx.py`'s pattern.  
 - `backend/governance.py` – Standard 1 governance: versioned mission/goals text, a council/committee document register (files on disk under `backend/exports/governance_documents/`, metadata in SQLite), and an append-only stakeholder-participation log.  
+- `backend/faculty_data.py` – Standard 5 faculty data: roster (specialization/degree/rank), teaching load per semester, research/publication log; load-imbalance flags (z-score, same statistical pattern as `quality.py`'s anomaly detection) and specialization-gap flags (course vs. instructor specialization token overlap, reusing `course_matching.py`'s normalization).  
 - `frontend/` – Home, Dashboard, CSS (White + Blue + Orange), Chart.js, dashboard_logic.js.  
 - `frontend/indicators-tracker.html` + `frontend/js/indicators_tracker.js` – Accreditation indicators tracker UI (grouped by standard, inline edit, closing-the-loop log).  
 - `frontend/curriculum-mapping.html` + `frontend/js/curriculum_mapping.js` – Curriculum mapping UI (ILOs, course list + Excel import, coverage matrix checkboxes, findings, Standard 2 indicator sync).  
 - `frontend/governance.html` + `frontend/js/governance.js` – Governance UI (mission version history, document register with upload/filter, stakeholder log, Standard 1 indicator sync).  
+- `frontend/faculty-dashboard.html` + `frontend/js/faculty_dashboard.js` – Faculty dashboard UI (roster, teaching load, publications, load-balance KPI cards, imbalance/specialization-gap flag tables, Standard 5 indicator sync).  
 
 ---
 
@@ -130,7 +132,7 @@ covered by `survey_dashboard.py`. New modules land per standard:
 | 7. Quality Assurance & Program Evaluation | `backend/indicators.py` | Done (Phase 1) — built first since every other standard registers evidence here |
 | 2. Program Design | `backend/curriculum_mapping.py`, `backend/curriculum_map_report.py` | Done (Phase 2) |
 | 1. Mission & Program Management | `backend/governance.py` | Done (Phase 3) |
-| 5. Faculty & Supporting Staff | `backend/faculty_data.py` | Planned |
+| 5. Faculty & Supporting Staff | `backend/faculty_data.py` | Done (Phase 4) |
 | 6. Resources & Learning Facilities | `backend/resources.py` | Planned |
 | 4. Students & Graduates (alumni) | `backend/alumni.py` | Planned |
 | Final integration | `backend/ssr_report.py` (or extend `program_report_docx.py`) | Planned |

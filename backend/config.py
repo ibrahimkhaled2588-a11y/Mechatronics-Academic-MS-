@@ -87,6 +87,7 @@ class ServerSettings:
         "indicators-tracker.html",
         "curriculum-mapping.html",
         "governance.html",
+        "faculty-dashboard.html",
     }))
     # SQLite database file for accreditation-support data (indicators, ILOs,
     # governance docs, faculty/resources/alumni registries). Separate from the

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Faculty Dashboard – Accreditation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="dashboard-page faculty-page">
+    <header class="dashboard-header">
+        <div class="header-inner">
+            <a href="index.html" class="back-home" title="Home">← Home</a>
+            <h1>Faculty &amp; Supporting Staff</h1>
+            <div class="header-actions">
+                <nav class="top-nav">
+                    <a href="dashboard.html" class="nav-link">Quality Dashboard</a>
+                    <a href="course-report.html" class="nav-link">Course Report</a>
+                    <a href="program-report.html" class="nav-link">Program Report</a>
+                    <a href="survey-dashboard.html" class="nav-link">Survey Dashboard</a>
+                    <a href="curriculum-mapping.html" class="nav-link">🗺️ Curriculum Map</a>
+                    <a href="governance.html" class="nav-link">🏛️ Governance</a>
+                    <a href="faculty-dashboard.html" class="nav-link nav-link-active">👩‍🏫 Faculty</a>
+                    <a href="indicators-tracker.html" class="nav-link">📋 Indicators</a>
+                    <a href="qa-chat.html" class="nav-link">🎓 QA Chat</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <main class="dashboard-main">
+        <section class="indicators-summary-section">
+            <h2 class="section-label">Load-Balance KPIs</h2>
+            <div id="kpi-grid" class="indicators-summary-grid"></div>
+        </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="roster">
+                <span class="section-title">Faculty Roster</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <div class="curriculum-add-row">
+                    <input type="text" id="new-faculty-name" placeholder="Name" class="curriculum-input-lg">
+                    <input type="text" id="new-faculty-spec" placeholder="Specialization" class="curriculum-input-lg">
+                    <input type="text" id="new-faculty-degree" placeholder="Degree (e.g. PhD)" class="curriculum-input-sm">
+                    <input type="text" id="new-faculty-rank" placeholder="Rank (e.g. Professor)" class="curriculum-input-sm">
+                    <button type="button" id="add-faculty-btn" class="btn-header btn-header-primary">+ Add</button>
+                </div>
+                <table class="data-table" id="faculty-table">
+                    <thead><tr><th>Name</th><th>Specialization</th><th>Degree</th><th>Rank</th><th></th></tr></thead>
+                    <tbody id="faculty-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="load">
+                <span class="section-title">Teaching Load</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <div class="curriculum-add-row">
+                    <select id="load-faculty-select"></select>
+                    <input type="text" id="load-semester" placeholder="Semester (e.g. Fall 2025)" class="curriculum-input-sm">
+                    <input type="text" id="load-course" placeholder="Course name" class="curriculum-input-lg">
+                    <input type="number" id="load-hours" placeholder="Hours" step="0.5" class="curriculum-input-sm">
+                    <button type="button" id="add-load-btn" class="btn-header btn-header-primary">+ Add</button>
+                </div>
+                <table class="data-table" id="load-table">
+                    <thead><tr><th>Faculty</th><th>Semester</th><th>Course</th><th>Hours</th><th></th></tr></thead>
+                    <tbody id="load-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="publications">
+                <span class="section-title">Research / Publication Log</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <div class="curriculum-add-row">
+                    <select id="pub-faculty-select"></select>
+                    <input type="text" id="pub-title" placeholder="Title" class="curriculum-input-lg">
+                    <input type="text" id="pub-venue" placeholder="Venue" class="curriculum-input-sm">
+                    <input type="number" id="pub-year" placeholder="Year" class="curriculum-input-sm">
+                    <input type="text" id="pub-type" placeholder="Type (journal/conference/...)" class="curriculum-input-sm">
+                    <button type="button" id="add-pub-btn" class="btn-header btn-header-primary">+ Add</button>
+                </div>
+                <table class="data-table" id="pub-table">
+                    <thead><tr><th>Faculty</th><th>Title</th><th>Venue</th><th>Year</th><th>Type</th><th></th></tr></thead>
+                    <tbody id="pub-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="flags">
+                <span class="section-title">Flags: Load Imbalance &amp; Specialization Gaps</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <h3 class="governance-subheading">Load Imbalance (z-score, per semester)</h3>
+                <table class="data-table" id="imbalance-table">
+                    <thead><tr><th>Faculty</th><th>Semester</th><th>Total Hours</th><th>z-score</th><th>Flag</th></tr></thead>
+                    <tbody id="imbalance-tbody"></tbody>
+                </table>
+                <h3 class="governance-subheading">Specialization Gaps</h3>
+                <table class="data-table" id="gaps-table">
+                    <thead><tr><th>Course</th><th>Semester</th><th>Instructor</th><th>Instructor Specialization</th></tr></thead>
+                    <tbody id="gaps-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="std5">
+                <span class="section-title">Standard 5 Indicators</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <div id="std5-indicators-container"></div>
+            </div>
+        </section>
+    </main>
+    <script src="/static/js/faculty_dashboard.js"></script>
+</body>
+</html>
