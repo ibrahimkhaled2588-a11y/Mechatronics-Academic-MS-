@@ -2263,6 +2263,69 @@ body.program-page .dashboard-section .section-title::after {
   cursor: pointer;
 }
 
+/* Governance (Standard 1) */
+.governance-current-mission {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.governance-current-label {
+  margin: 0 0 0.4rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.governance-textarea {
+  width: 100%;
+  min-height: 100px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem;
+  font-family: var(--font);
+  font-size: 0.9rem;
+  margin-bottom: 0.6rem;
+  resize: vertical;
+}
+
+.governance-subheading {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 0.95rem;
+  color: var(--primary-soft);
+}
+
+.governance-history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.governance-upload-form {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.governance-upload-form input[type="text"],
+.governance-upload-form input[type="date"],
+.governance-upload-form input[type="file"] {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.7rem;
+  font-family: var(--font);
+  font-size: 0.9rem;
+}
+
 @media (max-width: 480px) {
   #cb-window { width: calc(100vw - 2rem); right: 1rem; bottom: 4.5rem; }
   #cb-toggle { right: 1rem; bottom: 1rem; }

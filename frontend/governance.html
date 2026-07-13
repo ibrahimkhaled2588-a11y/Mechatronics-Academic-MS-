@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Governance – Accreditation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="dashboard-page governance-page">
+    <header class="dashboard-header">
+        <div class="header-inner">
+            <a href="index.html" class="back-home" title="Home">← Home</a>
+            <h1>Program Governance</h1>
+            <div class="header-actions">
+                <nav class="top-nav">
+                    <a href="dashboard.html" class="nav-link">Quality Dashboard</a>
+                    <a href="course-report.html" class="nav-link">Course Report</a>
+                    <a href="program-report.html" class="nav-link">Program Report</a>
+                    <a href="survey-dashboard.html" class="nav-link">Survey Dashboard</a>
+                    <a href="curriculum-mapping.html" class="nav-link">🗺️ Curriculum Map</a>
+                    <a href="governance.html" class="nav-link nav-link-active">🏛️ Governance</a>
+                    <a href="indicators-tracker.html" class="nav-link">📋 Indicators</a>
+                    <a href="qa-chat.html" class="nav-link">🎓 QA Chat</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <main class="dashboard-main">
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="mission">
+                <span class="section-title">Program Mission &amp; Goals</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <p class="section-desc">Every save creates a new version — nothing is overwritten, so the history of how the mission statement evolved is kept.</p>
+                <div id="current-mission" class="governance-current-mission"></div>
+                <textarea id="new-mission-text" class="governance-textarea" placeholder="Program mission and goals..."></textarea>
+                <button type="button" id="save-mission-btn" class="btn-header btn-header-primary">Save New Version</button>
+                <h3 class="governance-subheading">Version History</h3>
+                <ul id="mission-history-list" class="governance-history-list"></ul>
+            </div>
+        </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="documents">
+                <span class="section-title">Council / Committee Document Register</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <div class="governance-upload-form">
+                    <input type="text" id="doc-title" placeholder="Title (e.g. Department Council Minutes)" class="curriculum-input-lg">
+                    <input type="text" id="doc-committee" placeholder="Committee name" class="curriculum-input-sm">
+                    <input type="date" id="doc-date">
+                    <input type="file" id="doc-file">
+                    <button type="button" id="upload-doc-btn" class="btn-header btn-header-primary">Upload</button>
+                </div>
+                <label>
+                    Filter by committee
+                    <select id="filter-committee"><option value="">All committees</option></select>
+                </label>
+                <table class="data-table" id="documents-table">
+                    <thead><tr><th>Title</th><th>Committee</th><th>Date</th><th>Uploaded</th><th></th></tr></thead>
+                    <tbody id="documents-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="stakeholders">
+                <span class="section-title">Stakeholder Participation Log</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <div class="governance-upload-form">
+                    <input type="text" id="sh-name" placeholder="Stakeholder name" class="curriculum-input-sm">
+                    <input type="text" id="sh-role" placeholder="Role (e.g. Alumni, Employer)" class="curriculum-input-sm">
+                    <input type="date" id="sh-date">
+                    <input type="text" id="sh-topic" placeholder="Topic consulted on" class="curriculum-input-lg">
+                    <button type="button" id="add-stakeholder-btn" class="btn-header btn-header-primary">Add Entry</button>
+                </div>
+                <table class="data-table" id="stakeholder-table">
+                    <thead><tr><th>Stakeholder</th><th>Role</th><th>Date</th><th>Topic</th></tr></thead>
+                    <tbody id="stakeholder-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="std1">
+                <span class="section-title">Standard 1 Indicators</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <div id="std1-indicators-container"></div>
+            </div>
+        </section>
+    </main>
+    <script src="/static/js/governance.js"></script>
+</body>
+</html>

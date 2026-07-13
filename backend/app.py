@@ -12,7 +12,7 @@ import uuid
 
 from typing import List
 
-from fastapi import FastAPI, File, HTTPException, Request, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from pydantic import BaseModel
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,6 +37,7 @@ from config import get_server, get_alert_thresholds
 from chatbot import answer_question
 import indicators
 import curriculum_mapping
+import governance
 
 logger = logging.getLogger(__name__)
 
@@ -461,6 +462,7 @@ async def export_program_docx(request: Request):
 # ---------------------------------------------------------------------------
 
 _SURVEY_EXPORTS_DIR = os.path.join(_base, "exports", "survey_dashboards")
+_GOVERNANCE_DOCS_DIR = os.path.join(_base, "exports", "governance_documents")
 
 
 @app.post("/api/survey/dashboard")
@@ -814,6 +816,105 @@ def export_curriculum_map_docx():
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         headers={"Content-Disposition": 'attachment; filename="Curriculum_Map.docx"'},
     )
+
+
+# ---------------------------------------------------------------------------
+# Accreditation — Standard 1 Governance
+# ---------------------------------------------------------------------------
+class MissionVersionCreate(BaseModel):
+    mission_text: str
+
+
+class StakeholderEntryCreate(BaseModel):
+    stakeholder_name: str
+    consulted_on: str
+    topic: str
+    stakeholder_role: str | None = None
+    notes: str | None = None
+
+
+@app.get("/api/governance/mission")
+def api_governance_list_mission():
+    return governance.list_mission_versions()
+
+
+@app.get("/api/governance/mission/current")
+def api_governance_current_mission():
+    current = governance.get_current_mission()
+    if current is None:
+        raise HTTPException(status_code=404, detail="No mission text has been saved yet")
+    return current
+
+
+@app.post("/api/governance/mission")
+def api_governance_create_mission(body: MissionVersionCreate):
+    try:
+        return governance.create_mission_version(body.mission_text)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.get("/api/governance/documents")
+def api_governance_list_documents(committee_name: str | None = None):
+    return governance.list_documents(committee_name=committee_name)
+
+
+@app.post("/api/governance/documents")
+async def api_governance_upload_document(
+    file: UploadFile = File(...),
+    title: str = Form(...),
+    committee_name: str | None = Form(None),
+    document_date: str | None = Form(None),
+):
+    contents = await file.read()
+    try:
+        return governance.create_document(
+            title=title,
+            file_bytes=contents,
+            original_filename=file.filename or "document",
+            storage_dir=_GOVERNANCE_DOCS_DIR,
+            committee_name=committee_name,
+            document_date=document_date,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.get("/api/governance/documents/{doc_id}/file")
+def api_governance_get_document_file(doc_id: int):
+    doc = governance.get_document(doc_id)
+    if doc is None:
+        raise HTTPException(status_code=404, detail="Document not found")
+    path = os.path.join(_GOVERNANCE_DOCS_DIR, doc["stored_filename"])
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Document file missing on server")
+    return FileResponse(path, filename=doc["original_filename"])
+
+
+@app.delete("/api/governance/documents/{doc_id}")
+def api_governance_delete_document(doc_id: int):
+    if not governance.delete_document(doc_id, _GOVERNANCE_DOCS_DIR):
+        raise HTTPException(status_code=404, detail="Document not found")
+    return {"deleted": True}
+
+
+@app.get("/api/governance/stakeholder-log")
+def api_governance_list_stakeholder_log():
+    return governance.list_stakeholder_log()
+
+
+@app.post("/api/governance/stakeholder-log")
+def api_governance_add_stakeholder_entry(body: StakeholderEntryCreate):
+    try:
+        return governance.add_stakeholder_entry(
+            stakeholder_name=body.stakeholder_name,
+            consulted_on=body.consulted_on,
+            topic=body.topic,
+            stakeholder_role=body.stakeholder_role,
+            notes=body.notes,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 # ---------------------------------------------------------------------------

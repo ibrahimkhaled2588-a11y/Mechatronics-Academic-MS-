@@ -41,8 +41,10 @@ backend/            FastAPI application (Python)
                           (manual or de-duplicated Excel import via course_matching.py), coverage matrix,
                           zero/low-coverage and heavy-duplication analysis
   curriculum_map_report.py  Curriculum map DOCX export (matrix + findings)
+  governance.py            Standard 1 (Mission & Program Management) — versioned mission/goals text,
+                          council/committee document register, stakeholder-participation log
   tests/                  Backend test suite
-  exports/                Generated report/output files
+  exports/                Generated report/output files, incl. exports/governance_documents/ (uploaded minutes etc.)
   data/                   SQLite file for accreditation-support data (git-ignored, created at runtime)
 
 frontend/            Static web UI served by the backend
@@ -54,6 +56,7 @@ frontend/            Static web UI served by the backend
   qa-chat.html            Chatbot interface
   indicators-tracker.html Accreditation indicators tracker (Standard 7), grouped by standard, inline-editable
   curriculum-mapping.html Curriculum mapping (Standard 2): ILOs, course list/import, coverage matrix, findings
+  governance.html         Governance (Standard 1): mission version history, document register, stakeholder log
   css/, js/               Styling and client-side logic (Chart.js-based visualizations)
 
 ARCHITECTURE.md            Detailed technical architecture (data flow, KPI formulas, component table)
@@ -88,4 +91,4 @@ This is slow, error-prone, and hard to repeat consistently across semesters. Thi
 
 Core pipeline (upload → quality checks → academic analytics → charts → reports) is implemented per [ARCHITECTURE.md](ARCHITECTURE.md). Per [TODO.md](TODO.md), the course-name normalization/matching layer is implemented and live-verified against real uploaded files (2026-07-13).
 
-The app is being extended to support Egypt's NAQAAE-style 7-standard accreditation process (see "Accreditation Support" in [ARCHITECTURE.md](ARCHITECTURE.md)). Phase 1 (Standard 7 — the indicators tracker) is done: `backend/indicators.py` + `frontend/indicators-tracker.html`, backed by a new SQLite persistence layer (`backend/db.py`) since accreditation data needs to survive restarts unlike the core analytics pipeline. Phase 2 (Standard 2 — curriculum mapping) is also done: `backend/curriculum_mapping.py` + `frontend/curriculum-mapping.html`, which imports a de-duplicated course list straight from an uploaded grades workbook (reusing `course_matching.py`), lets staff mark a courses x ILOs coverage matrix, and can mark the relevant Standard 2 indicator complete in the Phase 1 tracker with the exported DOCX as evidence. Every later accreditation phase (governance, faculty data, resources, alumni) will register its evidence against indicators the same way.
+The app is being extended to support Egypt's NAQAAE-style 7-standard accreditation process (see "Accreditation Support" in [ARCHITECTURE.md](ARCHITECTURE.md)). Phase 1 (Standard 7 — the indicators tracker) is done: `backend/indicators.py` + `frontend/indicators-tracker.html`, backed by a new SQLite persistence layer (`backend/db.py`) since accreditation data needs to survive restarts unlike the core analytics pipeline. Phase 2 (Standard 2 — curriculum mapping) is also done: `backend/curriculum_mapping.py` + `frontend/curriculum-mapping.html`, which imports a de-duplicated course list straight from an uploaded grades workbook (reusing `course_matching.py`), lets staff mark a courses x ILOs coverage matrix, and can mark the relevant Standard 2 indicator complete in the Phase 1 tracker with the exported DOCX as evidence. Phase 3 (Standard 1 — governance) is done: `backend/governance.py` + `frontend/governance.html`, a document-register-style page (not analytics-heavy) for versioned mission/goals text, council/committee meeting minutes, and a stakeholder-consultation log, wired into the Phase 1 tracker the same way. Every later accreditation phase (faculty data, resources, alumni) will register its evidence against indicators the same way.
