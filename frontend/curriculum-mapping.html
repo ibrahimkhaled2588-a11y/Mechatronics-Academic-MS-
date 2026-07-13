@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Curriculum Mapping – Accreditation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="dashboard-page curriculum-page">
+    <header class="dashboard-header">
+        <div class="header-inner">
+            <a href="index.html" class="back-home" title="Home">← Home</a>
+            <h1>Curriculum Mapping</h1>
+            <div class="header-actions">
+                <nav class="top-nav">
+                    <a href="dashboard.html" class="nav-link">Quality Dashboard</a>
+                    <a href="course-report.html" class="nav-link">Course Report</a>
+                    <a href="program-report.html" class="nav-link">Program Report</a>
+                    <a href="survey-dashboard.html" class="nav-link">Survey Dashboard</a>
+                    <a href="curriculum-mapping.html" class="nav-link nav-link-active">🗺️ Curriculum Map</a>
+                    <a href="indicators-tracker.html" class="nav-link">📋 Indicators</a>
+                    <a href="qa-chat.html" class="nav-link">🎓 QA Chat</a>
+                </nav>
+                <div class="header-btn-group">
+                    <a href="/export-curriculum-map-docx" class="btn-header btn-header-primary">Export DOCX</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="dashboard-main">
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="ilos">
+                <span class="section-title">Program Intended Learning Outcomes (ILOs)</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <div class="curriculum-add-row">
+                    <input type="text" id="new-ilo-code" placeholder="Code (e.g. ILO1)" class="curriculum-input-sm">
+                    <input type="text" id="new-ilo-text" placeholder="ILO text" class="curriculum-input-lg">
+                    <button type="button" id="add-ilo-btn" class="btn-header btn-header-primary">+ Add ILO</button>
+                </div>
+                <table class="data-table" id="ilos-table">
+                    <thead><tr><th>Code</th><th>Text</th><th></th></tr></thead>
+                    <tbody id="ilos-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="courses">
+                <span class="section-title">Course List</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <div class="curriculum-add-row">
+                    <input type="text" id="new-course-name" placeholder="Course name" class="curriculum-input-lg">
+                    <button type="button" id="add-course-btn" class="btn-header btn-header-primary">+ Add Course</button>
+                    <label class="curriculum-import-label">
+                        Import from Excel
+                        <input type="file" id="course-import-file" accept=".xlsx">
+                    </label>
+                </div>
+                <p id="import-summary" class="section-desc"></p>
+                <table class="data-table" id="courses-table">
+                    <thead><tr><th>Course</th><th>Source</th><th></th></tr></thead>
+                    <tbody id="courses-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="matrix">
+                <span class="section-title">Coverage Matrix</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <p class="section-desc">Check the ILOs that each course addresses.</p>
+                <div class="matrix-scroll">
+                    <table class="data-table" id="matrix-table"></table>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="findings">
+                <span class="section-title">Findings</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <div id="findings-container" class="advanced-stats-grid"></div>
+            </div>
+        </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="std2">
+                <span class="section-title">Standard 2 Indicators</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <p class="section-desc">Mark Standard 2 indicators complete once the curriculum map is in good shape, and attach this export as evidence.</p>
+                <div id="std2-indicators-container"></div>
+            </div>
+        </section>
+    </main>
+    <script src="/static/js/curriculum_mapping.js"></script>
+</body>
+</html>

@@ -36,6 +36,7 @@ from statistics_cross import compute_cross_module_and_executive
 from config import get_server, get_alert_thresholds
 from chatbot import answer_question
 import indicators
+import curriculum_mapping
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +64,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=_server.allowed_origins,
     allow_credentials=False,
-    allow_methods=["GET", "POST", "PATCH"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE"],
     allow_headers=["Content-Type"],
 )
 
@@ -682,6 +683,137 @@ def api_indicators_add_log(indicator_id: int, body: LoopLogEntryCreate):
     if result is None:
         raise HTTPException(status_code=404, detail="Indicator not found")
     return result
+
+
+# ---------------------------------------------------------------------------
+# Accreditation — Standard 2 Curriculum Mapping
+# ---------------------------------------------------------------------------
+class IloCreate(BaseModel):
+    ilo_text: str
+    ilo_code: str | None = None
+
+
+class IloUpdate(BaseModel):
+    ilo_text: str | None = None
+    ilo_code: str | None = None
+
+
+class CourseCreate(BaseModel):
+    course_name: str
+
+
+class CoursesImportBulk(BaseModel):
+    course_names: list[str]
+
+
+class MappingSet(BaseModel):
+    course_id: int
+    ilo_id: int
+    mapped: bool
+
+
+@app.get("/api/curriculum/ilos")
+def api_curriculum_list_ilos():
+    return curriculum_mapping.list_ilos()
+
+
+@app.post("/api/curriculum/ilos")
+def api_curriculum_create_ilo(body: IloCreate):
+    try:
+        return curriculum_mapping.create_ilo(body.ilo_text, body.ilo_code)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.patch("/api/curriculum/ilos/{ilo_id}")
+def api_curriculum_update_ilo(ilo_id: int, body: IloUpdate):
+    try:
+        result = curriculum_mapping.update_ilo(ilo_id, ilo_text=body.ilo_text, ilo_code=body.ilo_code)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    if result is None:
+        raise HTTPException(status_code=404, detail="ILO not found")
+    return result
+
+
+@app.delete("/api/curriculum/ilos/{ilo_id}")
+def api_curriculum_delete_ilo(ilo_id: int):
+    if not curriculum_mapping.delete_ilo(ilo_id):
+        raise HTTPException(status_code=404, detail="ILO not found")
+    return {"deleted": True}
+
+
+@app.get("/api/curriculum/courses")
+def api_curriculum_list_courses():
+    return curriculum_mapping.list_courses()
+
+
+@app.post("/api/curriculum/courses")
+def api_curriculum_create_course(body: CourseCreate):
+    try:
+        return curriculum_mapping.create_course(body.course_name)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.delete("/api/curriculum/courses/{course_id}")
+def api_curriculum_delete_course(course_id: int):
+    if not curriculum_mapping.delete_course(course_id):
+        raise HTTPException(status_code=404, detail="Course not found")
+    return {"deleted": True}
+
+
+@app.post("/api/curriculum/courses/import")
+def api_curriculum_import_courses(body: CoursesImportBulk):
+    return curriculum_mapping.import_courses_bulk(body.course_names, source="import")
+
+
+@app.post("/api/curriculum/courses/import-excel")
+async def api_curriculum_import_courses_excel(file: UploadFile = File(...)):
+    """Extract a clean, de-duplicated course list from an uploaded grades workbook."""
+    _validate_file(file)
+    contents = await _read_limited(file)
+    try:
+        names = curriculum_mapping.extract_course_names_from_excel(contents)
+    except Exception as exc:
+        logger.exception("Course extraction failed for curriculum import")
+        raise HTTPException(status_code=400, detail=f"Could not read Excel file: {exc}") from exc
+    if not names:
+        raise HTTPException(status_code=422, detail="No course names could be extracted from this file")
+    return curriculum_mapping.import_courses_bulk(names, source="import-excel")
+
+
+@app.get("/api/curriculum/matrix")
+def api_curriculum_matrix():
+    return curriculum_mapping.get_matrix()
+
+
+@app.post("/api/curriculum/matrix")
+def api_curriculum_set_mapping(body: MappingSet):
+    curriculum_mapping.set_mapping(body.course_id, body.ilo_id, body.mapped)
+    return {"ok": True}
+
+
+@app.get("/api/curriculum/summary")
+def api_curriculum_summary():
+    return curriculum_mapping.compute_coverage_summary()
+
+
+@app.get("/export-curriculum-map-docx")
+def export_curriculum_map_docx():
+    try:
+        from curriculum_map_report import build_curriculum_map_docx
+        data = curriculum_mapping.get_export_data()
+        docx_bytes = build_curriculum_map_docx(data)
+    except Exception as exc:
+        logger.exception("Curriculum map DOCX generation failed")
+        raise HTTPException(status_code=500, detail="Report generation failed; check server logs") from exc
+
+    return StreamingResponse(
+        io.BytesIO(docx_bytes),
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={"Content-Disposition": 'attachment; filename="Curriculum_Map.docx"'},
+    )
 
 
 # ---------------------------------------------------------------------------

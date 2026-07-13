@@ -37,6 +37,10 @@ backend/            FastAPI application (Python)
   db.py                   Shared SQLite connection helper for accreditation-support data
   indicators.py           Standard 7 (Quality Assurance & Program Evaluation) indicators tracker —
                           status/evidence per accreditation indicator + append-only closing-the-loop log
+  curriculum_mapping.py   Standard 2 (Program Design) curriculum mapping — ILOs CRUD, course list
+                          (manual or de-duplicated Excel import via course_matching.py), coverage matrix,
+                          zero/low-coverage and heavy-duplication analysis
+  curriculum_map_report.py  Curriculum map DOCX export (matrix + findings)
   tests/                  Backend test suite
   exports/                Generated report/output files
   data/                   SQLite file for accreditation-support data (git-ignored, created at runtime)
@@ -49,6 +53,7 @@ frontend/            Static web UI served by the backend
   program-report.html    Program-level report viewer
   qa-chat.html            Chatbot interface
   indicators-tracker.html Accreditation indicators tracker (Standard 7), grouped by standard, inline-editable
+  curriculum-mapping.html Curriculum mapping (Standard 2): ILOs, course list/import, coverage matrix, findings
   css/, js/               Styling and client-side logic (Chart.js-based visualizations)
 
 ARCHITECTURE.md            Detailed technical architecture (data flow, KPI formulas, component table)
@@ -83,4 +88,4 @@ This is slow, error-prone, and hard to repeat consistently across semesters. Thi
 
 Core pipeline (upload → quality checks → academic analytics → charts → reports) is implemented per [ARCHITECTURE.md](ARCHITECTURE.md). Per [TODO.md](TODO.md), the course-name normalization/matching layer is implemented and live-verified against real uploaded files (2026-07-13).
 
-The app is being extended to support Egypt's NAQAAE-style 7-standard accreditation process (see "Accreditation Support" in [ARCHITECTURE.md](ARCHITECTURE.md)). Phase 1 (Standard 7 — the indicators tracker) is done: `backend/indicators.py` + `frontend/indicators-tracker.html`, backed by a new SQLite persistence layer (`backend/db.py`) since accreditation data needs to survive restarts unlike the core analytics pipeline. Every later accreditation phase (curriculum mapping, governance, faculty data, resources, alumni) will register its evidence against indicators in this tracker.
+The app is being extended to support Egypt's NAQAAE-style 7-standard accreditation process (see "Accreditation Support" in [ARCHITECTURE.md](ARCHITECTURE.md)). Phase 1 (Standard 7 — the indicators tracker) is done: `backend/indicators.py` + `frontend/indicators-tracker.html`, backed by a new SQLite persistence layer (`backend/db.py`) since accreditation data needs to survive restarts unlike the core analytics pipeline. Phase 2 (Standard 2 — curriculum mapping) is also done: `backend/curriculum_mapping.py` + `frontend/curriculum-mapping.html`, which imports a de-duplicated course list straight from an uploaded grades workbook (reusing `course_matching.py`), lets staff mark a courses x ILOs coverage matrix, and can mark the relevant Standard 2 indicator complete in the Phase 1 tracker with the exported DOCX as evidence. Every later accreditation phase (governance, faculty data, resources, alumni) will register its evidence against indicators the same way.
