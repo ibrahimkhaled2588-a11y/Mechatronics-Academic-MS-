@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Program Report – Academic Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="program-page">
+    <header class="dashboard-header">
+        <div class="header-inner">
+            <a href="index.html" class="back-home" title="Home">← Home</a>
+            <h1>Program-Level Academic Report</h1>
+            <div class="header-actions">
+                <nav class="top-nav">
+                    <a href="dashboard.html" class="nav-link">Quality Dashboard</a>
+                    <a href="course-report.html" class="nav-link">Course Report</a>
+                    <a href="program-report.html" class="nav-link nav-link-active">Program Report</a>
+                    <a href="survey-dashboard.html" class="nav-link">Survey Dashboard</a>
+                    <a href="qa-chat.html" class="nav-link">🎓 QA Chat</a>
+                </nav>
+                <div class="header-btn-group">
+                    <button type="button" id="programExportPdfBtn" class="btn-header btn-header-primary" title="Full PDF Program Report">Full PDF Report</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="dashboard-main">
+        <section class="upload-section">
+            <h2 class="section-label">Upload Program Dataset</h2>
+
+            <!-- Upload mode selector -->
+            <div class="upload-mode-tabs" id="uploadModeTabs" role="tablist">
+                <button class="upload-mode-tab is-active" data-mode="single" role="tab">Single File</button>
+                <button class="upload-mode-tab" data-mode="multi2" role="tab">2 Files — 1 Semester</button>
+                <button class="upload-mode-tab" data-mode="multi4" role="tab">4 Files — 2 Semesters</button>
+            </div>
+
+            <!-- Panel: single file (default) -->
+            <div id="panel-single" class="upload-panel">
+                <div id="program-upload-zone" class="upload-zone">
+                    <input type="file" id="programExcelInput" accept=".xlsx" class="upload-input" />
+                    <div class="upload-zone-content">
+                        <div class="upload-icon" aria-hidden="true">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        </div>
+                        <p class="upload-text">Drag & drop your .xlsx file here, or <span class="upload-browse">browse</span></p>
+                        <p class="upload-hint">Workbook with all program courses and grades (multiple sheets supported)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel: 2 files — 1 semester (old bylaw + new bylaw) -->
+            <div id="panel-multi2" class="upload-panel" hidden>
+                <p class="upload-hint multi-hint">Upload old-bylaw and new-bylaw files for one semester. Courses shared between bylaws are automatically merged into one.</p>
+                <div class="multi-upload-grid">
+                    <div class="multi-upload-slot">
+                        <p class="multi-slot-label">Semester 1 — Old Bylaw <span class="multi-slot-ar">(لائحة سابقة)</span></p>
+                        <div class="upload-zone multi-zone" id="zone-sem1-old">
+                            <input type="file" accept=".xlsx" class="upload-input" id="input-sem1-old" />
+                            <div class="upload-zone-content">
+                                <div class="upload-icon" aria-hidden="true">
+                                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                </div>
+                                <p class="upload-text"><span class="upload-browse">Browse</span> or drop file</p>
+                                <p class="multi-file-name" id="fname-sem1-old"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="multi-upload-slot">
+                        <p class="multi-slot-label">Semester 1 — New Bylaw <span class="multi-slot-ar">(لائحة حديثة)</span></p>
+                        <div class="upload-zone multi-zone" id="zone-sem1-new">
+                            <input type="file" accept=".xlsx" class="upload-input" id="input-sem1-new" />
+                            <div class="upload-zone-content">
+                                <div class="upload-icon" aria-hidden="true">
+                                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                </div>
+                                <p class="upload-text"><span class="upload-browse">Browse</span> or drop file</p>
+                                <p class="multi-file-name" id="fname-sem1-new"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="multi-analyze-row">
+                    <button id="progMulti2AnalyzeBtn" class="cta-btn" disabled>Analyze — 1 Semester</button>
+                </div>
+            </div>
+
+            <!-- Panel: 4 files — 2 semesters -->
+            <div id="panel-multi4" class="upload-panel" hidden>
+                <p class="upload-hint multi-hint">Upload old-bylaw and new-bylaw files for each of the two semesters. Courses shared between bylaws within the same semester are merged.</p>
+                <div class="multi-upload-grid">
+                    <div class="multi-upload-slot">
+                        <p class="multi-slot-label">Semester 1 — Old Bylaw <span class="multi-slot-ar">(لائحة سابقة)</span></p>
+                        <div class="upload-zone multi-zone" id="zone-sem1-old-4">
+                            <input type="file" accept=".xlsx" class="upload-input" id="input-sem1-old-4" />
+                            <div class="upload-zone-content">
+                                <div class="upload-icon" aria-hidden="true">
+                                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                </div>
+                                <p class="upload-text"><span class="upload-browse">Browse</span> or drop file</p>
+                                <p class="multi-file-name" id="fname-sem1-old-4"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="multi-upload-slot">
+                        <p class="multi-slot-label">Semester 1 — New Bylaw <span class="multi-slot-ar">(لائحة حديثة)</span></p>
+                        <div class="upload-zone multi-zone" id="zone-sem1-new-4">
+                            <input type="file" accept=".xlsx" class="upload-input" id="input-sem1-new-4" />
+                            <div class="upload-zone-content">
+                                <div class="upload-icon" aria-hidden="true">
+                                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                </div>
+                                <p class="upload-text"><span class="upload-browse">Browse</span> or drop file</p>
+                                <p class="multi-file-name" id="fname-sem1-new-4"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="multi-upload-slot">
+                        <p class="multi-slot-label">Semester 2 — Old Bylaw <span class="multi-slot-ar">(لائحة سابقة)</span></p>
+                        <div class="upload-zone multi-zone" id="zone-sem2-old-4">
+                            <input type="file" accept=".xlsx" class="upload-input" id="input-sem2-old-4" />
+                            <div class="upload-zone-content">
+                                <div class="upload-icon" aria-hidden="true">
+                                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                </div>
+                                <p class="upload-text"><span class="upload-browse">Browse</span> or drop file</p>
+                                <p class="multi-file-name" id="fname-sem2-old-4"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="multi-upload-slot">
+                        <p class="multi-slot-label">Semester 2 — New Bylaw <span class="multi-slot-ar">(لائحة حديثة)</span></p>
+                        <div class="upload-zone multi-zone" id="zone-sem2-new-4">
+                            <input type="file" accept=".xlsx" class="upload-input" id="input-sem2-new-4" />
+                            <div class="upload-zone-content">
+                                <div class="upload-icon" aria-hidden="true">
+                                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                </div>
+                                <p class="upload-text"><span class="upload-browse">Browse</span> or drop file</p>
+                                <p class="multi-file-name" id="fname-sem2-new-4"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="multi-analyze-row">
+                    <button id="progMulti4AnalyzeBtn" class="cta-btn" disabled>Analyze — 2 Semesters</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="program-results" class="results-section">
+            <div id="program-loading" class="loading-placeholder" hidden>
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Analyzing program data...</p>
+            </div>
+
+            <section class="dashboard-section">
+                <h2 class="section-title">Executive Dashboard</h2>
+                <div class="kpi-grid program-kpi-grid">
+                    <article class="kpi-card kpi-program">
+                        <h3>Total Students</h3>
+                        <p class="kpi-value" id="progTotalStudents">—</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Total Courses</h3>
+                        <p class="kpi-value" id="progTotalCourses">—</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Average GPA</h3>
+                        <p class="kpi-value" id="progAvgGpa">—</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Overall Failure Rate</h3>
+                        <p class="kpi-value" id="progFailureRate">—</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Overall Excellence Rate</h3>
+                        <p class="kpi-value" id="progExcellenceRate">—</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Overall Data Quality Score</h3>
+                        <p class="kpi-value" id="progQualityScore">—</p>
+                    </article>
+                </div>
+                <div class="program-total-override">
+                    <label for="progTotalStudentsOverride">Total students (manual override, optional)</label>
+                    <input type="number" id="progTotalStudentsOverride" min="0" placeholder="Enter total..." />
+                </div>
+            </section>
+
+            <section class="dashboard-section">
+                <h2 class="section-title">Risk Analysis</h2>
+                <div class="risk-layout">
+                    <div>
+                        <h3 class="subsection-title">Top High-Risk Courses</h3>
+                        <ul id="progTopRiskCourses" class="risk-list program-risk-list"></ul>
+                    </div>
+                    <div>
+                        <h3 class="subsection-title">Courses with Increasing Failure Trend</h3>
+                        <ul id="progIncreasingFailureCourses" class="risk-list program-risk-list"></ul>
+                    </div>
+                    <div>
+                        <h3 class="subsection-title">GPA Decline Detection</h3>
+                        <ul id="progGpaDeclineCourses" class="risk-list program-risk-list"></ul>
+                    </div>
+                    <div>
+                        <h3 class="subsection-title">Volatility Ranking</h3>
+                        <ul id="progVolatilityCourses" class="risk-list program-risk-list"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dashboard-section">
+                <h2 class="section-title">Program Visualizations</h2>
+                <div class="charts-row program-charts">
+                    <div class="chart-wrap">
+                        <h4>Program GPA Trend</h4>
+                        <div class="chart-container chart-container-sm">
+                            <canvas id="progGpaTrendChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-wrap">
+                        <h4>Enrollment Comparison</h4>
+                        <div class="chart-container chart-container-sm">
+                            <canvas id="progEnrollmentChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-wrap">
+                        <h4>Quality Score Trend</h4>
+                        <div class="chart-container chart-container-sm">
+                            <canvas id="progQualityTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="heatmap-section">
+                    <h3 class="subsection-title">Risk Heatmap Matrix</h3>
+                    <div id="progRiskHeatmap" class="risk-heatmap"></div>
+                </div>
+            </section>
+
+            <section class="dashboard-section">
+                <h2 class="section-title">Predictive Outlook</h2>
+                <div class="predictive-summary-grid">
+                    <article class="prediction-summary-box">
+                        <h4>Predicted Next Semester GPA</h4>
+                        <p class="kpi-value" id="progPredictedGpa">—</p>
+                        <p class="prediction-note" id="progPredictedGpaNote"></p>
+                    </article>
+                    <article class="prediction-summary-box">
+                        <h4>Predicted High-Risk Courses</h4>
+                        <ul id="progPredictedHighRiskCourses" class="risk-list program-risk-list"></ul>
+                    </article>
+                    <article class="prediction-summary-box">
+                        <h4>Stability Index</h4>
+                        <p class="kpi-value" id="progStabilityIndex">—</p>
+                        <p class="prediction-note" id="progStabilityNote"></p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- ═══ COHORT INTELLIGENCE ═══ -->
+            <section class="dashboard-section" id="prog-cohort-intelligence">
+                <h2 class="section-title">Cohort Intelligence</h2>
+                <p class="section-desc">Estimated cohort behaviour derived from grade distributions: retention, dropout risk, and academic recovery.</p>
+                <div class="kpi-grid program-kpi-grid">
+                    <article class="kpi-card kpi-program">
+                        <h3>Estimated Retention Rate</h3>
+                        <p class="kpi-value" id="progCohortRetention">—</p>
+                        <p class="kpi-sub">Fraction of students not failing on average</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Dropout Risk Probability</h3>
+                        <p class="kpi-value" id="progDropoutRisk">—</p>
+                        <p class="kpi-sub">Higher when many courses exceed 30% failure</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Academic Recovery Rate</h3>
+                        <p class="kpi-value" id="progRecoveryRate">—</p>
+                        <p class="kpi-sub">Fraction of courses with failure &lt; 15%</p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- ═══ VARIANCE DECOMPOSITION ═══ -->
+            <section class="dashboard-section" id="prog-variance-decomp">
+                <h2 class="section-title">Variance Decomposition</h2>
+                <p class="section-desc">How much of the GPA spread comes from differences between courses vs. variation within each course.</p>
+                <div class="kpi-grid program-kpi-grid">
+                    <article class="kpi-card kpi-program">
+                        <h3>Between-Course Variance</h3>
+                        <p class="kpi-value" id="progBetweenVar">—</p>
+                        <p class="kpi-sub">Variance of sheet-level course means</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Within-Course Variance</h3>
+                        <p class="kpi-value" id="progWithinVar">—</p>
+                        <p class="kpi-sub">Residual variance after removing between-course effect</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>GPA Gini Inequality</h3>
+                        <p class="kpi-value" id="progGiniIndex">—</p>
+                        <p class="kpi-sub">0 = all courses equal, 1 = maximum inequality</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Academic Equity Score</h3>
+                        <p class="kpi-value" id="progEquityScore">—</p>
+                        <p class="kpi-sub">Higher = more equitable across courses</p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- ═══ BAYESIAN DATA QUALITY ═══ -->
+            <section class="dashboard-section" id="prog-bayesian-quality">
+                <h2 class="section-title">Bayesian Data Quality Estimate</h2>
+                <p class="section-desc">Posterior reliability estimate after updating a normal prior with the observed composite reliability scores across sheets.</p>
+                <div class="kpi-grid program-kpi-grid">
+                    <article class="kpi-card kpi-program">
+                        <h3>Posterior Reliability Mean</h3>
+                        <p class="kpi-value" id="progBayesianMean">—</p>
+                        <p class="kpi-sub">Updated belief about true data quality</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Posterior Std Deviation</h3>
+                        <p class="kpi-value" id="progBayesianStd">—</p>
+                        <p class="kpi-sub">Uncertainty in the quality estimate</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Accreditation Readiness</h3>
+                        <p class="kpi-value" id="progAccreditationReadiness">—</p>
+                        <p class="kpi-sub">Estimated probability of meeting quality bar</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Institutional Stability Score</h3>
+                        <p class="kpi-value" id="progStabilityCert">—</p>
+                        <p class="kpi-sub">High reliability + low drift = high score / 100</p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- ═══ MONTE CARLO SIMULATION ═══ -->
+            <section class="dashboard-section" id="prog-monte-carlo">
+                <h2 class="section-title">Monte Carlo GPA Simulation</h2>
+                <p class="section-desc">1,000-path simulation of future GPA scenarios based on the current mean and standard deviation, including a stress-test for worst-case failure.</p>
+                <div class="kpi-grid program-kpi-grid">
+                    <article class="kpi-card kpi-program">
+                        <h3>Simulated Mean GPA</h3>
+                        <p class="kpi-value" id="progMcMeanGpa">—</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>5th Percentile GPA</h3>
+                        <p class="kpi-value" id="progMcP5">—</p>
+                        <p class="kpi-sub">Pessimistic scenario</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>95th Percentile GPA</h3>
+                        <p class="kpi-value" id="progMcP95">—</p>
+                        <p class="kpi-sub">Optimistic scenario</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>P(GPA &lt; 2.0)</h3>
+                        <p class="kpi-value" id="progMcPBelow2">—</p>
+                        <p class="kpi-sub">Probability of falling below minimum standard</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>P(GPA ≥ 3.0)</h3>
+                        <p class="kpi-value" id="progMcPAbove3">—</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Stress Worst-Case Failure</h3>
+                        <p class="kpi-value" id="progMcStressFailure">—</p>
+                        <p class="kpi-sub">95th %ile failure rate under stressed conditions</p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- ═══ TREND FORECAST ═══ -->
+            <section class="dashboard-section" id="prog-trend-forecast">
+                <h2 class="section-title">Trend Forecast (OLS Regression)</h2>
+                <p class="section-desc">Next-period GPA, failure rate, and excellence rate forecasts using linear regression across uploaded sheets. Requires 2+ sheets.</p>
+                <div class="kpi-grid program-kpi-grid" id="prog-forecast-kpis">
+                    <article class="kpi-card kpi-program">
+                        <h3>Forecast — Next Semester GPA</h3>
+                        <p class="kpi-value" id="progFcGpa">—</p>
+                        <p class="kpi-sub" id="progFcGpaTrend"></p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Forecast — Failure Rate</h3>
+                        <p class="kpi-value" id="progFcFailure">—</p>
+                        <p class="kpi-sub" id="progFcFailureTrend"></p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Forecast — Excellence Rate</h3>
+                        <p class="kpi-value" id="progFcExcellence">—</p>
+                        <p class="kpi-sub" id="progFcExcellenceTrend"></p>
+                    </article>
+                </div>
+                <p class="section-desc" id="progFcNote" style="margin-top:0.5rem;"></p>
+                <div id="progTrendForecastContainer"></div>
+            </section>
+
+            <!-- ═══ LONGITUDINAL GROWTH ═══ -->
+            <section class="dashboard-section" id="prog-longitudinal">
+                <h2 class="section-title">Longitudinal Growth</h2>
+                <p class="section-desc">How academic indicators have changed across semesters/sheets over time.</p>
+                <div class="kpi-grid program-kpi-grid">
+                    <article class="kpi-card kpi-program">
+                        <h3>GPA CAGR (per sheet)</h3>
+                        <p class="kpi-value" id="progCagrGpa">—</p>
+                        <p class="kpi-sub">Compound growth rate of GPA across sheets</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Excellence Growth Rate</h3>
+                        <p class="kpi-value" id="progGrowthExcellence">—</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Failure Trend Acceleration</h3>
+                        <p class="kpi-value" id="progFailAcceleration">—</p>
+                        <p class="kpi-sub">Positive = failure rate accelerating upward</p>
+                    </article>
+                    <article class="kpi-card kpi-program">
+                        <h3>Program Momentum Score</h3>
+                        <p class="kpi-value" id="progMomentum">—</p>
+                        <p class="kpi-sub">1.0 = GPA rising + failure falling</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="dashboard-section" id="prog-strategic-stats">
+                <h2 class="section-title">Strategic & Institutional Statistics</h2>
+                <p class="section-desc">All advanced computed metrics in card format.</p>
+                <div id="progStrategicStatsContainer" class="advanced-stats-grid"></div>
+            </section>
+
+            <section class="dashboard-section">
+                <h2 class="section-title">Executive Summary</h2>
+                <p class="section-desc">Automatically generated summary in a professional academic tone, suitable for program review meetings and accreditation reports.</p>
+                <div id="progExecutiveCertificates" class="executive-certificates"></div>
+                <article id="progExecutiveSummary" class="executive-summary-text">
+                </article>
+            </section>
+
+            <!-- ═══════════════════════════════════════════════════════════
+                 PROGRAM ANALYTICS REPORT — All 7 Sections
+            ═══════════════════════════════════════════════════════════ -->
+            <section class="dashboard-section analytics-report-section" id="prog-analytics-report">
+                <h2 class="section-title">📊 Program Analytics Report</h2>
+                <p class="section-desc">Structured seven-section analytics report generated automatically from the uploaded dataset.</p>
+
+                <!-- Section 1: Executive Dashboard Banner -->
+                <div class="ar-section">
+                    <h3 class="ar-section-title">Section 1 — Executive Dashboard</h3>
+                    <div id="ar-exec-interpretation" class="ar-interpretation"></div>
+                    <div id="ar-exec-kpis" class="ar-kpi-row"></div>
+                </div>
+
+                <!-- Section 2: Risk Analysis -->
+                <div class="ar-section">
+                    <h3 class="ar-section-title">Section 2 — Risk Analysis</h3>
+                    <div class="ar-risk-grid">
+                        <div>
+                            <h4 class="ar-sub">🔴 Top High-Risk Courses</h4>
+                            <div id="ar-high-risk-table"></div>
+                        </div>
+                        <div>
+                            <h4 class="ar-sub">📈 Courses with Increasing Failure Trend</h4>
+                            <ul id="ar-incr-fail-list" class="ar-list"></ul>
+                        </div>
+                        <div>
+                            <h4 class="ar-sub">📉 GPA Decline / Low GPA Detection</h4>
+                            <ul id="ar-gpa-decline-list" class="ar-list"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Visual Analytics Summaries -->
+                <div class="ar-section">
+                    <h3 class="ar-section-title">Section 3 — Program Visual Analytics</h3>
+                    <div class="ar-analytics-grid" id="ar-visual-analytics"></div>
+                </div>
+
+                <!-- Section 4: Volatility Analysis -->
+                <div class="ar-section">
+                    <h3 class="ar-section-title">Section 4 — Course Volatility Analysis</h3>
+                    <div id="ar-volatility-table"></div>
+                </div>
+
+                <!-- Section 5: Risk Heatmap Matrix -->
+                <div class="ar-section">
+                    <h3 class="ar-section-title">Section 5 — Risk Heatmap Matrix</h3>
+                    <div id="ar-heatmap-quadrants" class="ar-quadrant-grid"></div>
+                    <p id="ar-heatmap-summary" class="ar-note"></p>
+                </div>
+
+                <!-- Section 6: Program Insights -->
+                <div class="ar-section">
+                    <h3 class="ar-section-title">Section 6 — Program Insights</h3>
+                    <div id="ar-insights" class="ar-insights-grid"></div>
+                </div>
+
+                <!-- Section 7: Recommended Actions -->
+                <div class="ar-section">
+                    <h3 class="ar-section-title">Section 7 — Recommended Actions</h3>
+                    <div id="ar-recommendations" class="ar-recommendations-grid"></div>
+                </div>
+            </section>
+
+            <section class="dashboard-section">
+                <h2 class="section-title">Export</h2>
+                <p class="section-desc">Export the full program report, an executive-summary-only PDF, or an Excel-readable analytics file.</p>
+                <div class="export-actions">
+                    <button type="button" id="progExportPdfFullBtn" class="cta-btn">Full PDF Program Report</button>
+                    <button type="button" id="progExportPdfSummaryBtn" class="cta-btn-outline">Executive Summary Only</button>
+                    <button type="button" id="progExportExcelBtn" class="cta-btn-outline">Excel Analytics File</button>
+                    <button type="button" id="progExportDocxBtn" class="cta-btn-outline">&#128196; Export DOCX Report</button>
+                </div>
+            </section>
+        </section>
+    </main>
+    <script src="/static/js/qaForecast.js"></script>
+    <script src="/static/js/program_report.js"></script>
+    <script src="/static/js/chatbot.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard - Academic Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="dashboard-page">
+    <header class="dashboard-header">
+        <div class="header-inner">
+            <a href="index.html" class="back-home" id="backHome" title="Home">← Home</a>
+            <h1 id="mainTitle">Academic Performance Intelligence Dashboard</h1>
+            <div class="header-actions">
+                <nav class="top-nav">
+                    <a href="dashboard.html" class="nav-link nav-link-active">Quality Dashboard</a>
+                    <a href="course-report.html" class="nav-link">Course Report</a>
+                    <a href="program-report.html" class="nav-link">Program Report</a>
+                    <a href="survey-dashboard.html" class="nav-link">Survey Dashboard</a>
+                    <a href="qa-chat.html" class="nav-link">🎓 QA Chat</a>
+                </nav>
+                <div class="header-btn-group">
+                    <button type="button" id="exportPdfBtn" class="btn-header btn-header-primary" title="Export PDF">Export PDF</button>
+                    <button type="button" id="translateBtn" class="btn-header btn-header-secondary">العربية</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="dashboard-main">
+        <section id="upload-section" class="upload-section">
+            <h2 id="uploadTitle" class="section-label">Upload Excel File</h2>
+            <div id="upload-zone" class="upload-zone">
+                <input type="file" id="excelInput" accept=".xlsx" class="upload-input" multiple />
+                <div class="upload-zone-content">
+                    <div class="upload-icon" aria-hidden="true">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <p class="upload-text" id="uploadText">Drag & drop one or more .xlsx files here, or <span class="upload-browse">browse</span></p>
+                    <p class="upload-hint" id="uploadHint">Select up to 10 Excel workbooks — sheets with matching names are merged automatically</p>
+                </div>
+            </div>
+        </section>
+        <section id="results" class="results-section">
+            <div id="loading-placeholder" class="loading-placeholder" hidden>
+                <div class="loading-spinner"></div>
+                <p class="loading-text" id="loadingText">Analyzing...</p>
+            </div>
+            <div id="alerts-container"></div>
+            <div id="quality-section" class="dashboard-section section-collapsible">
+                <button type="button" class="section-toggle" aria-expanded="true" data-section="quality">
+                    <span id="qualityTitle" class="section-title">Data Quality Monitoring</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="section-body" id="quality-body">
+                    <div id="kpi-cards" class="kpi-grid"></div>
+                </div>
+            </div>
+            <div id="advanced-stats-section" class="dashboard-section section-collapsible">
+                <button type="button" class="section-toggle" aria-expanded="true" data-section="advanced-stats">
+                    <span class="section-title">Advanced Statistical Intelligence</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="section-body" id="advanced-stats-body">
+                    <div id="advanced-stats-container" class="advanced-stats-grid"></div>
+                </div>
+            </div>
+            <div id="academic-section" class="dashboard-section section-collapsible">
+                <button type="button" class="section-toggle" aria-expanded="true" data-section="academic">
+                    <span id="academicTitle" class="section-title">Academic Analytics</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="section-body" id="academic-body">
+                    <div id="academic-charts" class="charts-row charts-large"></div>
+                    <div id="academic-tables" class="tables-wrap"></div>
+                    <div id="merged-courses-container" class="merged-courses-wrap"></div>
+                </div>
+            </div>
+            <div id="predictive-section" class="dashboard-section section-collapsible">
+                <button type="button" class="section-toggle" aria-expanded="true" data-section="predictive">
+                    <span id="predictiveTitle" class="section-title">Predictive Risk Indicators</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="section-body" id="predictive-body">
+                    <div id="prediction-summary"></div>
+                    <div id="predictive-cards" class="predictive-grid"></div>
+                </div>
+            </div>
+            <div id="forecast-section" class="dashboard-section section-collapsible">
+                <button type="button" class="section-toggle" aria-expanded="true" data-section="forecast">
+                    <span class="section-title">Trend Forecast (OLS)</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="section-body" id="forecast-body">
+                    <p class="section-desc">Next-period GPA, failure rate, and excellence rate forecasts based on linear trend across sheets.</p>
+                    <div id="forecast-container" class="advanced-stats-grid"></div>
+                </div>
+            </div>
+            <div id="plans-section" class="dashboard-section section-collapsible">
+                <button type="button" class="section-toggle" aria-expanded="true" data-section="plans">
+                    <span id="plansTitle" class="section-title">Course Action Plans</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="section-body" id="plans-body">
+                    <p id="plansDesc" class="section-desc">Recommended actions per course based on failure rate, GPA, and risk.</p>
+                    <div id="course-plans" class="plans-grid"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="/static/js/qaForecast.js"></script>
+    <script src="/static/js/dashboard_logic.js"></script>
+    <script src="/static/js/chatbot.js"></script>
+</body>
+</html>

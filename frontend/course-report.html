@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Course Report – Academic Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="course-page">
+    <header class="dashboard-header">
+        <div class="header-inner">
+            <a href="index.html" class="back-home" title="Home">← Home</a>
+            <h1>Course-Level Academic Report</h1>
+            <div class="header-actions">
+                <nav class="top-nav">
+                    <a href="dashboard.html" class="nav-link">Quality Dashboard</a>
+                    <a href="course-report.html" class="nav-link nav-link-active">Course Report</a>
+                    <a href="program-report.html" class="nav-link">Program Report</a>
+                    <a href="survey-dashboard.html" class="nav-link">Survey Dashboard</a>
+                    <a href="qa-chat.html" class="nav-link">🎓 QA Chat</a>
+                </nav>
+                <div class="header-btn-group">
+                    <button type="button" id="courseExportPdfBtn" class="btn-header btn-header-primary" title="Download PDF">Download PDF</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="dashboard-main">
+        <section class="upload-section">
+            <h2 class="section-label">Upload Course Dataset</h2>
+            <div id="course-upload-zone" class="upload-zone">
+                <input type="file" id="courseExcelInput" accept=".xlsx" class="upload-input" multiple />
+                <div class="upload-zone-content">
+                    <div class="upload-icon" aria-hidden="true">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <p class="upload-text">Drag & drop one or more .xlsx files here, or <span class="upload-browse">browse</span></p>
+                    <p class="upload-hint" id="courseUploadHint">Select up to 10 Excel workbooks — sheets with matching names are merged automatically</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="course-results" class="results-section">
+            <div id="course-loading" class="loading-placeholder" hidden>
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Analyzing course data...</p>
+            </div>
+
+            <section class="dashboard-section" id="success-overview-section" hidden>
+                <header class="course-section-header">
+                    <div>
+                        <h2 class="section-title">High-Success Courses</h2>
+                        <p class="section-desc" id="successOverviewDesc">Courses where the pass rate meets or exceeds the threshold below.</p>
+                    </div>
+                    <div class="course-selector" style="align-items:center;gap:8px;">
+                        <label for="successThresholdInput" style="white-space:nowrap;">Success threshold</label>
+                        <input type="number" id="successThresholdInput" value="60" min="0" max="100" step="1"
+                               style="width:70px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:.9rem;" />
+                        <span style="font-size:.9rem;color:var(--text-muted);">%</span>
+                        <button type="button" id="successThresholdBtn" class="cta-btn" style="padding:6px 14px;font-size:.85rem;">Apply</button>
+                    </div>
+                </header>
+                <div id="successCoursesContainer" class="tables-wrap" style="margin-top:12px;"></div>
+            </section>
+
+            <section class="dashboard-section">
+                <header class="course-section-header">
+                    <div>
+                        <h2 class="section-title">Course Selection</h2>
+                        <p class="section-desc">The system extracts all detected courses from the uploaded workbook. Select a course to view its detailed academic report.</p>
+                    </div>
+                    <div class="course-selector">
+                        <label for="courseSelect">Course</label>
+                        <select id="courseSelect">
+                            <option value="" disabled selected>Select a course...</option>
+                        </select>
+                    </div>
+                </header>
+            </section>
+
+            <section id="course-report-panels" class="course-layout" hidden>
+                <section class="dashboard-section">
+                    <h2 class="section-title">Key Performance Indicators</h2>
+                    <div class="kpi-grid course-kpi-grid">
+                        <article class="kpi-card kpi-course">
+                            <h3>Enrollment Count</h3>
+                            <p class="kpi-value" id="kpiEnrollment">—</p>
+                        </article>
+                        <article class="kpi-card kpi-course">
+                            <h3>Excellence Rate</h3>
+                            <p class="kpi-value" id="kpiExcellence">—</p>
+                        </article>
+                        <article class="kpi-card kpi-course">
+                            <h3>Failure Rate</h3>
+                            <p class="kpi-value" id="kpiFailure">—</p>
+                        </article>
+                        <article class="kpi-card kpi-course">
+                            <h3>Estimated GPA</h3>
+                            <p class="kpi-value" id="kpiGpa">—</p>
+                        </article>
+                        <article class="kpi-card kpi-course kpi-risk">
+                            <h3>Risk Score</h3>
+                            <p class="kpi-value" id="kpiRisk">—</p>
+                            <p class="kpi-sub" id="kpiRiskLevel"></p>
+                        </article>
+                        <article class="kpi-card kpi-course">
+                            <h3>Pass Rate</h3>
+                            <p class="kpi-value" id="kpiPassRate">—</p>
+                        </article>
+                        <article class="kpi-card kpi-course">
+                            <h3>GPA Volatility Index</h3>
+                            <p class="kpi-value" id="kpiVolatility">—</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="dashboard-section">
+                    <h2 class="section-title">Grade Distribution Breakdown</h2>
+                    <p class="section-desc">Percentage of students per grade letter (from A+ to F).</p>
+                    <div id="courseGradeBreakdownTable"></div>
+                </section>
+
+                <section class="dashboard-section">
+                    <h2 class="section-title">Visual Analytics</h2>
+                    <div class="charts-row course-charts">
+                        <div class="chart-wrap">
+                            <h4>Grade Distribution</h4>
+                            <div class="chart-container chart-container-sm">
+                                <canvas id="courseGradeDistributionChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-wrap">
+                            <h4>GPA Trend by Term / Sheet</h4>
+                            <div class="chart-container chart-container-sm">
+                                <canvas id="courseGpaTrendChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-wrap">
+                            <h4>Failure Rate Trend</h4>
+                            <div class="chart-container chart-container-sm">
+                                <canvas id="courseFailureTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="dashboard-section">
+                    <h2 class="section-title">Data Quality Profile</h2>
+                    <div class="kpi-grid course-quality-grid">
+                        <article class="kpi-card kpi-quality">
+                            <h3>Missing Data</h3>
+                            <p class="kpi-value" id="qualityMissing">—</p>
+                        </article>
+                        <article class="kpi-card kpi-quality">
+                            <h3>Duplicate Records</h3>
+                            <p class="kpi-value" id="qualityDuplicate">—</p>
+                        </article>
+                        <article class="kpi-card kpi-quality">
+                            <h3>Reliability Index</h3>
+                            <p class="kpi-value" id="qualityReliability">—</p>
+                        </article>
+                        <article class="kpi-card kpi-quality">
+                            <h3>Drift Status</h3>
+                            <p class="kpi-value" id="qualityDriftStatus">—</p>
+                            <p class="kpi-sub" id="qualityDriftScore"></p>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="dashboard-section" id="course-deep-stats-section">
+                    <h2 class="section-title">Deep Academic Statistical Profiling</h2>
+                    <p class="section-desc">Advanced metrics: grade distribution (MAD, trimmed mean, Gini), fairness indicators, risk modeling.</p>
+                    <div id="courseDeepStatsContainer" class="advanced-stats-grid"></div>
+                </section>
+
+                <section class="dashboard-section">
+                    <h2 class="section-title">Automated Recommendations</h2>
+                    <p class="section-desc">Evidence-based recommendations generated from course performance, risk level, and data quality metrics.</p>
+                    <div id="courseRecommendations" class="plans-grid"></div>
+                </section>
+
+                <section class="dashboard-section">
+                    <h2 class="section-title">Export</h2>
+                    <p class="section-desc">Download the course report in PDF format or as an Excel-readable summary file.</p>
+                    <div class="export-actions">
+                        <button type="button" id="courseExportPdfSecondaryBtn" class="cta-btn">Download Course PDF</button>
+                        <button type="button" id="courseExportExcelBtn" class="cta-btn-outline">Download Excel Summary</button>
+                    </div>
+                </section>
+
+                <section class="dashboard-section" id="official-course-report-section">
+                    <h2 class="section-title">Official Course Report (DOCX)</h2>
+                    <p class="section-desc">
+                        Fully automated — no data entry required. Course code, title, instructor, academic year,
+                        semester, and program are all read directly from the uploaded workbook for every course.
+                        Just click a button below.
+                    </p>
+                    <div class="export-actions" style="margin-top:10px;">
+                        <button type="button" id="courseExportDocxBtn" class="cta-btn">Generate Report for Selected Course (DOCX)</button>
+                        <button type="button" id="courseExportDocxAllBtn" class="cta-btn-outline">Generate Reports for ALL Courses (ZIP)</button>
+                    </div>
+                    <details style="margin-top:16px;">
+                        <summary style="cursor:pointer;color:var(--text-muted);font-size:.9rem;">
+                            Optional: override fields the workbook doesn't contain (credit hours, university, dates...)
+                        </summary>
+                        <div class="course-selector" style="flex-wrap:wrap;gap:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:12px;">
+                            <div><label for="crfCourseCode">Course Code</label><input type="text" id="crfCourseCode" placeholder="Auto-detected" /></div>
+                            <div><label for="crfAcademicYear">Academic Year</label><input type="text" id="crfAcademicYear" placeholder="Auto-detected" /></div>
+                            <div><label for="crfSemester">Semester</label><input type="text" id="crfSemester" placeholder="Auto-detected" /></div>
+                            <div><label for="crfDepartment">Department</label><input type="text" id="crfDepartment" placeholder="Basic Science Engineering" /></div>
+                            <div><label for="crfCreditHours">Credit Hours</label><input type="text" id="crfCreditHours" placeholder="3" /></div>
+                            <div><label for="crfCourseType">Course Type</label><input type="text" id="crfCourseType" placeholder="Core" /></div>
+                            <div><label for="crfLevel">Level</label><input type="text" id="crfLevel" placeholder="Level 2" /></div>
+                            <div><label for="crfProgram">Academic Program</label><input type="text" id="crfProgram" placeholder="Auto-detected" /></div>
+                            <div><label for="crfFaculty">Faculty/Institute</label><input type="text" id="crfFaculty" placeholder="Auto-detected from sheet name" /></div>
+                            <div><label for="crfUniversity">University/Academy</label><input type="text" id="crfUniversity" placeholder="Menoufia University" /></div>
+                            <div><label for="crfCoordinator">Course Coordinator</label><input type="text" id="crfCoordinator" placeholder="Auto-detected" /></div>
+                            <div><label for="crfDeptHead">Head of Department</label><input type="text" id="crfDeptHead" placeholder="Prof. ..." /></div>
+                            <div><label for="crfApprovalDate">Approval Date</label><input type="text" id="crfApprovalDate" placeholder="dd/mm/yyyy" /></div>
+                        </div>
+                    </details>
+                </section>
+            </section>
+        </section>
+    </main>
+    <script src="/static/js/course_report.js"></script>
+    <script src="/static/js/chatbot.js"></script>
+</body>
+</html>
+

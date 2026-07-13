@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Survey Dashboard Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="dashboard-page survey-page">
+    <header class="dashboard-header">
+        <div class="header-inner">
+            <a href="index.html" class="back-home" title="Home">← Home</a>
+            <h1>Survey Analysis Dashboard</h1>
+            <div class="header-actions">
+                <nav class="top-nav">
+                    <a href="dashboard.html" class="nav-link">Quality Dashboard</a>
+                    <a href="course-report.html" class="nav-link">Course Report</a>
+                    <a href="program-report.html" class="nav-link">Program Report</a>
+                    <a href="survey-dashboard.html" class="nav-link nav-link-active">Survey Dashboard</a>
+                </nav>
+                <div class="header-btn-group">
+                    <a href="/api/survey/template" class="btn-header btn-header-primary">Download Template</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-main survey-main">
+        <section class="dashboard-section survey-upload-card">
+            <h2 class="section-title">Upload Survey Excel Files (.xlsx)</h2>
+            <p class="section-desc">Upload one or more files (students, graduates, employers). Each column should be one question with Arabic response values.</p>
+
+            <div id="survey-upload-zone" class="upload-zone">
+                <input type="file" id="surveyFiles" multiple accept=".xlsx" class="upload-input" />
+                <div class="upload-zone-content">
+                    <div class="upload-icon" aria-hidden="true">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <p class="upload-text">Drag & drop your .xlsx files here, or <span class="upload-browse">browse</span></p>
+                    <p class="upload-hint">You can select multiple files at once (one per survey group)</p>
+                    <p class="multi-file-name" id="surveyFilesName"></p>
+                </div>
+            </div>
+            <div class="multi-analyze-row" style="margin-top:1rem">
+                <button id="generateSurveyBtn" class="cta-btn">Generate Dashboard Package</button>
+            </div>
+            <p id="surveyStatus" class="survey-status"></p>
+        </section>
+
+        <section class="dashboard-section survey-format-card">
+            <h3 class="section-title">Example Excel Format</h3>
+            <div class="survey-format-example">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Q1 جودة المقررات</th>
+                            <th>Q2 كفاءة أعضاء هيئة التدريس</th>
+                            <th>Q3 خدمات المعامل</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>موافق تماماً</td>
+                            <td>موافق</td>
+                            <td>محايد</td>
+                        </tr>
+                        <tr>
+                            <td>موافق</td>
+                            <td>موافق تماماً</td>
+                            <td>غير موافق</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="section-desc">Allowed responses: موافق تماماً، موافق، محايد، غير موافق، غير موافق تماماً</p>
+        </section>
+
+        <section id="surveyResult" class="dashboard-section survey-result-card" hidden>
+            <h3 class="section-title">Output Files</h3>
+            <div id="surveyLinks" class="survey-links"></div>
+        </section>
+    </main>
+
+    <script src="/static/js/survey_dashboard.js"></script>
+    <script src="/static/js/chatbot.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+=== NEW FILE SHEETS ===
+['Ibn ElHaitham']
+=== OLD FILE SHEETS ===
+['Ibn ElHaitham']
+
+--- NEW Sheet: Ibn ElHaitham (55 courses) ---
+  BES 141         Statics                        enrolled= 43 fail_rate= 16.3% gpa=2.62 excellence=20.9%
+  MEC 403         Robotics                       enrolled=  5 fail_rate=  0.0% gpa=4.00 excellence=100.0%
+  BES 111         Mathematics 1                  enrolled= 47 fail_rate= 14.9% gpa=2.82 excellence=14.9%
+  BES 122         Physics 2                      enrolled= 19 fail_rate=  5.3% gpa=2.72 excellence=5.3%
+  MEC 307         Mechatronic Design(2)          enrolled= 29 fail_rate=  0.0% gpa=3.02 excellence=20.7%
+  BES 299         Probability and Statistics     enrolled= 43 fail_rate=  4.7% gpa=3.33 excellence=32.6%
+  GEN 112         Societal Issues                enrolled= 12 fail_rate=  0.0% gpa=3.39 excellence=25.0%
+  ELE 231         Electronics                    enrolled= 18 fail_rate= 11.1% gpa=1.64 excellence=0.0%
+  MEC 408         PC-Based Control               enrolled=  5 fail_rate=  0.0% gpa=4.00 excellence=100.0%
+  BES 282         Modern Physics                 enrolled= 16 fail_rate= 37.5% gpa=1.44 excellence=6.2%
+  PRE 315         Stress Analysis                enrolled= 55 fail_rate=  3.6% gpa=2.93 excellence=18.2%
+  PRE 131         Engineering Drawing            enrolled= 44 fail_rate= 11.4% gpa=2.66 excellence=15.9%
+  MEC 305         Control Systems                enrolled= 29 fail_rate=  0.0% gpa=2.94 excellence=3.5%
+  MEC 201         Introduction to Autocad        enrolled= 49 fail_rate=  2.0% gpa=3.88 excellence=73.5%
+  GEN 192         History of Engineering & Techn enrolled= 11 fail_rate=  0.0% gpa=3.66 excellence=45.5%
+  BES 121         Physics 1                      enrolled= 41 fail_rate= 39.0% gpa=2.12 excellence=7.3%
+  PRE 244         Applied Mechanics(2)           enrolled=  1 fail_rate=  0.0% gpa=4.00 excellence=100.0%
+  GEN 321         Technical Report Writing       enrolled= 30 fail_rate=  0.0% gpa=2.74 excellence=3.3%
+  ELE 211         Electric Circuit 1             enrolled= 32 fail_rate=  3.1% gpa=2.43 excellence=3.1%
+  MPE 252         Thermodynamics and Heat Transf enrolled= 26 fail_rate= 26.9% gpa=1.84 excellence=11.5%
+  GEN 393         Marketing                      enrolled=  9 fail_rate=  0.0% gpa=3.21 excellence=11.1%
+  PRE 432         Applied Machine Design         enrolled= 40 fail_rate=  0.0% gpa=2.69 excellence=5.0%
+  GEN 421         Communication & Presentation S enrolled= 24 fail_rate=  0.0% gpa=3.34 excellence=12.5%
+  MEC 202         Fundamentals of Mechatronics E enrolled= 30 fail_rate=  0.0% gpa=2.89 excellence=6.7%
+  GEN 394         Accounting                     enrolled= 21 fail_rate=  4.8% gpa=3.45 excellence=28.6%
+  ECE 331         Digital Electronics            enrolled= 22 fail_rate=  4.5% gpa=2.62 excellence=9.1%
+  BES 298         Discrete Mathematics           enrolled=  1 fail_rate=  0.0% gpa=3.70 excellence=0.0%
+  MEC 409         Applied Optimal Control        enrolled= 29 fail_rate=  0.0% gpa=3.31 excellence=27.6%
+  ECE 425         Digital Control                enrolled=  5 fail_rate=  0.0% gpa=3.74 excellence=40.0%
+  PRE 322         CNC Machines                   enrolled= 10 fail_rate= 30.0% gpa=1.76 excellence=0.0%
+  BES 142         Dynamics                       enrolled= 13 fail_rate= 23.1% gpa=1.83 excellence=0.0%
+  GEN 111         Introduction to Quality Assura enrolled= 10 fail_rate=  0.0% gpa=2.91 excellence=0.0%
+  MPE 351         Hydraulic and pneumatic circui enrolled= 14 fail_rate=  0.0% gpa=2.35 excellence=0.0%
+  PRE 343         Theory of Machines             enrolled= 12 fail_rate= 25.0% gpa=1.82 excellence=0.0%
+  MEC 304         Digital Systems                enrolled= 19 fail_rate=  0.0% gpa=3.03 excellence=10.5%
+  MEC 301         Mechatronic Components         enrolled= 28 fail_rate=  0.0% gpa=3.23 excellence=17.9%
+  PRE 243         Applied Mechanics (1)          enrolled= 44 fail_rate= 11.4% gpa=2.28 excellence=2.3%
+  PRE 336         Mechanical Machine Elements    enrolled= 23 fail_rate= 17.4% gpa=3.00 excellence=8.7%
+  FAC 492         Project Management Essentials  enrolled= 30 fail_rate= 10.0% gpa=1.74 excellence=3.3%
+  ELE 141         Introduction to Computers      enrolled= 48 fail_rate= 18.8% gpa=3.04 excellence=31.2%
+  ELE 413         Industrial electronics         enrolled= 43 fail_rate= 16.3% gpa=1.96 excellence=0.0%
+  PRE 222         Production Technology          enrolled= 16 fail_rate= 18.8% gpa=2.24 excellence=0.0%
+  MEC 308         Intelligent Mechatronics       enrolled=  8 fail_rate=  0.0% gpa=3.89 excellence=62.5%
+  MEC 310         Artificial Intelligence        enrolled=  6 fail_rate=  0.0% gpa=2.62 excellence=0.0%
+  MEC 203         Mechatronics Design (1)        enrolled= 27 fail_rate=  0.0% gpa=3.12 excellence=11.1%
+  MEC 207         Object Oriented Programming    enrolled= 31 fail_rate=  0.0% gpa=2.99 excellence=9.7%
+  PRE 151         Manufacturing Engineering      enrolled= 47 fail_rate= 27.7% gpa=2.26 excellence=6.4%
+  ECE 323         Microprocessors                enrolled= 46 fail_rate= 15.2% gpa=2.55 excellence=2.2%
+  MEC 401         Mechatronics Systems           enrolled=  8 fail_rate=  0.0% gpa=3.70 excellence=50.0%
+  PRE 215         Engineering Materials          enrolled= 18 fail_rate=  5.6% gpa=1.75 excellence=0.0%
+  MEC 414         Graduation Project             enrolled=  1 fail_rate=  0.0% gpa=4.00 excellence=100.0%
+  ELE 333         Programmable Logic Controller  enrolled= 17 fail_rate=  5.9% gpa=2.39 excellence=5.9%
+  MPE 251         Fluid Mechanics                enrolled= 32 fail_rate= 12.5% gpa=2.14 excellence=0.0%
+  BES 211         Mathematics 3                  enrolled= 26 fail_rate= 11.5% gpa=2.22 excellence=3.9%
+  PRE 443         Advanced Theory of Machines    enrolled= 12 fail_rate= 25.0% gpa=2.11 excellence=0.0%
+
+--- OLD Sheet: Ibn ElHaitham (56 courses) ---
+  MEC-C308        Intelligent Mechatronics       enrolled= 22 fail_rate=  0.0% gpa=3.09
+  FAC-C009        Engineering Drawing            enrolled=  3 fail_rate=  0.0% gpa=3.50
+  MEC-C307        Mechatronic Design(2)          enrolled= 10 fail_rate=  0.0% gpa=2.61
+  MEC-C408        PC-Based Control               enrolled= 39 fail_rate=  0.0% gpa=3.22
+  FAC-C106        Discrete Mathematics           enrolled=  6 fail_rate= 16.7% gpa=1.12
+  MEC-C412        Industrial Automation          enrolled=  4 fail_rate=  0.0% gpa=3.50
+  MEC-C301        Mechatronic Components         enrolled=  7 fail_rate=  0.0% gpa=2.67
+  MEC-C409        Applied Optimal Control        enrolled= 18 fail_rate=  0.0% gpa=2.89
+  PRE-C202        Machine Drawing                enrolled= 19 fail_rate=  0.0% gpa=3.44
+  MEC-C310        Artificial Intelligence        enrolled= 16 fail_rate=  6.2% gpa=1.61
+  PRE-C301        CNC Machines                   enrolled= 61 fail_rate= 24.6% gpa=1.16
+  MEC-C201        Mechatronics Design(1)         enrolled=  7 fail_rate= 14.3% gpa=2.08
+  FAC-C105        Statistical Methods            enrolled= 14 fail_rate=  7.1% gpa=2.95
+  MPE-C105        Fluid Mechanics                enrolled= 20 fail_rate= 10.0% gpa=2.10
+  ECE-C301        Programmable Logic Controllers enrolled= 12 fail_rate=  8.3% gpa=1.92
+  MEC-C303        Mechanical Machine Elements    enrolled=  9 fail_rate= 11.1% gpa=2.74
+  GEN112          Social Issues                  enrolled=  6 fail_rate=  0.0% gpa=3.68
+  FAC-C001        Mathematics (1)                enrolled=  2 fail_rate=  0.0% gpa=2.50
+  MEC-C101        Computer Aided Engineering Dra enrolled=  2 fail_rate=  0.0% gpa=3.30
+  GEN-C201        Presentation Skills            enrolled=  6 fail_rate=  0.0% gpa=3.17
+  FAC-C008        Manufacturing Engineering      enrolled=  7 fail_rate=  0.0% gpa=1.89
+  GEN -C102       Project Management             enrolled= 29 fail_rate= 20.7% gpa=1.56
+  FAC-C107        Energy Conversion              enrolled=  8 fail_rate=  0.0% gpa=3.58
+  MEC-C402        Advanced Theory of Machines    enrolled= 26 fail_rate=  3.9% gpa=1.92
+  ECE-C201        Digital Electronics            enrolled=  2 fail_rate= 50.0% gpa=0.00
+  MEC-C302        Theory of Machines             enrolled=  7 fail_rate= 14.3% gpa=0.94
+  PRE-C201        Engineering Materials          enrolled= 24 fail_rate= 16.7% gpa=1.85
+  MEC-C102        Fundamentals of Mechatronics E enrolled=  1 fail_rate=  0.0% gpa=1.00
+  FAC-C202        Linear Programming             enrolled=  9 fail_rate= 11.1% gpa=2.55
+  MEC-C401        Mechatronics Systems           enrolled= 22 fail_rate=  4.5% gpa=2.40
+  MEC-C305        Control Systems                enrolled= 11 fail_rate=  0.0% gpa=1.97
+  MEC-C304        Digital Systems                enrolled= 20 fail_rate= 10.0% gpa=2.27
+  FAC-C006        Physics (2)                    enrolled=  1 fail_rate=  0.0% gpa=4.00
+  GEN-C103        Critical Thinking              enrolled= 20 fail_rate=  0.0% gpa=3.73
+  GEN-C204        Marketing                      enrolled=  6 fail_rate=  0.0% gpa=3.38
+  MPE-C205        Thermodynamics and Heat Transf enrolled=  8 fail_rate= 12.5% gpa=1.78
+  ELE-C407        Industrial Electronics         enrolled= 17 fail_rate=  0.0% gpa=1.66
+  MPE-C309        Hydraulic and pneumatic circui enrolled= 30 fail_rate= 20.0% gpa=1.60
+  PRE-C302        Stress Analysis                enrolled= 22 fail_rate=  9.1% gpa=2.06
+  MEC-C404        Advanced Engineering Vibration enrolled= 54 fail_rate=  0.0% gpa=2.28
+  GEN-C002        Introduction to Computers      enrolled=  2 fail_rate=  0.0% gpa=3.20
+  MEC-C202        Engineering Mechanics(1)       enrolled=  2 fail_rate=  0.0% gpa=2.00
+  MEC-C204        Applied Machine Design         enrolled= 32 fail_rate=  6.2% gpa=2.72
+  FAC-C401        Graduation Project             enrolled= 35 fail_rate=  0.0% gpa=4.00
+  FAC-C101        Probability and statistics     enrolled=  8 fail_rate=  0.0% gpa=3.57
+  FAC-C003        History of Engineering Science enrolled=  5 fail_rate=  0.0% gpa=3.67
+  ECE-C204        Microprocessors                enrolled=  7 fail_rate=  0.0% gpa=2.20
+  ECE-C406        Digital Control                enrolled= 12 fail_rate=  8.3% gpa=2.21
+  MEC-C405        Mechatronics in Automotive Eng enrolled= 44 fail_rate= 29.6% gpa=1.34
+  GEN-C301        Writing Technical Report       enrolled=  4 fail_rate=  0.0% gpa=3.15
+  MEC-C406        Mechatronic Sys. Modeling, and enrolled= 34 fail_rate=  0.0% gpa=2.50
+  FAC-C00 2       Physics(1)                     enrolled=  1 fail_rate=  0.0% gpa=0.00
+  PRE-C203        Production Technology          enrolled= 27 fail_rate=  3.7% gpa=2.03
+  ELE-C101        Circuits (1)                   enrolled=  1 fail_rate=  0.0% gpa=4.00
+  MEC-C205        Object Oriented Programming    enrolled=  3 fail_rate=  0.0% gpa=1.85
+  MEC-C403        Robotics                       enrolled= 43 fail_rate=  7.0% gpa=2.89

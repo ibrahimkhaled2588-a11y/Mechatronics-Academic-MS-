@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Academic Data Quality Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="home-page">
+    <div class="hero">
+        <div class="logo-container">
+            <img src="/static/54.png" alt="برنامج هندسة الميكاترونكس – كلية الهندسة – جامعة المنوفية" class="logo animate-fadein">
+        </div>
+        <p class="tagline" id="tagline">Mechatronics Engineering Program – Faculty of Engineering – Menoufia University</p>
+        <p class="tagline-desc" id="taglineDesc">Data quality and academic performance analytics for courses and grades</p>
+
+        <div class="hero-actions">
+            <button id="startBtn" class="cta-btn">Open Quality Dashboard</button>
+            <div class="hero-secondary-actions">
+                <button id="coursePageBtn" class="cta-btn-outline">Course Report Page</button>
+                <button id="programPageBtn" class="cta-btn-outline">Program Report Page</button>
+                <button id="surveyPageBtn" class="cta-btn-outline">Survey Dashboard Page</button>
+                <button id="qaChatBtn" class="cta-btn-outline" onclick="location.href='qa-chat.html'">🎓 QA Intelligence Chat</button>
+            </div>
+        </div>
+    </div>
+    <button id="translateBtn" class="lang-btn">العربية</button>
+    <script src="/static/js/dashboard.js"></script>
+    <script src="/static/js/chatbot.js"></script>
+</body>
+</html>
