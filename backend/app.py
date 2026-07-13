@@ -35,6 +35,7 @@ from statistics_program import compute_program_statistics
 from statistics_cross import compute_cross_module_and_executive
 from config import get_server, get_alert_thresholds
 from chatbot import answer_question
+import indicators
 
 logger = logging.getLogger(__name__)
 
@@ -62,11 +63,16 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=_server.allowed_origins,
     allow_credentials=False,
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "PATCH"],
     allow_headers=["Content-Type"],
 )
 
 app.mount("/static", StaticFiles(directory=_frontend_dir), name="static")
+
+
+@app.on_event("startup")
+def _seed_accreditation_defaults() -> None:
+    indicators.seed_defaults()
 
 # ---------------------------------------------------------------------------
 # In-memory upload history  (bounded to prevent memory leak)
@@ -581,6 +587,101 @@ async def api_survey_template():
     except Exception as exc:
         logger.exception("Template generation failed")
         raise HTTPException(status_code=500, detail="Template generation failed") from exc
+
+
+# ---------------------------------------------------------------------------
+# Accreditation — Standard 7 Indicators Tracker
+# ---------------------------------------------------------------------------
+class IndicatorCreate(BaseModel):
+    standard_number: int
+    indicator_text: str
+    responsible_person: str | None = None
+    evidence_link: str | None = None
+    due_date: str | None = None
+
+
+class IndicatorUpdate(BaseModel):
+    status: str | None = None
+    responsible_person: str | None = None
+    evidence_link: str | None = None
+    due_date: str | None = None
+    indicator_text: str | None = None
+
+
+class LoopLogEntryCreate(BaseModel):
+    weakness_identified: str
+    action_taken: str | None = None
+    entry_status: str | None = None
+    entry_date: str | None = None
+
+
+@app.get("/api/indicators/standards")
+def api_indicators_standards():
+    """Return the 7 standard numbers/names for building the tracker UI."""
+    return [{"standard_number": n, "standard_name": name} for n, name in indicators.STANDARDS.items()]
+
+
+@app.get("/api/indicators/summary")
+def api_indicators_summary():
+    """Per-standard status counts, for a progress overview."""
+    return [s.__dict__ for s in indicators.summarize_by_standard()]
+
+
+@app.get("/api/indicators")
+def api_indicators_list(standard_number: int | None = None, status: str | None = None):
+    if status is not None and status not in indicators.VALID_STATUSES:
+        raise HTTPException(status_code=422, detail=f"status must be one of {indicators.VALID_STATUSES}")
+    return indicators.list_indicators(standard_number=standard_number, status=status)
+
+
+@app.get("/api/indicators/{indicator_id}")
+def api_indicators_get(indicator_id: int):
+    result = indicators.get_indicator(indicator_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Indicator not found")
+    return result
+
+
+@app.post("/api/indicators")
+def api_indicators_create(body: IndicatorCreate):
+    try:
+        return indicators.create_indicator(
+            standard_number=body.standard_number,
+            indicator_text=body.indicator_text,
+            responsible_person=body.responsible_person,
+            evidence_link=body.evidence_link,
+            due_date=body.due_date,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.patch("/api/indicators/{indicator_id}")
+def api_indicators_update(indicator_id: int, body: IndicatorUpdate):
+    try:
+        result = indicators.update_indicator(indicator_id, **body.model_dump(exclude_unset=True))
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    if result is None:
+        raise HTTPException(status_code=404, detail="Indicator not found")
+    return result
+
+
+@app.post("/api/indicators/{indicator_id}/log")
+def api_indicators_add_log(indicator_id: int, body: LoopLogEntryCreate):
+    try:
+        result = indicators.add_log_entry(
+            indicator_id,
+            weakness_identified=body.weakness_identified,
+            action_taken=body.action_taken,
+            entry_status=body.entry_status,
+            entry_date=body.entry_date,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    if result is None:
+        raise HTTPException(status_code=404, detail="Indicator not found")
+    return result
 
 
 # ---------------------------------------------------------------------------

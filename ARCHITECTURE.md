@@ -105,4 +105,35 @@ The system monitors **data quality**, detects **anomalies**, evaluates **reliabi
 - `backend/kpis.py` – Excellence rate, failure rate, GPA estimate, GPA variance.  
 - `backend/ml_models.py` – Quality prediction, course risk probabilities.  
 - `backend/alerts.py` – Alert generation from thresholds.  
+- `backend/db.py` – Shared SQLite connection helper for accreditation-support data (see below).  
+- `backend/indicators.py` – Standard 7 accreditation indicators tracker (list/status/evidence, closing-the-loop log); integration point for the other accreditation-support modules as they land.  
 - `frontend/` – Home, Dashboard, CSS (White + Blue + Orange), Chart.js, dashboard_logic.js.  
+- `frontend/indicators-tracker.html` + `frontend/js/indicators_tracker.js` – Accreditation indicators tracker UI (grouped by standard, inline edit, closing-the-loop log).  
+
+---
+
+## Accreditation Support (NAQAAE-style, 7 Standards)
+
+Extending the core analytics app to support Egypt's academic program
+accreditation process. Standard 3 (Teaching, Learning & Assessment) is
+already substantially covered by `academic_analytics.py`/`kpis.py`/
+`statistics_course.py`; Standard 4 (Students & Graduates) is partially
+covered by `survey_dashboard.py`. New modules land per standard:
+
+| Standard | Module | Status |
+|----------|--------|--------|
+| 7. Quality Assurance & Program Evaluation | `backend/indicators.py` | Done (Phase 1) — built first since every other standard registers evidence here |
+| 2. Program Design | `backend/curriculum_mapping.py` | Planned |
+| 1. Mission & Program Management | `backend/governance.py` | Planned |
+| 5. Faculty & Supporting Staff | `backend/faculty_data.py` | Planned |
+| 6. Resources & Learning Facilities | `backend/resources.py` | Planned |
+| 4. Students & Graduates (alumni) | `backend/alumni.py` | Planned |
+| Final integration | `backend/ssr_report.py` (or extend `program_report_docx.py`) | Planned |
+
+**Persistence**: unlike the core analytics pipeline (in-memory, request-scoped
+— see `_upload_history` in `app.py`), accreditation data must survive a
+server restart. It lives in a single SQLite file
+(`backend/data/accreditation.db`, path configurable via
+`ACCREDITATION_DB_PATH`) accessed through `backend/db.py`. Each domain
+module owns its own tables via idempotent `CREATE TABLE IF NOT EXISTS`
+statements called from its own `init_db()`.

@@ -84,7 +84,15 @@ class ServerSettings:
         "course-report.html",
         "program-report.html",
         "survey-dashboard.html",
+        "indicators-tracker.html",
     }))
+    # SQLite database file for accreditation-support data (indicators, ILOs,
+    # governance docs, faculty/resources/alumni registries). Separate from the
+    # in-memory upload history above, which stays request-scoped by design.
+    accreditation_db_path: str = os.environ.get(
+        "ACCREDITATION_DB_PATH",
+        os.path.join(os.path.dirname(__file__), "data", "accreditation.db"),
+    )
 
 
 # ---------------------------------------------------------------------------

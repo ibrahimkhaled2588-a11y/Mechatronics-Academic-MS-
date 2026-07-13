@@ -34,8 +34,12 @@ backend/            FastAPI application (Python)
   chatbot.py              Q&A chatbot over uploaded academic data
   grade_utils.py, merge_excel_stats.py, extract_data.py
                           Supporting utilities for grade parsing and stat merging
+  db.py                   Shared SQLite connection helper for accreditation-support data
+  indicators.py           Standard 7 (Quality Assurance & Program Evaluation) indicators tracker —
+                          status/evidence per accreditation indicator + append-only closing-the-loop log
   tests/                  Backend test suite
   exports/                Generated report/output files
+  data/                   SQLite file for accreditation-support data (git-ignored, created at runtime)
 
 frontend/            Static web UI served by the backend
   index.html            Home page (entry point, links to the tools below)
@@ -44,6 +48,7 @@ frontend/            Static web UI served by the backend
   course-report.html     Course-level report viewer
   program-report.html    Program-level report viewer
   qa-chat.html            Chatbot interface
+  indicators-tracker.html Accreditation indicators tracker (Standard 7), grouped by standard, inline-editable
   css/, js/               Styling and client-side logic (Chart.js-based visualizations)
 
 ARCHITECTURE.md            Detailed technical architecture (data flow, KPI formulas, component table)
@@ -76,4 +81,6 @@ This is slow, error-prone, and hard to repeat consistently across semesters. Thi
 
 ## Current state
 
-Core pipeline (upload → quality checks → academic analytics → charts → reports) is implemented per [ARCHITECTURE.md](ARCHITECTURE.md). Per [TODO.md](TODO.md), active work is on a course-name normalization/matching layer so that the same course listed with slightly different names across sheets is correctly merged rather than counted as separate courses — implemented, pending live verification against real uploaded files.
+Core pipeline (upload → quality checks → academic analytics → charts → reports) is implemented per [ARCHITECTURE.md](ARCHITECTURE.md). Per [TODO.md](TODO.md), the course-name normalization/matching layer is implemented and live-verified against real uploaded files (2026-07-13).
+
+The app is being extended to support Egypt's NAQAAE-style 7-standard accreditation process (see "Accreditation Support" in [ARCHITECTURE.md](ARCHITECTURE.md)). Phase 1 (Standard 7 — the indicators tracker) is done: `backend/indicators.py` + `frontend/indicators-tracker.html`, backed by a new SQLite persistence layer (`backend/db.py`) since accreditation data needs to survive restarts unlike the core analytics pipeline. Every later accreditation phase (curriculum mapping, governance, faculty data, resources, alumni) will register its evidence against indicators in this tracker.
