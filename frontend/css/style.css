@@ -206,14 +206,20 @@ body.program-page {
 .header-inner {
   max-width: 1280px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.header-top-row {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   column-gap: 1.25rem;
-  row-gap: 0.75rem;
+  row-gap: 0.6rem;
 }
-.header-inner .back-home { white-space: nowrap; }
-.header-inner h1 { margin: 0; text-align: center; }
+.header-top-row .back-home { white-space: nowrap; }
+.header-top-row h1 { margin: 0; text-align: center; }
 
 .header-actions {
   display: flex;
@@ -269,32 +275,52 @@ body.program-page {
 }
 
 .top-nav {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem;
-  background: rgba(15, 23, 42, 0.35);
-  border-radius: 999px;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 14px;
 }
 
 .nav-link {
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.42rem 0.85rem;
+  border-radius: 9px;
+  font-size: 0.82rem;
   font-weight: 500;
-  color: #e5e7eb;
+  line-height: 1.2;
+  color: #cbd5e1;
   text-decoration: none;
-  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
 }
 
 .nav-link:hover {
-  background: rgba(248, 250, 252, 0.14);
+  background: rgba(248, 250, 252, 0.12);
   color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.nav-link:focus-visible {
+  outline: 2px solid #facc15;
+  outline-offset: 1px;
 }
 
 .nav-link-active {
-  background: #e0f2fe;
-  color: #0f172a;
+  background: linear-gradient(135deg, var(--accent-light), var(--accent));
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(3, 105, 161, 0.45);
+}
+
+.nav-link-active:hover {
+  color: #ffffff;
+  transform: none;
 }
 
 /* بار الهيدر: روابط وزر بلون فاتح واضح */
@@ -1333,26 +1359,30 @@ body.program-page .dashboard-section .section-title::after {
   .predictive-grid { grid-template-columns: 1fr; }
   .upload-zone { padding: 1.5rem 1rem; }
 
-  .header-inner {
+  .header-top-row {
     grid-template-columns: 1fr;
     justify-items: flex-start;
   }
 
-  .header-inner h1 {
+  .header-top-row h1 {
     text-align: left;
     font-size: 1.1rem;
   }
 
   .header-actions {
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-wrap: wrap;
   }
 
   .top-nav {
     width: 100%;
     justify-content: flex-start;
-    overflow-x: auto;
+  }
+
+  .nav-link {
+    font-size: 0.78rem;
+    padding: 0.38rem 0.7rem;
   }
 }
 
