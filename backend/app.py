@@ -40,6 +40,7 @@ import curriculum_mapping
 import governance
 import faculty_data
 import sheets_sync
+import resources
 
 logger = logging.getLogger(__name__)
 
@@ -1035,6 +1036,116 @@ def api_faculty_delete_publication(pub_id: int):
 @app.get("/api/faculty/dashboard")
 def api_faculty_dashboard():
     return faculty_data.get_dashboard_summary()
+
+
+# ---------------------------------------------------------------------------
+# Accreditation — Standard 6 Resources & Learning Facilities
+# ---------------------------------------------------------------------------
+class EquipmentCreate(BaseModel):
+    name: str
+    category: str | None = None
+    location: str | None = None
+    status: str = "operational"
+    next_maintenance_date: str | None = None
+
+
+class EquipmentUpdate(BaseModel):
+    name: str | None = None
+    category: str | None = None
+    location: str | None = None
+    status: str | None = None
+    next_maintenance_date: str | None = None
+
+
+class LibraryHoldingCreate(BaseModel):
+    title: str
+    count: int
+    subject_area: str | None = None
+
+
+class BudgetEntryCreate(BaseModel):
+    fiscal_year: str
+    category: str
+    amount: float
+    notes: str | None = None
+
+
+@app.get("/api/resources/equipment")
+def api_resources_list_equipment(status: str | None = None):
+    return resources.list_equipment(status=status)
+
+
+@app.post("/api/resources/equipment")
+def api_resources_create_equipment(body: EquipmentCreate):
+    try:
+        return resources.create_equipment(
+            body.name, body.category, body.location, body.status, body.next_maintenance_date
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.patch("/api/resources/equipment/{equipment_id}")
+def api_resources_update_equipment(equipment_id: int, body: EquipmentUpdate):
+    try:
+        result = resources.update_equipment(equipment_id, **body.model_dump(exclude_unset=True))
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    if result is None:
+        raise HTTPException(status_code=404, detail="Equipment not found")
+    return result
+
+
+@app.delete("/api/resources/equipment/{equipment_id}")
+def api_resources_delete_equipment(equipment_id: int):
+    if not resources.delete_equipment(equipment_id):
+        raise HTTPException(status_code=404, detail="Equipment not found")
+    return {"deleted": True}
+
+
+@app.get("/api/resources/library")
+def api_resources_list_library():
+    return resources.list_library_holdings()
+
+
+@app.post("/api/resources/library")
+def api_resources_create_library(body: LibraryHoldingCreate):
+    try:
+        return resources.create_library_holding(body.title, body.count, body.subject_area)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.delete("/api/resources/library/{holding_id}")
+def api_resources_delete_library(holding_id: int):
+    if not resources.delete_library_holding(holding_id):
+        raise HTTPException(status_code=404, detail="Library holding not found")
+    return {"deleted": True}
+
+
+@app.get("/api/resources/budget")
+def api_resources_list_budget(fiscal_year: str | None = None):
+    return resources.list_budget_entries(fiscal_year=fiscal_year)
+
+
+@app.post("/api/resources/budget")
+def api_resources_create_budget(body: BudgetEntryCreate):
+    try:
+        return resources.create_budget_entry(body.fiscal_year, body.category, body.amount, body.notes)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.delete("/api/resources/budget/{entry_id}")
+def api_resources_delete_budget(entry_id: int):
+    if not resources.delete_budget_entry(entry_id):
+        raise HTTPException(status_code=404, detail="Budget entry not found")
+    return {"deleted": True}
+
+
+@app.get("/api/resources/dashboard")
+def api_resources_dashboard(days_ahead: int = 30):
+    return resources.get_dashboard_summary(days_ahead)
 
 
 # ---------------------------------------------------------------------------
