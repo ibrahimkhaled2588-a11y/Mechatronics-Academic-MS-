@@ -38,15 +38,15 @@ async function loadEquipment() {
             <td>${escapeHtml(e.location || '')}</td>
             <td>
                 <select class="eq-status-select" data-id="${e.id}">
-                    <option value="operational" ${e.status === 'operational' ? 'selected' : ''}>Operational</option>
-                    <option value="needs_repair" ${e.status === 'needs_repair' ? 'selected' : ''}>Needs Repair</option>
-                    <option value="out_of_service" ${e.status === 'out_of_service' ? 'selected' : ''}>Out of Service</option>
+                    <option value="operational" ${e.status === 'operational' ? 'selected' : ''}>${t('res.statusOperational')}</option>
+                    <option value="needs_repair" ${e.status === 'needs_repair' ? 'selected' : ''}>${t('res.statusNeedsRepair')}</option>
+                    <option value="out_of_service" ${e.status === 'out_of_service' ? 'selected' : ''}>${t('res.statusOutOfService')}</option>
                 </select>
             </td>
             <td>${escapeHtml(e.next_maintenance_date || '')}</td>
-            <td><button type="button" class="btn-header btn-header-secondary delete-eq-btn" data-id="${e.id}">Delete</button></td>
+            <td><button type="button" class="btn-header btn-header-secondary delete-eq-btn" data-id="${e.id}">${t('common.delete')}</button></td>
         </tr>
-    `).join('') || '<tr><td colspan="6" class="section-desc">No equipment recorded yet.</td></tr>';
+    `).join('') || `<tr><td colspan="6" class="section-desc">${t('res.noEquipment')}</td></tr>`;
 
     document.querySelectorAll('.eq-status-select').forEach((sel) => {
         sel.addEventListener('change', async () => {
@@ -74,7 +74,7 @@ function initEquipmentForm() {
         const status = document.getElementById('new-eq-status').value;
         const date = document.getElementById('new-eq-date').value;
         if (!name) {
-            alert('Equipment name is required.');
+            alert(t('res.eqNameRequired'));
             return;
         }
         try {
@@ -106,9 +106,9 @@ async function loadLibrary() {
             <td>${escapeHtml(h.title)}</td>
             <td>${escapeHtml(h.subject_area || '')}</td>
             <td>${h.count}</td>
-            <td><button type="button" class="btn-header btn-header-secondary delete-lib-btn" data-id="${h.id}">Delete</button></td>
+            <td><button type="button" class="btn-header btn-header-secondary delete-lib-btn" data-id="${h.id}">${t('common.delete')}</button></td>
         </tr>
-    `).join('') || '<tr><td colspan="4" class="section-desc">No library holdings recorded yet.</td></tr>';
+    `).join('') || `<tr><td colspan="4" class="section-desc">${t('res.noLibrary')}</td></tr>`;
 
     document.querySelectorAll('.delete-lib-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -124,7 +124,7 @@ function initLibraryForm() {
         const subject = document.getElementById('new-lib-subject').value.trim();
         const count = Number(document.getElementById('new-lib-count').value);
         if (!title || !document.getElementById('new-lib-count').value) {
-            alert('Title and count are required.');
+            alert(t('res.titleCountRequired'));
             return;
         }
         try {
@@ -153,9 +153,9 @@ async function loadBudget() {
             <td>${escapeHtml(b.category)}</td>
             <td>${b.amount}</td>
             <td>${escapeHtml(b.notes || '')}</td>
-            <td><button type="button" class="btn-header btn-header-secondary delete-budget-btn" data-id="${b.id}">Delete</button></td>
+            <td><button type="button" class="btn-header btn-header-secondary delete-budget-btn" data-id="${b.id}">${t('common.delete')}</button></td>
         </tr>
-    `).join('') || '<tr><td colspan="5" class="section-desc">No budget entries recorded yet.</td></tr>';
+    `).join('') || `<tr><td colspan="5" class="section-desc">${t('res.noBudget')}</td></tr>`;
 
     document.querySelectorAll('.delete-budget-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -172,7 +172,7 @@ function initBudgetForm() {
         const amount = Number(document.getElementById('new-budget-amount').value);
         const notes = document.getElementById('new-budget-notes').value.trim();
         if (!year || !category || !document.getElementById('new-budget-amount').value) {
-            alert('Fiscal year, category, and amount are required.');
+            alert(t('res.yearCategoryAmountRequired'));
             return;
         }
         try {
@@ -200,23 +200,23 @@ async function loadDashboard() {
     document.getElementById('kpi-grid').innerHTML = `
         <div class="indicator-summary-card">
             <h3>${summary.total_equipment}</h3>
-            <p class="indicator-summary-name">Equipment items</p>
+            <p class="indicator-summary-name">${t('res.kpiEquipmentItems')}</p>
         </div>
         <div class="indicator-summary-card">
             <h3>${summary.needs_repair_count + summary.out_of_service_count}</h3>
-            <p class="indicator-summary-name">Needing repair / out of service</p>
+            <p class="indicator-summary-name">${t('res.kpiNeedingRepair')}</p>
         </div>
         <div class="indicator-summary-card">
             <h3>${summary.maintenance_due_count}</h3>
-            <p class="indicator-summary-name">Maintenance due (30 days)</p>
+            <p class="indicator-summary-name">${t('res.kpiMaintenanceDue')}</p>
         </div>
         <div class="indicator-summary-card">
             <h3>${summary.total_library_items}</h3>
-            <p class="indicator-summary-name">Library items (${summary.total_library_titles} titles)</p>
+            <p class="indicator-summary-name">${t('res.kpiLibraryItems').replace('{n}', summary.total_library_titles)}</p>
         </div>
         <div class="indicator-summary-card">
             <h3>${summary.total_budget_amount}</h3>
-            <p class="indicator-summary-name">Total budget recorded</p>
+            <p class="indicator-summary-name">${t('res.kpiTotalBudget')}</p>
         </div>
     `;
 
@@ -225,9 +225,9 @@ async function loadDashboard() {
             <td>${escapeHtml(e.name)}</td>
             <td>${escapeHtml(e.location || '')}</td>
             <td>${escapeHtml(e.next_maintenance_date)}</td>
-            <td>${e.overdue ? '<span class="badge badge-missing">overdue</span>' : '<span class="badge badge-partial">due soon</span>'}</td>
+            <td>${e.overdue ? `<span class="badge badge-missing">${t('res.overdue')}</span>` : `<span class="badge badge-partial">${t('res.dueSoon')}</span>`}</td>
         </tr>
-    `).join('') || '<tr><td colspan="4" class="section-desc">Nothing due for maintenance in the next 30 days.</td></tr>';
+    `).join('') || `<tr><td colspan="4" class="section-desc">${t('res.noMaintenanceDue')}</td></tr>`;
 }
 
 // --- Standard 6 indicators integration ---
@@ -238,12 +238,12 @@ async function loadStandard6Indicators() {
     container.innerHTML = rows.map((ind) => `
         <div class="indicator-summary-card">
             <p>${escapeHtml(ind.indicator_text)}</p>
-            <p class="indicator-summary-name">Status: <span class="badge badge-${ind.status}">${ind.status}</span></p>
+            <p class="indicator-summary-name">${t('ind.statusLabel')} <span class="badge badge-${ind.status}">${t('status.' + ind.status)}</span></p>
             <button type="button" class="btn-header btn-header-primary mark-complete-btn" data-id="${ind.id}">
-                Mark complete + note this dashboard as evidence
+                ${t('res.markCompleteDashboard')}
             </button>
         </div>
-    `).join('') || '<p class="section-desc">No Standard 6 indicators found.</p>';
+    `).join('') || `<p class="section-desc">${t('ind.noneForStandard')}</p>`;
 
     container.querySelectorAll('.mark-complete-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -274,3 +274,4 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('i18n:applied', () => refreshAll());

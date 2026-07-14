@@ -2371,3 +2371,37 @@ body.program-page .dashboard-section .section-title::after {
   #cb-window { width: calc(100vw - 2rem); right: 1rem; bottom: 4.5rem; }
   #cb-toggle { right: 1rem; bottom: 1rem; }
 }
+
+/* RTL support (Arabic UI, toggled via js/i18n.js setting <html dir="rtl">).
+   The `dir` attribute already flips flex/grid visual order natively; these
+   cover the cases that don't auto-flip (explicit text-align, Arabic font
+   fallback, icon mirroring). */
+html[dir="rtl"] body {
+  font-family: 'Tahoma', 'Segoe UI', 'Noto Naskh Arabic', var(--font);
+}
+
+html[dir="rtl"] .data-table th,
+html[dir="rtl"] .data-table td {
+  text-align: right;
+}
+
+html[dir="rtl"] .header-top-row h1,
+html[dir="rtl"] .upload-section .section-label,
+html[dir="rtl"] .section-title {
+  text-align: right;
+}
+
+html[dir="rtl"] .back-home:hover {
+  transform: translateX(2px);
+}
+
+html[dir="rtl"] .kpi-card,
+html[dir="rtl"] .indicator-summary-card {
+  border-left: none;
+  border-right: 3px solid var(--accent);
+}
+
+html[dir="rtl"] .curriculum-add-row,
+html[dir="rtl"] .governance-upload-form {
+  direction: rtl;
+}

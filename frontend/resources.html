@@ -13,38 +13,45 @@
     <header class="dashboard-header">
         <div class="header-inner">
             <div class="header-top-row">
-                <a href="index.html" class="back-home" title="Home">← Home</a>
-                <h1>Resources &amp; Learning Facilities</h1>
-                <div class="header-actions"></div>
+                <a href="index.html" class="back-home" data-i18n="common.backHome" title="Home">← Home</a>
+                <h1 data-i18n="res.title">Resources &amp; Learning Facilities</h1>
+                <div class="header-actions">
+                    <div class="header-btn-group">
+                        <button type="button" class="btn-header btn-header-secondary lang-toggle-btn">العربية</button>
+                    </div>
+                </div>
             </div>
             <nav class="top-nav">
-                <a href="dashboard.html" class="nav-link">Quality Dashboard</a>
-                <a href="course-report.html" class="nav-link">Course Report</a>
-                <a href="program-report.html" class="nav-link">Program Report</a>
-                <a href="survey-dashboard.html" class="nav-link">Survey Dashboard</a>
-                <a href="curriculum-mapping.html" class="nav-link">🗺️ Curriculum Map</a>
-                <a href="governance.html" class="nav-link">🏛️ Governance</a>
-                <a href="faculty-dashboard.html" class="nav-link">👩‍🏫 Faculty</a>
-                <a href="resources.html" class="nav-link nav-link-active">🧪 Resources</a>
-                <a href="indicators-tracker.html" class="nav-link">📋 Indicators</a>
-                <a href="qa-chat.html" class="nav-link">🎓 QA Chat</a>
+                <a href="dashboard.html" class="nav-link" data-i18n="nav.dashboard">Quality Dashboard</a>
+                <a href="course-report.html" class="nav-link" data-i18n="nav.course">Course Report</a>
+                <a href="program-report.html" class="nav-link" data-i18n="nav.program">Program Report</a>
+                <a href="survey-dashboard.html" class="nav-link" data-i18n="nav.survey">Survey Dashboard</a>
+                <a href="curriculum-mapping.html" class="nav-link" data-i18n="nav.curriculum">🗺️ Curriculum Map</a>
+                <a href="governance.html" class="nav-link" data-i18n="nav.governance">🏛️ Governance</a>
+                <a href="faculty-dashboard.html" class="nav-link" data-i18n="nav.faculty">👩‍🏫 Faculty</a>
+                <a href="resources.html" class="nav-link nav-link-active" data-i18n="nav.resources">🧪 Resources</a>
+                <a href="indicators-tracker.html" class="nav-link" data-i18n="nav.indicators">📋 Indicators</a>
+                <a href="qa-chat.html" class="nav-link" data-i18n="nav.qachat">🎓 QA Chat</a>
             </nav>
         </div>
     </header>
     <main class="dashboard-main">
         <section class="indicators-summary-section">
-            <h2 class="section-label">Overview</h2>
+            <h2 class="section-label" data-i18n="res.sectionOverview">Overview</h2>
             <div id="kpi-grid" class="indicators-summary-grid"></div>
         </section>
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="maintenance">
-                <span class="section-title">Maintenance Due (next 30 days)</span>
+                <span class="section-title" data-i18n="res.sectionMaintenance">Maintenance Due (next 30 days)</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
                 <table class="data-table" id="maintenance-table">
-                    <thead><tr><th>Equipment</th><th>Location</th><th>Next Maintenance</th><th>Status</th></tr></thead>
+                    <thead><tr>
+                        <th data-i18n="res.colEquipment">Equipment</th><th data-i18n="res.colLocation">Location</th>
+                        <th data-i18n="res.colNextMaintenance">Next Maintenance</th><th data-i18n="common.status">Status</th>
+                    </tr></thead>
                     <tbody id="maintenance-tbody"></tbody>
                 </table>
             </div>
@@ -52,24 +59,27 @@
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="equipment">
-                <span class="section-title">Lab / Equipment Inventory</span>
+                <span class="section-title" data-i18n="res.sectionEquipment">Lab / Equipment Inventory</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
                 <div class="curriculum-add-row">
-                    <input type="text" id="new-eq-name" placeholder="Equipment name" class="curriculum-input-lg">
-                    <input type="text" id="new-eq-category" placeholder="Category" class="curriculum-input-sm">
-                    <input type="text" id="new-eq-location" placeholder="Location" class="curriculum-input-sm">
+                    <input type="text" id="new-eq-name" data-i18n-placeholder="res.phEqName" placeholder="Equipment name" class="curriculum-input-lg">
+                    <input type="text" id="new-eq-category" data-i18n-placeholder="res.phCategory" placeholder="Category" class="curriculum-input-sm">
+                    <input type="text" id="new-eq-location" data-i18n-placeholder="res.phLocation" placeholder="Location" class="curriculum-input-sm">
                     <select id="new-eq-status">
-                        <option value="operational">Operational</option>
-                        <option value="needs_repair">Needs Repair</option>
-                        <option value="out_of_service">Out of Service</option>
+                        <option value="operational" data-i18n="res.statusOperational">Operational</option>
+                        <option value="needs_repair" data-i18n="res.statusNeedsRepair">Needs Repair</option>
+                        <option value="out_of_service" data-i18n="res.statusOutOfService">Out of Service</option>
                     </select>
                     <input type="date" id="new-eq-date">
-                    <button type="button" id="add-eq-btn" class="btn-header btn-header-primary">+ Add</button>
+                    <button type="button" id="add-eq-btn" class="btn-header btn-header-primary" data-i18n="common.add">+ Add</button>
                 </div>
                 <table class="data-table" id="equipment-table">
-                    <thead><tr><th>Name</th><th>Category</th><th>Location</th><th>Status</th><th>Next Maintenance</th><th></th></tr></thead>
+                    <thead><tr>
+                        <th data-i18n="res.colName">Name</th><th data-i18n="res.colCategory">Category</th><th data-i18n="res.colLocation">Location</th>
+                        <th data-i18n="common.status">Status</th><th data-i18n="res.colNextMaintenance">Next Maintenance</th><th></th>
+                    </tr></thead>
                     <tbody id="equipment-tbody"></tbody>
                 </table>
             </div>
@@ -77,18 +87,21 @@
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="library">
-                <span class="section-title">Library Holdings</span>
+                <span class="section-title" data-i18n="res.sectionLibrary">Library Holdings</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
                 <div class="curriculum-add-row">
-                    <input type="text" id="new-lib-title" placeholder="Title / category" class="curriculum-input-lg">
-                    <input type="text" id="new-lib-subject" placeholder="Subject area" class="curriculum-input-sm">
-                    <input type="number" id="new-lib-count" placeholder="Count" class="curriculum-input-sm">
-                    <button type="button" id="add-lib-btn" class="btn-header btn-header-primary">+ Add</button>
+                    <input type="text" id="new-lib-title" data-i18n-placeholder="res.phLibTitle" placeholder="Title / category" class="curriculum-input-lg">
+                    <input type="text" id="new-lib-subject" data-i18n-placeholder="res.phSubject" placeholder="Subject area" class="curriculum-input-sm">
+                    <input type="number" id="new-lib-count" data-i18n-placeholder="res.phCount" placeholder="Count" class="curriculum-input-sm">
+                    <button type="button" id="add-lib-btn" class="btn-header btn-header-primary" data-i18n="common.add">+ Add</button>
                 </div>
                 <table class="data-table" id="library-table">
-                    <thead><tr><th>Title / Category</th><th>Subject Area</th><th>Count</th><th></th></tr></thead>
+                    <thead><tr>
+                        <th data-i18n="res.colTitleCategory">Title / Category</th><th data-i18n="res.colSubjectArea">Subject Area</th>
+                        <th data-i18n="res.colCount">Count</th><th></th>
+                    </tr></thead>
                     <tbody id="library-tbody"></tbody>
                 </table>
             </div>
@@ -96,19 +109,22 @@
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="budget">
-                <span class="section-title">Annual Budget</span>
+                <span class="section-title" data-i18n="res.sectionBudget">Annual Budget</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
                 <div class="curriculum-add-row">
-                    <input type="text" id="new-budget-year" placeholder="Fiscal year (e.g. 2025-2026)" class="curriculum-input-sm">
-                    <input type="text" id="new-budget-category" placeholder="Category" class="curriculum-input-sm">
-                    <input type="number" id="new-budget-amount" placeholder="Amount" step="0.01" class="curriculum-input-sm">
-                    <input type="text" id="new-budget-notes" placeholder="Notes (optional)" class="curriculum-input-lg">
-                    <button type="button" id="add-budget-btn" class="btn-header btn-header-primary">+ Add</button>
+                    <input type="text" id="new-budget-year" data-i18n-placeholder="res.phFiscalYear" placeholder="Fiscal year (e.g. 2025-2026)" class="curriculum-input-sm">
+                    <input type="text" id="new-budget-category" data-i18n-placeholder="res.phCategory" placeholder="Category" class="curriculum-input-sm">
+                    <input type="number" id="new-budget-amount" data-i18n-placeholder="res.phAmount" placeholder="Amount" step="0.01" class="curriculum-input-sm">
+                    <input type="text" id="new-budget-notes" data-i18n-placeholder="res.phNotes" placeholder="Notes (optional)" class="curriculum-input-lg">
+                    <button type="button" id="add-budget-btn" class="btn-header btn-header-primary" data-i18n="common.add">+ Add</button>
                 </div>
                 <table class="data-table" id="budget-table">
-                    <thead><tr><th>Fiscal Year</th><th>Category</th><th>Amount</th><th>Notes</th><th></th></tr></thead>
+                    <thead><tr>
+                        <th data-i18n="res.colFiscalYear">Fiscal Year</th><th data-i18n="res.colCategory">Category</th>
+                        <th data-i18n="res.colAmount">Amount</th><th data-i18n="common.notes">Notes</th><th></th>
+                    </tr></thead>
                     <tbody id="budget-tbody"></tbody>
                 </table>
             </div>
@@ -116,7 +132,7 @@
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="std6">
-                <span class="section-title">Standard 6 Indicators</span>
+                <span class="section-title" data-i18n="res.sectionStd6">Standard 6 Indicators</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
@@ -124,6 +140,7 @@
             </div>
         </section>
     </main>
+    <script src="/static/js/i18n.js"></script>
     <script src="/static/js/resources.js"></script>
 </body>
 </html>

@@ -13,70 +13,72 @@
     <header class="dashboard-header">
         <div class="header-inner">
             <div class="header-top-row">
-                <a href="index.html" class="back-home" title="Home">← Home</a>
-                <h1>Accreditation Indicators Tracker</h1>
+                <a href="index.html" class="back-home" data-i18n="common.backHome" title="Home">← Home</a>
+                <h1 data-i18n="ind.title">Accreditation Indicators Tracker</h1>
                 <div class="header-actions">
                     <div class="header-btn-group">
-                        <button type="button" id="generate-ssr-btn" class="btn-header btn-header-primary">Generate SSR</button>
+                        <button type="button" id="generate-ssr-btn" class="btn-header btn-header-primary" data-i18n="ind.generateSsr">Generate SSR</button>
+                        <button type="button" class="btn-header btn-header-secondary lang-toggle-btn">العربية</button>
                     </div>
                 </div>
             </div>
             <nav class="top-nav">
-                <a href="dashboard.html" class="nav-link">Quality Dashboard</a>
-                <a href="course-report.html" class="nav-link">Course Report</a>
-                <a href="program-report.html" class="nav-link">Program Report</a>
-                <a href="survey-dashboard.html" class="nav-link">Survey Dashboard</a>
-                <a href="curriculum-mapping.html" class="nav-link">🗺️ Curriculum Map</a>
-                <a href="governance.html" class="nav-link">🏛️ Governance</a>
-                <a href="faculty-dashboard.html" class="nav-link">👩‍🏫 Faculty</a>
-                <a href="resources.html" class="nav-link">🧪 Resources</a>
-                <a href="indicators-tracker.html" class="nav-link nav-link-active">📋 Indicators</a>
-                <a href="qa-chat.html" class="nav-link">🎓 QA Chat</a>
+                <a href="dashboard.html" class="nav-link" data-i18n="nav.dashboard">Quality Dashboard</a>
+                <a href="course-report.html" class="nav-link" data-i18n="nav.course">Course Report</a>
+                <a href="program-report.html" class="nav-link" data-i18n="nav.program">Program Report</a>
+                <a href="survey-dashboard.html" class="nav-link" data-i18n="nav.survey">Survey Dashboard</a>
+                <a href="curriculum-mapping.html" class="nav-link" data-i18n="nav.curriculum">🗺️ Curriculum Map</a>
+                <a href="governance.html" class="nav-link" data-i18n="nav.governance">🏛️ Governance</a>
+                <a href="faculty-dashboard.html" class="nav-link" data-i18n="nav.faculty">👩‍🏫 Faculty</a>
+                <a href="resources.html" class="nav-link" data-i18n="nav.resources">🧪 Resources</a>
+                <a href="indicators-tracker.html" class="nav-link nav-link-active" data-i18n="nav.indicators">📋 Indicators</a>
+                <a href="qa-chat.html" class="nav-link" data-i18n="nav.qachat">🎓 QA Chat</a>
             </nav>
         </div>
     </header>
     <main class="dashboard-main">
         <section class="indicators-summary-section">
-            <h2 class="section-label">Progress by Standard</h2>
+            <h2 class="section-label" data-i18n="ind.sectionProgress">Progress by Standard</h2>
             <div id="standard-summary-grid" class="indicators-summary-grid"></div>
         </section>
 
         <section class="governance-upload-form indicators-sheet-sync">
-            <input type="text" id="sheet-url-input" placeholder="Google Sheet link (team fills status/evidence there)" class="curriculum-input-lg">
-            <button type="button" id="sync-sheet-btn" class="btn-header btn-header-primary">Sync from Google Sheet</button>
+            <input type="text" id="sheet-url-input" data-i18n-placeholder="ind.phSheetUrl" placeholder="Google Sheet link (team fills status/evidence there)" class="curriculum-input-lg">
+            <button type="button" id="sync-sheet-btn" class="btn-header btn-header-primary" data-i18n="ind.syncSheet">Sync from Google Sheet</button>
             <span id="sync-status-text" class="section-desc"></span>
         </section>
 
         <section class="indicators-filter-bar">
             <label>
-                Standard
+                <span data-i18n="ind.labelStandard">Standard</span>
                 <select id="filter-standard">
-                    <option value="">All standards</option>
+                    <option value="" data-i18n="ind.allStandards">All standards</option>
                 </select>
             </label>
             <label>
-                Status
+                <span data-i18n="ind.labelStatus">Status</span>
                 <select id="filter-status">
-                    <option value="">All statuses</option>
-                    <option value="missing">Missing</option>
-                    <option value="partial">Partial</option>
-                    <option value="complete">Complete</option>
+                    <option value="" data-i18n="ind.allStatuses">All statuses</option>
+                    <option value="missing" data-i18n="status.missing">Missing</option>
+                    <option value="partial" data-i18n="status.partial">Partial</option>
+                    <option value="complete" data-i18n="status.complete">Complete</option>
                 </select>
             </label>
-            <button type="button" id="add-indicator-btn" class="btn-header btn-header-primary">+ Add Indicator</button>
+            <button type="button" id="add-indicator-btn" class="btn-header btn-header-primary" data-i18n="ind.addIndicator">+ Add Indicator</button>
         </section>
 
         <div id="add-indicator-form" class="indicator-add-form" hidden>
             <select id="new-standard"></select>
-            <input type="text" id="new-text" placeholder="Indicator text">
-            <input type="text" id="new-responsible" placeholder="Responsible person (optional)">
+            <input type="text" id="new-text" data-i18n-placeholder="ind.phIndicatorText" placeholder="Indicator text">
+            <input type="text" id="new-responsible" data-i18n-placeholder="ind.phResponsible" placeholder="Responsible person (optional)">
             <input type="date" id="new-due-date">
-            <button type="button" id="save-new-indicator-btn" class="btn-header btn-header-primary">Save</button>
-            <button type="button" id="cancel-new-indicator-btn" class="btn-header btn-header-secondary">Cancel</button>
+            <button type="button" id="save-new-indicator-btn" class="btn-header btn-header-primary" data-i18n="common.save">Save</button>
+            <button type="button" id="cancel-new-indicator-btn" class="btn-header btn-header-secondary" data-i18n="common.cancel">Cancel</button>
         </div>
 
         <section id="standards-container"></section>
     </main>
+    <script src="/static/js/i18n.js"></script>
     <script src="/static/js/indicators_tracker.js"></script>
 </body>
 </html>

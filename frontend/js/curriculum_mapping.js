@@ -43,9 +43,9 @@ function renderIlos() {
         <tr>
             <td>${escapeHtml(ilo.ilo_code || '')}</td>
             <td>${escapeHtml(ilo.ilo_text)}</td>
-            <td><button type="button" class="btn-header btn-header-secondary delete-ilo-btn" data-id="${ilo.id}">Delete</button></td>
+            <td><button type="button" class="btn-header btn-header-secondary delete-ilo-btn" data-id="${ilo.id}">${t('common.delete')}</button></td>
         </tr>
-    `).join('') || '<tr><td colspan="3" class="section-desc">No ILOs yet.</td></tr>';
+    `).join('') || `<tr><td colspan="3" class="section-desc">${t('curr.noIlos')}</td></tr>`;
 
     document.querySelectorAll('.delete-ilo-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -68,9 +68,9 @@ function renderCourses() {
         <tr>
             <td>${escapeHtml(c.course_name)}</td>
             <td>${escapeHtml(c.source)}</td>
-            <td><button type="button" class="btn-header btn-header-secondary delete-course-btn" data-id="${c.id}">Delete</button></td>
+            <td><button type="button" class="btn-header btn-header-secondary delete-course-btn" data-id="${c.id}">${t('common.delete')}</button></td>
         </tr>
-    `).join('') || '<tr><td colspan="3" class="section-desc">No courses yet.</td></tr>';
+    `).join('') || `<tr><td colspan="3" class="section-desc">${t('curr.noCourses')}</td></tr>`;
 
     document.querySelectorAll('.delete-course-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -92,7 +92,7 @@ async function loadMatrix() {
 function renderMatrix() {
     const table = document.getElementById('matrix-table');
     if (!ilos.length || !courses.length) {
-        table.innerHTML = '<tr><td class="section-desc">Add at least one ILO and one course to build the matrix.</td></tr>';
+        table.innerHTML = `<tr><td class="section-desc">${t('curr.buildMatrixHint')}</td></tr>`;
         return;
     }
     const headerCells = ilos.map((i) => `<th>${escapeHtml(i.ilo_code || ('ILO' + i.id))}</th>`).join('');
@@ -104,7 +104,7 @@ function renderMatrix() {
         return `<tr><th class="matrix-row-label">${escapeHtml(c.course_name)}</th>${cells}</tr>`;
     }).join('');
 
-    table.innerHTML = `<thead><tr><th>Course \\ ILO</th>${headerCells}</tr></thead><tbody>${rows}</tbody>`;
+    table.innerHTML = `<thead><tr><th>${t('curr.courseVsIlo')}</th>${headerCells}</tr></thead><tbody>${rows}</tbody>`;
 
     table.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
         cb.addEventListener('change', async () => {
@@ -141,10 +141,10 @@ async function loadFindings() {
         </div>
     `;
     container.innerHTML = [
-        section('Zero-coverage ILOs', summary.zero_coverage_ilos, (i) => `${i.ilo_code || 'ILO' + i.id}: ${i.ilo_text}`, 'None — every ILO is covered.'),
-        section('Low-coverage ILOs', summary.low_coverage_ilos, (i) => `${i.ilo_code || 'ILO' + i.id}: ${i.ilo_text}`, 'None.'),
-        section('Heavy-duplication ILOs', summary.heavy_duplication_ilos, (i) => `${i.ilo_code || 'ILO' + i.id}: ${i.ilo_text}`, 'None.'),
-        section('Courses with no mapped ILOs', summary.courses_without_ilos, (c) => c.course_name, 'None — every course is mapped.'),
+        section(t('curr.findZero'), summary.zero_coverage_ilos, (i) => `${i.ilo_code || 'ILO' + i.id}: ${i.ilo_text}`, t('curr.findZeroEmpty')),
+        section(t('curr.findLow'), summary.low_coverage_ilos, (i) => `${i.ilo_code || 'ILO' + i.id}: ${i.ilo_text}`, t('curr.findLowEmpty')),
+        section(t('curr.findDup'), summary.heavy_duplication_ilos, (i) => `${i.ilo_code || 'ILO' + i.id}: ${i.ilo_text}`, t('curr.findDupEmpty')),
+        section(t('curr.findUnmapped'), summary.courses_without_ilos, (c) => c.course_name, t('curr.findUnmappedEmpty')),
     ].join('');
 }
 
@@ -156,12 +156,12 @@ async function loadStandard2Indicators() {
     container.innerHTML = rows.map((ind) => `
         <div class="indicator-summary-card">
             <p>${escapeHtml(ind.indicator_text)}</p>
-            <p class="indicator-summary-name">Status: <span class="badge badge-${ind.status}">${ind.status}</span></p>
+            <p class="indicator-summary-name">${t('ind.statusLabel')} <span class="badge badge-${ind.status}">${t('status.' + ind.status)}</span></p>
             <button type="button" class="btn-header btn-header-primary mark-complete-btn" data-id="${ind.id}">
-                Mark complete + attach this export as evidence
+                ${t('curr.markCompleteExport')}
             </button>
         </div>
-    `).join('') || '<p class="section-desc">No Standard 2 indicators found.</p>';
+    `).join('') || `<p class="section-desc">${t('ind.noneForStandard')}</p>`;
 
     container.querySelectorAll('.mark-complete-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -260,3 +260,4 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('i18n:applied', () => refreshAll());

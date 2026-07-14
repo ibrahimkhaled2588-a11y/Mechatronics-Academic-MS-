@@ -16,37 +16,38 @@
     <header class="dashboard-header">
         <div class="header-inner">
             <div class="header-top-row">
-                <a href="index.html" class="back-home" title="Home">← Home</a>
-                <h1>Program-Level Academic Report</h1>
+                <a href="index.html" class="back-home" data-i18n="common.backHome" title="Home">← Home</a>
+                <h1 data-i18n="program.title">Program-Level Academic Report</h1>
                 <div class="header-actions">
                     <div class="header-btn-group">
-                        <button type="button" id="programExportPdfBtn" class="btn-header btn-header-primary" title="Full PDF Program Report">Full PDF Report</button>
+                        <button type="button" id="programExportPdfBtn" class="btn-header btn-header-primary" data-i18n="program.fullPdf" title="Full PDF Program Report">Full PDF Report</button>
+                        <button type="button" class="btn-header btn-header-secondary lang-toggle-btn">العربية</button>
                     </div>
                 </div>
             </div>
             <nav class="top-nav">
-                <a href="dashboard.html" class="nav-link">Quality Dashboard</a>
-                <a href="course-report.html" class="nav-link">Course Report</a>
-                <a href="program-report.html" class="nav-link nav-link-active">Program Report</a>
-                <a href="survey-dashboard.html" class="nav-link">Survey Dashboard</a>
-                <a href="curriculum-mapping.html" class="nav-link">🗺️ Curriculum Map</a>
-                <a href="governance.html" class="nav-link">🏛️ Governance</a>
-                <a href="faculty-dashboard.html" class="nav-link">👩‍🏫 Faculty</a>
-                <a href="resources.html" class="nav-link">🧪 Resources</a>
-                <a href="indicators-tracker.html" class="nav-link">📋 Indicators</a>
-                <a href="qa-chat.html" class="nav-link">🎓 QA Chat</a>
+                <a href="dashboard.html" class="nav-link" data-i18n="nav.dashboard">Quality Dashboard</a>
+                <a href="course-report.html" class="nav-link" data-i18n="nav.course">Course Report</a>
+                <a href="program-report.html" class="nav-link nav-link-active" data-i18n="nav.program">Program Report</a>
+                <a href="survey-dashboard.html" class="nav-link" data-i18n="nav.survey">Survey Dashboard</a>
+                <a href="curriculum-mapping.html" class="nav-link" data-i18n="nav.curriculum">🗺️ Curriculum Map</a>
+                <a href="governance.html" class="nav-link" data-i18n="nav.governance">🏛️ Governance</a>
+                <a href="faculty-dashboard.html" class="nav-link" data-i18n="nav.faculty">👩‍🏫 Faculty</a>
+                <a href="resources.html" class="nav-link" data-i18n="nav.resources">🧪 Resources</a>
+                <a href="indicators-tracker.html" class="nav-link" data-i18n="nav.indicators">📋 Indicators</a>
+                <a href="qa-chat.html" class="nav-link" data-i18n="nav.qachat">🎓 QA Chat</a>
             </nav>
         </div>
     </header>
     <main class="dashboard-main">
         <section class="upload-section">
-            <h2 class="section-label">Upload Program Dataset</h2>
+            <h2 class="section-label" data-i18n="program.uploadTitle">Upload Program Dataset</h2>
 
             <!-- Upload mode selector -->
             <div class="upload-mode-tabs" id="uploadModeTabs" role="tablist">
-                <button class="upload-mode-tab is-active" data-mode="single" role="tab">Single File</button>
-                <button class="upload-mode-tab" data-mode="multi2" role="tab">2 Files — 1 Semester</button>
-                <button class="upload-mode-tab" data-mode="multi4" role="tab">4 Files — 2 Semesters</button>
+                <button class="upload-mode-tab is-active" data-mode="single" role="tab" data-i18n="program.tabSingle">Single File</button>
+                <button class="upload-mode-tab" data-mode="multi2" role="tab" data-i18n="program.tabMulti2">2 Files — 1 Semester</button>
+                <button class="upload-mode-tab" data-mode="multi4" role="tab" data-i18n="program.tabMulti4">4 Files — 2 Semesters</button>
             </div>
 
             <!-- Panel: single file (default) -->
@@ -95,7 +96,7 @@
                     </div>
                 </div>
                 <div class="multi-analyze-row">
-                    <button id="progMulti2AnalyzeBtn" class="cta-btn" disabled>Analyze — 1 Semester</button>
+                    <button id="progMulti2AnalyzeBtn" class="cta-btn" disabled data-i18n="program.analyzeSem1">Analyze — 1 Semester</button>
                 </div>
             </div>
 
@@ -157,7 +158,7 @@
                     </div>
                 </div>
                 <div class="multi-analyze-row">
-                    <button id="progMulti4AnalyzeBtn" class="cta-btn" disabled>Analyze — 2 Semesters</button>
+                    <button id="progMulti4AnalyzeBtn" class="cta-btn" disabled data-i18n="program.analyzeSem2">Analyze — 2 Semesters</button>
                 </div>
             </div>
         </section>
@@ -169,7 +170,7 @@
             </div>
 
             <section class="dashboard-section">
-                <h2 class="section-title">Executive Dashboard</h2>
+                <h2 class="section-title" data-i18n="program.sectionExecutive">Executive Dashboard</h2>
                 <div class="kpi-grid program-kpi-grid">
                     <article class="kpi-card kpi-program">
                         <h3>Total Students</h3>
@@ -203,7 +204,7 @@
             </section>
 
             <section class="dashboard-section">
-                <h2 class="section-title">Risk Analysis</h2>
+                <h2 class="section-title" data-i18n="program.sectionRisk">Risk Analysis</h2>
                 <div class="risk-layout">
                     <div>
                         <h3 class="subsection-title">Top High-Risk Courses</h3>
@@ -225,7 +226,7 @@
             </section>
 
             <section class="dashboard-section">
-                <h2 class="section-title">Program Visualizations</h2>
+                <h2 class="section-title" data-i18n="program.sectionVisualizations">Program Visualizations</h2>
                 <div class="charts-row program-charts">
                     <div class="chart-wrap">
                         <h4>Program GPA Trend</h4>
@@ -254,7 +255,7 @@
             </section>
 
             <section class="dashboard-section">
-                <h2 class="section-title">Predictive Outlook</h2>
+                <h2 class="section-title" data-i18n="program.sectionPredictive">Predictive Outlook</h2>
                 <div class="predictive-summary-grid">
                     <article class="prediction-summary-box">
                         <h4>Predicted Next Semester GPA</h4>
@@ -275,7 +276,7 @@
 
             <!-- ═══ COHORT INTELLIGENCE ═══ -->
             <section class="dashboard-section" id="prog-cohort-intelligence">
-                <h2 class="section-title">Cohort Intelligence</h2>
+                <h2 class="section-title" data-i18n="program.sectionCohort">Cohort Intelligence</h2>
                 <p class="section-desc">Estimated cohort behaviour derived from grade distributions: retention, dropout risk, and academic recovery.</p>
                 <div class="kpi-grid program-kpi-grid">
                     <article class="kpi-card kpi-program">
@@ -298,7 +299,7 @@
 
             <!-- ═══ VARIANCE DECOMPOSITION ═══ -->
             <section class="dashboard-section" id="prog-variance-decomp">
-                <h2 class="section-title">Variance Decomposition</h2>
+                <h2 class="section-title" data-i18n="program.sectionVariance">Variance Decomposition</h2>
                 <p class="section-desc">How much of the GPA spread comes from differences between courses vs. variation within each course.</p>
                 <div class="kpi-grid program-kpi-grid">
                     <article class="kpi-card kpi-program">
@@ -326,7 +327,7 @@
 
             <!-- ═══ BAYESIAN DATA QUALITY ═══ -->
             <section class="dashboard-section" id="prog-bayesian-quality">
-                <h2 class="section-title">Bayesian Data Quality Estimate</h2>
+                <h2 class="section-title" data-i18n="program.sectionBayesian">Bayesian Data Quality Estimate</h2>
                 <p class="section-desc">Posterior reliability estimate after updating a normal prior with the observed composite reliability scores across sheets.</p>
                 <div class="kpi-grid program-kpi-grid">
                     <article class="kpi-card kpi-program">
@@ -354,7 +355,7 @@
 
             <!-- ═══ MONTE CARLO SIMULATION ═══ -->
             <section class="dashboard-section" id="prog-monte-carlo">
-                <h2 class="section-title">Monte Carlo GPA Simulation</h2>
+                <h2 class="section-title" data-i18n="program.sectionMonteCarlo">Monte Carlo GPA Simulation</h2>
                 <p class="section-desc">1,000-path simulation of future GPA scenarios based on the current mean and standard deviation, including a stress-test for worst-case failure.</p>
                 <div class="kpi-grid program-kpi-grid">
                     <article class="kpi-card kpi-program">
@@ -390,7 +391,7 @@
 
             <!-- ═══ TREND FORECAST ═══ -->
             <section class="dashboard-section" id="prog-trend-forecast">
-                <h2 class="section-title">Trend Forecast (OLS Regression)</h2>
+                <h2 class="section-title" data-i18n="program.sectionTrendForecast">Trend Forecast (OLS Regression)</h2>
                 <p class="section-desc">Next-period GPA, failure rate, and excellence rate forecasts using linear regression across uploaded sheets. Requires 2+ sheets.</p>
                 <div class="kpi-grid program-kpi-grid" id="prog-forecast-kpis">
                     <article class="kpi-card kpi-program">
@@ -415,7 +416,7 @@
 
             <!-- ═══ LONGITUDINAL GROWTH ═══ -->
             <section class="dashboard-section" id="prog-longitudinal">
-                <h2 class="section-title">Longitudinal Growth</h2>
+                <h2 class="section-title" data-i18n="program.sectionLongitudinal">Longitudinal Growth</h2>
                 <p class="section-desc">How academic indicators have changed across semesters/sheets over time.</p>
                 <div class="kpi-grid program-kpi-grid">
                     <article class="kpi-card kpi-program">
@@ -441,13 +442,13 @@
             </section>
 
             <section class="dashboard-section" id="prog-strategic-stats">
-                <h2 class="section-title">Strategic & Institutional Statistics</h2>
+                <h2 class="section-title" data-i18n="program.sectionStrategic">Strategic & Institutional Statistics</h2>
                 <p class="section-desc">All advanced computed metrics in card format.</p>
                 <div id="progStrategicStatsContainer" class="advanced-stats-grid"></div>
             </section>
 
             <section class="dashboard-section">
-                <h2 class="section-title">Executive Summary</h2>
+                <h2 class="section-title" data-i18n="program.sectionExecSummary">Executive Summary</h2>
                 <p class="section-desc">Automatically generated summary in a professional academic tone, suitable for program review meetings and accreditation reports.</p>
                 <div id="progExecutiveCertificates" class="executive-certificates"></div>
                 <article id="progExecutiveSummary" class="executive-summary-text">
@@ -458,7 +459,7 @@
                  PROGRAM ANALYTICS REPORT — All 7 Sections
             ═══════════════════════════════════════════════════════════ -->
             <section class="dashboard-section analytics-report-section" id="prog-analytics-report">
-                <h2 class="section-title">📊 Program Analytics Report</h2>
+                <h2 class="section-title" data-i18n="program.sectionAnalyticsReport">📊 Program Analytics Report</h2>
                 <p class="section-desc">Structured seven-section analytics report generated automatically from the uploaded dataset.</p>
 
                 <!-- Section 1: Executive Dashboard Banner -->
@@ -520,17 +521,18 @@
             </section>
 
             <section class="dashboard-section">
-                <h2 class="section-title">Export</h2>
+                <h2 class="section-title" data-i18n="program.sectionExport">Export</h2>
                 <p class="section-desc">Export the full program report, an executive-summary-only PDF, or an Excel-readable analytics file.</p>
                 <div class="export-actions">
-                    <button type="button" id="progExportPdfFullBtn" class="cta-btn">Full PDF Program Report</button>
-                    <button type="button" id="progExportPdfSummaryBtn" class="cta-btn-outline">Executive Summary Only</button>
-                    <button type="button" id="progExportExcelBtn" class="cta-btn-outline">Excel Analytics File</button>
-                    <button type="button" id="progExportDocxBtn" class="cta-btn-outline">&#128196; Export DOCX Report</button>
+                    <button type="button" id="progExportPdfFullBtn" class="cta-btn" data-i18n="program.fullPdfReport">Full PDF Program Report</button>
+                    <button type="button" id="progExportPdfSummaryBtn" class="cta-btn-outline" data-i18n="program.execSummaryOnly">Executive Summary Only</button>
+                    <button type="button" id="progExportExcelBtn" class="cta-btn-outline" data-i18n="program.excelAnalytics">Excel Analytics File</button>
+                    <button type="button" id="progExportDocxBtn" class="cta-btn-outline" data-i18n="program.exportDocx">&#128196; Export DOCX Report</button>
                 </div>
             </section>
         </section>
     </main>
+    <script src="/static/js/i18n.js"></script>
     <script src="/static/js/qaForecast.js"></script>
     <script src="/static/js/program_report.js"></script>
     <script src="/static/js/chatbot.js"></script>

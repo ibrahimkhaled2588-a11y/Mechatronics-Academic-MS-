@@ -721,19 +721,5 @@ initializeSectionToggles();
     });
 }());
 
-// translation toggle on dashboard page
-const dashTranslateBtn = document.getElementById('translateBtn');
-if (dashTranslateBtn) {
-    dashTranslateBtn.addEventListener('click', () => {
-        const btn = dashTranslateBtn;
-        if (btn.innerText === 'العربية') {
-            document.getElementById('mainTitle').innerText = 'لوحة معلومات أداء أكاديمي';
-            document.getElementById('uploadTitle').innerText = 'تحميل ملف إكسل';
-            btn.innerText = 'English';
-        } else {
-            document.getElementById('mainTitle').innerText = 'Academic Performance Intelligence Dashboard';
-            document.getElementById('uploadTitle').innerText = 'Upload Excel File';
-            btn.innerText = 'العربية';
-        }
-    });
-}
+// Language toggle for #translateBtn is now handled by the shared
+// js/i18n.js (loaded before this file) via its .lang-toggle-btn class.

@@ -13,45 +13,52 @@
     <header class="dashboard-header">
         <div class="header-inner">
             <div class="header-top-row">
-                <a href="index.html" class="back-home" title="Home">← Home</a>
-                <h1>Faculty &amp; Supporting Staff</h1>
-                <div class="header-actions"></div>
+                <a href="index.html" class="back-home" data-i18n="common.backHome" title="Home">← Home</a>
+                <h1 data-i18n="fac.title">Faculty &amp; Supporting Staff</h1>
+                <div class="header-actions">
+                    <div class="header-btn-group">
+                        <button type="button" class="btn-header btn-header-secondary lang-toggle-btn">العربية</button>
+                    </div>
+                </div>
             </div>
             <nav class="top-nav">
-                <a href="dashboard.html" class="nav-link">Quality Dashboard</a>
-                <a href="course-report.html" class="nav-link">Course Report</a>
-                <a href="program-report.html" class="nav-link">Program Report</a>
-                <a href="survey-dashboard.html" class="nav-link">Survey Dashboard</a>
-                <a href="curriculum-mapping.html" class="nav-link">🗺️ Curriculum Map</a>
-                <a href="governance.html" class="nav-link">🏛️ Governance</a>
-                <a href="faculty-dashboard.html" class="nav-link nav-link-active">👩‍🏫 Faculty</a>
-                <a href="resources.html" class="nav-link">🧪 Resources</a>
-                <a href="indicators-tracker.html" class="nav-link">📋 Indicators</a>
-                <a href="qa-chat.html" class="nav-link">🎓 QA Chat</a>
+                <a href="dashboard.html" class="nav-link" data-i18n="nav.dashboard">Quality Dashboard</a>
+                <a href="course-report.html" class="nav-link" data-i18n="nav.course">Course Report</a>
+                <a href="program-report.html" class="nav-link" data-i18n="nav.program">Program Report</a>
+                <a href="survey-dashboard.html" class="nav-link" data-i18n="nav.survey">Survey Dashboard</a>
+                <a href="curriculum-mapping.html" class="nav-link" data-i18n="nav.curriculum">🗺️ Curriculum Map</a>
+                <a href="governance.html" class="nav-link" data-i18n="nav.governance">🏛️ Governance</a>
+                <a href="faculty-dashboard.html" class="nav-link nav-link-active" data-i18n="nav.faculty">👩‍🏫 Faculty</a>
+                <a href="resources.html" class="nav-link" data-i18n="nav.resources">🧪 Resources</a>
+                <a href="indicators-tracker.html" class="nav-link" data-i18n="nav.indicators">📋 Indicators</a>
+                <a href="qa-chat.html" class="nav-link" data-i18n="nav.qachat">🎓 QA Chat</a>
             </nav>
         </div>
     </header>
     <main class="dashboard-main">
         <section class="indicators-summary-section">
-            <h2 class="section-label">Load-Balance KPIs</h2>
+            <h2 class="section-label" data-i18n="fac.sectionKpis">Load-Balance KPIs</h2>
             <div id="kpi-grid" class="indicators-summary-grid"></div>
         </section>
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="roster">
-                <span class="section-title">Faculty Roster</span>
+                <span class="section-title" data-i18n="fac.sectionRoster">Faculty Roster</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
                 <div class="curriculum-add-row">
-                    <input type="text" id="new-faculty-name" placeholder="Name" class="curriculum-input-lg">
-                    <input type="text" id="new-faculty-spec" placeholder="Specialization" class="curriculum-input-lg">
-                    <input type="text" id="new-faculty-degree" placeholder="Degree (e.g. PhD)" class="curriculum-input-sm">
-                    <input type="text" id="new-faculty-rank" placeholder="Rank (e.g. Professor)" class="curriculum-input-sm">
-                    <button type="button" id="add-faculty-btn" class="btn-header btn-header-primary">+ Add</button>
+                    <input type="text" id="new-faculty-name" data-i18n-placeholder="common.name" placeholder="Name" class="curriculum-input-lg">
+                    <input type="text" id="new-faculty-spec" data-i18n-placeholder="fac.phSpecialization" placeholder="Specialization" class="curriculum-input-lg">
+                    <input type="text" id="new-faculty-degree" data-i18n-placeholder="fac.phDegree" placeholder="Degree (e.g. PhD)" class="curriculum-input-sm">
+                    <input type="text" id="new-faculty-rank" data-i18n-placeholder="fac.phRank" placeholder="Rank (e.g. Professor)" class="curriculum-input-sm">
+                    <button type="button" id="add-faculty-btn" class="btn-header btn-header-primary" data-i18n="common.add">+ Add</button>
                 </div>
                 <table class="data-table" id="faculty-table">
-                    <thead><tr><th>Name</th><th>Specialization</th><th>Degree</th><th>Rank</th><th></th></tr></thead>
+                    <thead><tr>
+                        <th data-i18n="common.name">Name</th><th data-i18n="fac.colSpecialization">Specialization</th>
+                        <th data-i18n="fac.colDegree">Degree</th><th data-i18n="fac.colRank">Rank</th><th></th>
+                    </tr></thead>
                     <tbody id="faculty-tbody"></tbody>
                 </table>
             </div>
@@ -59,19 +66,22 @@
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="load">
-                <span class="section-title">Teaching Load</span>
+                <span class="section-title" data-i18n="fac.sectionLoad">Teaching Load</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
                 <div class="curriculum-add-row">
                     <select id="load-faculty-select"></select>
-                    <input type="text" id="load-semester" placeholder="Semester (e.g. Fall 2025)" class="curriculum-input-sm">
-                    <input type="text" id="load-course" placeholder="Course name" class="curriculum-input-lg">
-                    <input type="number" id="load-hours" placeholder="Hours" step="0.5" class="curriculum-input-sm">
-                    <button type="button" id="add-load-btn" class="btn-header btn-header-primary">+ Add</button>
+                    <input type="text" id="load-semester" data-i18n-placeholder="fac.phSemester" placeholder="Semester (e.g. Fall 2025)" class="curriculum-input-sm">
+                    <input type="text" id="load-course" data-i18n-placeholder="fac.phCourseName" placeholder="Course name" class="curriculum-input-lg">
+                    <input type="number" id="load-hours" data-i18n-placeholder="fac.phHours" placeholder="Hours" step="0.5" class="curriculum-input-sm">
+                    <button type="button" id="add-load-btn" class="btn-header btn-header-primary" data-i18n="common.add">+ Add</button>
                 </div>
                 <table class="data-table" id="load-table">
-                    <thead><tr><th>Faculty</th><th>Semester</th><th>Course</th><th>Hours</th><th></th></tr></thead>
+                    <thead><tr>
+                        <th data-i18n="fac.colFaculty">Faculty</th><th data-i18n="fac.colSemester">Semester</th>
+                        <th data-i18n="fac.colCourse">Course</th><th data-i18n="fac.colHours">Hours</th><th></th>
+                    </tr></thead>
                     <tbody id="load-tbody"></tbody>
                 </table>
             </div>
@@ -79,20 +89,24 @@
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="publications">
-                <span class="section-title">Research / Publication Log</span>
+                <span class="section-title" data-i18n="fac.sectionPublications">Research / Publication Log</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
                 <div class="curriculum-add-row">
                     <select id="pub-faculty-select"></select>
-                    <input type="text" id="pub-title" placeholder="Title" class="curriculum-input-lg">
-                    <input type="text" id="pub-venue" placeholder="Venue" class="curriculum-input-sm">
-                    <input type="number" id="pub-year" placeholder="Year" class="curriculum-input-sm">
-                    <input type="text" id="pub-type" placeholder="Type (journal/conference/...)" class="curriculum-input-sm">
-                    <button type="button" id="add-pub-btn" class="btn-header btn-header-primary">+ Add</button>
+                    <input type="text" id="pub-title" data-i18n-placeholder="fac.phTitle" placeholder="Title" class="curriculum-input-lg">
+                    <input type="text" id="pub-venue" data-i18n-placeholder="fac.phVenue" placeholder="Venue" class="curriculum-input-sm">
+                    <input type="number" id="pub-year" data-i18n-placeholder="fac.phYear" placeholder="Year" class="curriculum-input-sm">
+                    <input type="text" id="pub-type" data-i18n-placeholder="fac.phType" placeholder="Type (journal/conference/...)" class="curriculum-input-sm">
+                    <button type="button" id="add-pub-btn" class="btn-header btn-header-primary" data-i18n="common.add">+ Add</button>
                 </div>
                 <table class="data-table" id="pub-table">
-                    <thead><tr><th>Faculty</th><th>Title</th><th>Venue</th><th>Year</th><th>Type</th><th></th></tr></thead>
+                    <thead><tr>
+                        <th data-i18n="fac.colFaculty">Faculty</th><th data-i18n="fac.phTitle">Title</th>
+                        <th data-i18n="fac.colVenue">Venue</th><th data-i18n="fac.colYear">Year</th>
+                        <th data-i18n="fac.colType">Type</th><th></th>
+                    </tr></thead>
                     <tbody id="pub-tbody"></tbody>
                 </table>
             </div>
@@ -100,18 +114,24 @@
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="flags">
-                <span class="section-title">Flags: Load Imbalance &amp; Specialization Gaps</span>
+                <span class="section-title" data-i18n="fac.sectionFlags">Flags: Load Imbalance &amp; Specialization Gaps</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
-                <h3 class="governance-subheading">Load Imbalance (z-score, per semester)</h3>
+                <h3 class="governance-subheading" data-i18n="fac.subLoadImbalance">Load Imbalance (z-score, per semester)</h3>
                 <table class="data-table" id="imbalance-table">
-                    <thead><tr><th>Faculty</th><th>Semester</th><th>Total Hours</th><th>z-score</th><th>Flag</th></tr></thead>
+                    <thead><tr>
+                        <th data-i18n="fac.colFaculty">Faculty</th><th data-i18n="fac.colSemester">Semester</th>
+                        <th data-i18n="fac.colTotalHours">Total Hours</th><th data-i18n="fac.colZScore">z-score</th><th data-i18n="fac.colFlag">Flag</th>
+                    </tr></thead>
                     <tbody id="imbalance-tbody"></tbody>
                 </table>
-                <h3 class="governance-subheading">Specialization Gaps</h3>
+                <h3 class="governance-subheading" data-i18n="fac.subSpecGaps">Specialization Gaps</h3>
                 <table class="data-table" id="gaps-table">
-                    <thead><tr><th>Course</th><th>Semester</th><th>Instructor</th><th>Instructor Specialization</th></tr></thead>
+                    <thead><tr>
+                        <th data-i18n="fac.colCourse">Course</th><th data-i18n="fac.colSemester">Semester</th>
+                        <th data-i18n="fac.colInstructor">Instructor</th><th data-i18n="fac.colInstructorSpec">Instructor Specialization</th>
+                    </tr></thead>
                     <tbody id="gaps-tbody"></tbody>
                 </table>
             </div>
@@ -119,7 +139,7 @@
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="std5">
-                <span class="section-title">Standard 5 Indicators</span>
+                <span class="section-title" data-i18n="fac.sectionStd5">Standard 5 Indicators</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
@@ -127,6 +147,7 @@
             </div>
         </section>
     </main>
+    <script src="/static/js/i18n.js"></script>
     <script src="/static/js/faculty_dashboard.js"></script>
 </body>
 </html>

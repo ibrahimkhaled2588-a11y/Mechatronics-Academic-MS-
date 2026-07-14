@@ -13,32 +13,33 @@
     <header class="dashboard-header">
         <div class="header-inner">
             <div class="header-top-row">
-                <a href="index.html" class="back-home" title="Home">← Home</a>
-                <h1>Survey Analysis Dashboard</h1>
+                <a href="index.html" class="back-home" data-i18n="common.backHome" title="Home">← Home</a>
+                <h1 data-i18n="survey.title">Survey Analysis Dashboard</h1>
                 <div class="header-actions">
                     <div class="header-btn-group">
-                        <a href="/api/survey/template" class="btn-header btn-header-primary">Download Template</a>
+                        <a href="/api/survey/template" class="btn-header btn-header-primary" data-i18n="survey.downloadTemplate">Download Template</a>
+                        <button type="button" class="btn-header btn-header-secondary lang-toggle-btn">العربية</button>
                     </div>
                 </div>
             </div>
             <nav class="top-nav">
-                <a href="dashboard.html" class="nav-link">Quality Dashboard</a>
-                <a href="course-report.html" class="nav-link">Course Report</a>
-                <a href="program-report.html" class="nav-link">Program Report</a>
-                <a href="survey-dashboard.html" class="nav-link nav-link-active">Survey Dashboard</a>
-                <a href="curriculum-mapping.html" class="nav-link">🗺️ Curriculum Map</a>
-                <a href="governance.html" class="nav-link">🏛️ Governance</a>
-                <a href="faculty-dashboard.html" class="nav-link">👩‍🏫 Faculty</a>
-                <a href="resources.html" class="nav-link">🧪 Resources</a>
-                <a href="indicators-tracker.html" class="nav-link">📋 Indicators</a>
+                <a href="dashboard.html" class="nav-link" data-i18n="nav.dashboard">Quality Dashboard</a>
+                <a href="course-report.html" class="nav-link" data-i18n="nav.course">Course Report</a>
+                <a href="program-report.html" class="nav-link" data-i18n="nav.program">Program Report</a>
+                <a href="survey-dashboard.html" class="nav-link nav-link-active" data-i18n="nav.survey">Survey Dashboard</a>
+                <a href="curriculum-mapping.html" class="nav-link" data-i18n="nav.curriculum">🗺️ Curriculum Map</a>
+                <a href="governance.html" class="nav-link" data-i18n="nav.governance">🏛️ Governance</a>
+                <a href="faculty-dashboard.html" class="nav-link" data-i18n="nav.faculty">👩‍🏫 Faculty</a>
+                <a href="resources.html" class="nav-link" data-i18n="nav.resources">🧪 Resources</a>
+                <a href="indicators-tracker.html" class="nav-link" data-i18n="nav.indicators">📋 Indicators</a>
             </nav>
         </div>
     </header>
 
     <main class="dashboard-main survey-main">
         <section class="dashboard-section survey-upload-card">
-            <h2 class="section-title">Upload Survey Excel Files (.xlsx)</h2>
-            <p class="section-desc">Upload one or more files (students, graduates, employers). Each column should be one question with Arabic response values.</p>
+            <h2 class="section-title" data-i18n="survey.uploadTitle">Upload Survey Excel Files (.xlsx)</h2>
+            <p class="section-desc" data-i18n="survey.uploadDesc">Upload one or more files (students, graduates, employers). Each column should be one question with Arabic response values.</p>
 
             <div id="survey-upload-zone" class="upload-zone">
                 <input type="file" id="surveyFiles" multiple accept=".xlsx" class="upload-input" />
@@ -46,19 +47,19 @@
                     <div class="upload-icon" aria-hidden="true">
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                     </div>
-                    <p class="upload-text">Drag & drop your .xlsx files here, or <span class="upload-browse">browse</span></p>
+                    <p class="upload-text"><span data-i18n="dash.uploadTextPre">Drag & drop one or more .xlsx files here, or</span> <span class="upload-browse" data-i18n="dash.browse">browse</span></p>
                     <p class="upload-hint">You can select multiple files at once (one per survey group)</p>
                     <p class="multi-file-name" id="surveyFilesName"></p>
                 </div>
             </div>
             <div class="multi-analyze-row" style="margin-top:1rem">
-                <button id="generateSurveyBtn" class="cta-btn">Generate Dashboard Package</button>
+                <button id="generateSurveyBtn" class="cta-btn" data-i18n="survey.generate">Generate Dashboard Package</button>
             </div>
             <p id="surveyStatus" class="survey-status"></p>
         </section>
 
         <section class="dashboard-section survey-format-card">
-            <h3 class="section-title">Example Excel Format</h3>
+            <h3 class="section-title" data-i18n="survey.sectionFormat">Example Excel Format</h3>
             <div class="survey-format-example">
                 <table>
                     <thead>
@@ -86,17 +87,17 @@
         </section>
 
         <section id="surveyResult" class="dashboard-section survey-result-card" hidden>
-            <h3 class="section-title">Output Files</h3>
+            <h3 class="section-title" data-i18n="survey.sectionOutput">Output Files</h3>
             <div id="surveyLinks" class="survey-links"></div>
         </section>
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="alumni">
-                <span class="section-title">Alumni Registry</span>
+                <span class="section-title" data-i18n="survey.sectionAlumni">Alumni Registry</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
-                <p class="section-desc">
+                <p class="section-desc" data-i18n="survey.alumniDesc">
                     A named graduate roster alongside the survey results above. The uploaded survey
                     responses stay anonymous/aggregate (no per-response identity to match against), so
                     this tracks per-alumnus employment and whether they participated in a survey round —
@@ -104,19 +105,23 @@
                 </p>
                 <div id="alumni-kpi-grid" class="indicators-summary-grid"></div>
                 <div class="curriculum-add-row">
-                    <input type="text" id="new-alum-name" placeholder="Name" class="curriculum-input-lg">
-                    <input type="text" id="new-alum-student-id" placeholder="Student ID" class="curriculum-input-sm">
-                    <input type="number" id="new-alum-year" placeholder="Graduation year" class="curriculum-input-sm">
-                    <input type="text" id="new-alum-employer" placeholder="Employer (optional)" class="curriculum-input-sm">
-                    <input type="text" id="new-alum-role" placeholder="Current role (optional)" class="curriculum-input-sm">
-                    <button type="button" id="add-alum-btn" class="btn-header btn-header-primary">+ Add</button>
+                    <input type="text" id="new-alum-name" data-i18n-placeholder="survey.phName" placeholder="Name" class="curriculum-input-lg">
+                    <input type="text" id="new-alum-student-id" data-i18n-placeholder="survey.phStudentId" placeholder="Student ID" class="curriculum-input-sm">
+                    <input type="number" id="new-alum-year" data-i18n-placeholder="survey.phGradYear" placeholder="Graduation year" class="curriculum-input-sm">
+                    <input type="text" id="new-alum-employer" data-i18n-placeholder="survey.phEmployer" placeholder="Employer (optional)" class="curriculum-input-sm">
+                    <input type="text" id="new-alum-role" data-i18n-placeholder="survey.phRole" placeholder="Current role (optional)" class="curriculum-input-sm">
+                    <button type="button" id="add-alum-btn" class="btn-header btn-header-primary" data-i18n="common.add">+ Add</button>
                 </div>
                 <label>
-                    Filter by graduation year
-                    <select id="filter-alum-year"><option value="">All years</option></select>
+                    <span data-i18n="survey.filterByYear">Filter by graduation year</span>
+                    <select id="filter-alum-year"><option value="" data-i18n="survey.allYears">All years</option></select>
                 </label>
                 <table class="data-table" id="alumni-table">
-                    <thead><tr><th>Name</th><th>Student ID</th><th>Grad Year</th><th>Employer</th><th>Role</th><th>Surveyed</th><th></th></tr></thead>
+                    <thead><tr>
+                        <th data-i18n="common.name">Name</th><th data-i18n="survey.colStudentId">Student ID</th>
+                        <th data-i18n="survey.colGradYear">Grad Year</th><th data-i18n="survey.colEmployer">Employer</th>
+                        <th data-i18n="survey.colRole">Role</th><th data-i18n="survey.colSurveyed">Surveyed</th><th></th>
+                    </tr></thead>
                     <tbody id="alumni-tbody"></tbody>
                 </table>
             </div>
@@ -124,7 +129,7 @@
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="std4">
-                <span class="section-title">Standard 4 Indicators</span>
+                <span class="section-title" data-i18n="survey.sectionStd4">Standard 4 Indicators</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
@@ -133,6 +138,7 @@
         </section>
     </main>
 
+    <script src="/static/js/i18n.js"></script>
     <script src="/static/js/survey_dashboard.js"></script>
     <script src="/static/js/alumni.js"></script>
     <script src="/static/js/chatbot.js"></script>

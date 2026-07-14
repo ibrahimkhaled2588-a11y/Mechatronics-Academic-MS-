@@ -35,8 +35,8 @@ async function loadMission() {
     const versions = await fetchJson(`${apiUrl}/api/governance/mission`);
     const currentEl = document.getElementById('current-mission');
     currentEl.innerHTML = versions.length
-        ? `<p class="governance-current-label">Current (saved ${escapeHtml(versions[0].created_at)}):</p><p>${escapeHtml(versions[0].mission_text)}</p>`
-        : '<p class="section-desc">No mission text saved yet.</p>';
+        ? `<p class="governance-current-label">${t('gov.currentSaved').replace('{date}', escapeHtml(versions[0].created_at))}</p><p>${escapeHtml(versions[0].mission_text)}</p>`
+        : `<p class="section-desc">${t('gov.noMission')}</p>`;
 
     document.getElementById('mission-history-list').innerHTML = versions.length > 1
         ? versions.slice(1).map((v) => `
@@ -44,14 +44,14 @@ async function loadMission() {
                 <strong>${escapeHtml(v.created_at)}</strong>: ${escapeHtml(v.mission_text)}
             </li>
         `).join('')
-        : '<li class="section-desc">No earlier versions.</li>';
+        : `<li class="section-desc">${t('gov.noEarlierVersions')}</li>`;
 }
 
 function initMissionForm() {
     document.getElementById('save-mission-btn').addEventListener('click', async () => {
         const text = document.getElementById('new-mission-text').value.trim();
         if (!text) {
-            alert('Mission text is required.');
+            alert(t('gov.missionRequired'));
             return;
         }
         try {
@@ -86,9 +86,9 @@ function renderDocuments() {
             <td>${escapeHtml(d.committee_name || '')}</td>
             <td>${escapeHtml(d.document_date || '')}</td>
             <td>${escapeHtml(d.uploaded_at)}</td>
-            <td><button type="button" class="btn-header btn-header-secondary delete-doc-btn" data-id="${d.id}">Delete</button></td>
+            <td><button type="button" class="btn-header btn-header-secondary delete-doc-btn" data-id="${d.id}">${t('common.delete')}</button></td>
         </tr>
-    `).join('') || '<tr><td colspan="5" class="section-desc">No documents uploaded yet.</td></tr>';
+    `).join('') || `<tr><td colspan="5" class="section-desc">${t('gov.noDocuments')}</td></tr>`;
 
     document.querySelectorAll('.delete-doc-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -104,7 +104,7 @@ function updateCommitteeFilterOptions() {
     documents.forEach((d) => { if (d.committee_name) knownCommittees.add(d.committee_name); });
     const select = document.getElementById('filter-committee');
     const current = select.value;
-    select.innerHTML = '<option value="">All committees</option>' +
+    select.innerHTML = `<option value="">${t('gov.allCommittees')}</option>` +
         [...knownCommittees].sort().map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
     select.value = current;
 }
@@ -117,7 +117,7 @@ function initDocumentForm() {
         const fileInput = document.getElementById('doc-file');
         const file = fileInput.files[0];
         if (!title || !file) {
-            alert('Title and a file are required.');
+            alert(t('gov.titleFileRequired'));
             return;
         }
         const form = new FormData();
@@ -151,7 +151,7 @@ async function loadStakeholderLog() {
             <td>${escapeHtml(r.consulted_on)}</td>
             <td>${escapeHtml(r.topic)}</td>
         </tr>
-    `).join('') || '<tr><td colspan="4" class="section-desc">No entries yet.</td></tr>';
+    `).join('') || `<tr><td colspan="4" class="section-desc">${t('gov.noStakeholderEntries')}</td></tr>`;
 }
 
 function initStakeholderForm() {
@@ -161,7 +161,7 @@ function initStakeholderForm() {
         const date = document.getElementById('sh-date').value;
         const topic = document.getElementById('sh-topic').value.trim();
         if (!name || !date || !topic) {
-            alert('Stakeholder name, date, and topic are required.');
+            alert(t('gov.stakeholderRequired'));
             return;
         }
         try {
@@ -194,12 +194,12 @@ async function loadStandard1Indicators() {
     container.innerHTML = rows.map((ind) => `
         <div class="indicator-summary-card">
             <p>${escapeHtml(ind.indicator_text)}</p>
-            <p class="indicator-summary-name">Status: <span class="badge badge-${ind.status}">${ind.status}</span></p>
+            <p class="indicator-summary-name">${t('ind.statusLabel')} <span class="badge badge-${ind.status}">${t('status.' + ind.status)}</span></p>
             <button type="button" class="btn-header btn-header-primary mark-complete-btn" data-id="${ind.id}">
-                Mark complete + note governance register as evidence
+                ${t('gov.markCompleteRegister')}
             </button>
         </div>
-    `).join('') || '<p class="section-desc">No Standard 1 indicators found.</p>';
+    `).join('') || `<p class="section-desc">${t('ind.noneForStandard')}</p>`;
 
     container.querySelectorAll('.mark-complete-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -229,3 +229,6 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('i18n:applied', () => {
+    Promise.all([loadMission(), loadDocuments(), loadStakeholderLog(), loadStandard1Indicators()]);
+});

@@ -13,59 +13,66 @@
     <header class="dashboard-header">
         <div class="header-inner">
             <div class="header-top-row">
-                <a href="index.html" class="back-home" title="Home">← Home</a>
-                <h1>Program Governance</h1>
-                <div class="header-actions"></div>
+                <a href="index.html" class="back-home" data-i18n="common.backHome" title="Home">← Home</a>
+                <h1 data-i18n="gov.title">Program Governance</h1>
+                <div class="header-actions">
+                    <div class="header-btn-group">
+                        <button type="button" class="btn-header btn-header-secondary lang-toggle-btn">العربية</button>
+                    </div>
+                </div>
             </div>
             <nav class="top-nav">
-                <a href="dashboard.html" class="nav-link">Quality Dashboard</a>
-                <a href="course-report.html" class="nav-link">Course Report</a>
-                <a href="program-report.html" class="nav-link">Program Report</a>
-                <a href="survey-dashboard.html" class="nav-link">Survey Dashboard</a>
-                <a href="curriculum-mapping.html" class="nav-link">🗺️ Curriculum Map</a>
-                <a href="governance.html" class="nav-link nav-link-active">🏛️ Governance</a>
-                <a href="faculty-dashboard.html" class="nav-link">👩‍🏫 Faculty</a>
-                <a href="resources.html" class="nav-link">🧪 Resources</a>
-                <a href="indicators-tracker.html" class="nav-link">📋 Indicators</a>
-                <a href="qa-chat.html" class="nav-link">🎓 QA Chat</a>
+                <a href="dashboard.html" class="nav-link" data-i18n="nav.dashboard">Quality Dashboard</a>
+                <a href="course-report.html" class="nav-link" data-i18n="nav.course">Course Report</a>
+                <a href="program-report.html" class="nav-link" data-i18n="nav.program">Program Report</a>
+                <a href="survey-dashboard.html" class="nav-link" data-i18n="nav.survey">Survey Dashboard</a>
+                <a href="curriculum-mapping.html" class="nav-link" data-i18n="nav.curriculum">🗺️ Curriculum Map</a>
+                <a href="governance.html" class="nav-link nav-link-active" data-i18n="nav.governance">🏛️ Governance</a>
+                <a href="faculty-dashboard.html" class="nav-link" data-i18n="nav.faculty">👩‍🏫 Faculty</a>
+                <a href="resources.html" class="nav-link" data-i18n="nav.resources">🧪 Resources</a>
+                <a href="indicators-tracker.html" class="nav-link" data-i18n="nav.indicators">📋 Indicators</a>
+                <a href="qa-chat.html" class="nav-link" data-i18n="nav.qachat">🎓 QA Chat</a>
             </nav>
         </div>
     </header>
     <main class="dashboard-main">
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="mission">
-                <span class="section-title">Program Mission &amp; Goals</span>
+                <span class="section-title" data-i18n="gov.sectionMission">Program Mission &amp; Goals</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
-                <p class="section-desc">Every save creates a new version — nothing is overwritten, so the history of how the mission statement evolved is kept.</p>
+                <p class="section-desc" data-i18n="gov.missionDesc">Every save creates a new version — nothing is overwritten, so the history of how the mission statement evolved is kept.</p>
                 <div id="current-mission" class="governance-current-mission"></div>
-                <textarea id="new-mission-text" class="governance-textarea" placeholder="Program mission and goals..."></textarea>
-                <button type="button" id="save-mission-btn" class="btn-header btn-header-primary">Save New Version</button>
-                <h3 class="governance-subheading">Version History</h3>
+                <textarea id="new-mission-text" class="governance-textarea" data-i18n-placeholder="gov.phMission" placeholder="Program mission and goals..."></textarea>
+                <button type="button" id="save-mission-btn" class="btn-header btn-header-primary" data-i18n="gov.saveVersion">Save New Version</button>
+                <h3 class="governance-subheading" data-i18n="gov.versionHistory">Version History</h3>
                 <ul id="mission-history-list" class="governance-history-list"></ul>
             </div>
         </section>
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="documents">
-                <span class="section-title">Council / Committee Document Register</span>
+                <span class="section-title" data-i18n="gov.sectionDocuments">Council / Committee Document Register</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
                 <div class="governance-upload-form">
-                    <input type="text" id="doc-title" placeholder="Title (e.g. Department Council Minutes)" class="curriculum-input-lg">
-                    <input type="text" id="doc-committee" placeholder="Committee name" class="curriculum-input-sm">
+                    <input type="text" id="doc-title" data-i18n-placeholder="gov.phDocTitle" placeholder="Title (e.g. Department Council Minutes)" class="curriculum-input-lg">
+                    <input type="text" id="doc-committee" data-i18n-placeholder="gov.phCommittee" placeholder="Committee name" class="curriculum-input-sm">
                     <input type="date" id="doc-date">
                     <input type="file" id="doc-file">
-                    <button type="button" id="upload-doc-btn" class="btn-header btn-header-primary">Upload</button>
+                    <button type="button" id="upload-doc-btn" class="btn-header btn-header-primary" data-i18n="common.upload">Upload</button>
                 </div>
                 <label>
-                    Filter by committee
-                    <select id="filter-committee"><option value="">All committees</option></select>
+                    <span data-i18n="gov.filterByCommittee">Filter by committee</span>
+                    <select id="filter-committee"><option value="" data-i18n="gov.allCommittees">All committees</option></select>
                 </label>
                 <table class="data-table" id="documents-table">
-                    <thead><tr><th>Title</th><th>Committee</th><th>Date</th><th>Uploaded</th><th></th></tr></thead>
+                    <thead><tr>
+                        <th data-i18n="gov.colTitle">Title</th><th data-i18n="gov.colCommittee">Committee</th>
+                        <th data-i18n="common.date">Date</th><th data-i18n="gov.colUploaded">Uploaded</th><th></th>
+                    </tr></thead>
                     <tbody id="documents-tbody"></tbody>
                 </table>
             </div>
@@ -73,19 +80,22 @@
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="stakeholders">
-                <span class="section-title">Stakeholder Participation Log</span>
+                <span class="section-title" data-i18n="gov.sectionStakeholders">Stakeholder Participation Log</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
                 <div class="governance-upload-form">
-                    <input type="text" id="sh-name" placeholder="Stakeholder name" class="curriculum-input-sm">
-                    <input type="text" id="sh-role" placeholder="Role (e.g. Alumni, Employer)" class="curriculum-input-sm">
+                    <input type="text" id="sh-name" data-i18n-placeholder="gov.phStakeholderName" placeholder="Stakeholder name" class="curriculum-input-sm">
+                    <input type="text" id="sh-role" data-i18n-placeholder="gov.phRole" placeholder="Role (e.g. Alumni, Employer)" class="curriculum-input-sm">
                     <input type="date" id="sh-date">
-                    <input type="text" id="sh-topic" placeholder="Topic consulted on" class="curriculum-input-lg">
-                    <button type="button" id="add-stakeholder-btn" class="btn-header btn-header-primary">Add Entry</button>
+                    <input type="text" id="sh-topic" data-i18n-placeholder="gov.phTopic" placeholder="Topic consulted on" class="curriculum-input-lg">
+                    <button type="button" id="add-stakeholder-btn" class="btn-header btn-header-primary" data-i18n="gov.addEntry">Add Entry</button>
                 </div>
                 <table class="data-table" id="stakeholder-table">
-                    <thead><tr><th>Stakeholder</th><th>Role</th><th>Date</th><th>Topic</th></tr></thead>
+                    <thead><tr>
+                        <th data-i18n="gov.colStakeholder">Stakeholder</th><th data-i18n="gov.colRole">Role</th>
+                        <th data-i18n="common.date">Date</th><th data-i18n="gov.colTopic">Topic</th>
+                    </tr></thead>
                     <tbody id="stakeholder-tbody"></tbody>
                 </table>
             </div>
@@ -93,7 +103,7 @@
 
         <section class="dashboard-section section-collapsible">
             <button type="button" class="section-toggle" aria-expanded="true" data-section="std1">
-                <span class="section-title">Standard 1 Indicators</span>
+                <span class="section-title" data-i18n="gov.sectionStd1">Standard 1 Indicators</span>
                 <span class="toggle-icon">▼</span>
             </button>
             <div class="section-body">
@@ -101,6 +111,7 @@
             </div>
         </section>
     </main>
+    <script src="/static/js/i18n.js"></script>
     <script src="/static/js/governance.js"></script>
 </body>
 </html>

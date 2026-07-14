@@ -44,9 +44,9 @@ function renderFacultyTable() {
             <td>${escapeHtml(f.specialization || '')}</td>
             <td>${escapeHtml(f.degree || '')}</td>
             <td>${escapeHtml(f.rank || '')}</td>
-            <td><button type="button" class="btn-header btn-header-secondary delete-faculty-btn" data-id="${f.id}">Delete</button></td>
+            <td><button type="button" class="btn-header btn-header-secondary delete-faculty-btn" data-id="${f.id}">${t('common.delete')}</button></td>
         </tr>
-    `).join('') || '<tr><td colspan="5" class="section-desc">No faculty members yet.</td></tr>';
+    `).join('') || `<tr><td colspan="5" class="section-desc">${t('fac.noFacultyMembers')}</td></tr>`;
 
     document.querySelectorAll('.delete-faculty-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -59,8 +59,8 @@ function renderFacultyTable() {
 
 function renderFacultySelects() {
     const options = faculty.map((f) => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join('');
-    document.getElementById('load-faculty-select').innerHTML = options || '<option value="">No faculty yet</option>';
-    document.getElementById('pub-faculty-select').innerHTML = options || '<option value="">No faculty yet</option>';
+    document.getElementById('load-faculty-select').innerHTML = options || `<option value="">${t('fac.noFacultyYet')}</option>`;
+    document.getElementById('pub-faculty-select').innerHTML = options || `<option value="">${t('fac.noFacultyYet')}</option>`;
 }
 
 function initFacultyForm() {
@@ -70,7 +70,7 @@ function initFacultyForm() {
         const degree = document.getElementById('new-faculty-degree').value.trim();
         const rank = document.getElementById('new-faculty-rank').value.trim();
         if (!name) {
-            alert('Name is required.');
+            alert(t('fac.nameRequired'));
             return;
         }
         try {
@@ -100,9 +100,9 @@ async function loadTeachingLoad() {
             <td>${escapeHtml(r.semester)}</td>
             <td>${escapeHtml(r.course_name)}</td>
             <td>${r.hours}</td>
-            <td><button type="button" class="btn-header btn-header-secondary delete-load-btn" data-id="${r.id}">Delete</button></td>
+            <td><button type="button" class="btn-header btn-header-secondary delete-load-btn" data-id="${r.id}">${t('common.delete')}</button></td>
         </tr>
-    `).join('') || '<tr><td colspan="5" class="section-desc">No teaching load entries yet.</td></tr>';
+    `).join('') || `<tr><td colspan="5" class="section-desc">${t('fac.noLoadEntries')}</td></tr>`;
 
     document.querySelectorAll('.delete-load-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -119,7 +119,7 @@ function initLoadForm() {
         const course = document.getElementById('load-course').value.trim();
         const hours = Number(document.getElementById('load-hours').value);
         if (!facultyId || !semester || !course || !hours) {
-            alert('Faculty, semester, course, and hours are all required.');
+            alert(t('fac.loadRequired'));
             return;
         }
         try {
@@ -149,9 +149,9 @@ async function loadPublications() {
             <td>${escapeHtml(p.venue || '')}</td>
             <td>${p.year || ''}</td>
             <td>${escapeHtml(p.pub_type || '')}</td>
-            <td><button type="button" class="btn-header btn-header-secondary delete-pub-btn" data-id="${p.id}">Delete</button></td>
+            <td><button type="button" class="btn-header btn-header-secondary delete-pub-btn" data-id="${p.id}">${t('common.delete')}</button></td>
         </tr>
-    `).join('') || '<tr><td colspan="6" class="section-desc">No publications logged yet.</td></tr>';
+    `).join('') || `<tr><td colspan="6" class="section-desc">${t('fac.noPublications')}</td></tr>`;
 
     document.querySelectorAll('.delete-pub-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -169,7 +169,7 @@ function initPublicationForm() {
         const year = document.getElementById('pub-year').value ? Number(document.getElementById('pub-year').value) : null;
         const pubType = document.getElementById('pub-type').value.trim();
         if (!facultyId || !title) {
-            alert('Faculty and title are required.');
+            alert(t('fac.pubRequired'));
             return;
         }
         try {
@@ -197,23 +197,23 @@ async function loadDashboard() {
     document.getElementById('kpi-grid').innerHTML = `
         <div class="indicator-summary-card">
             <h3>${summary.total_faculty}</h3>
-            <p class="indicator-summary-name">Faculty members</p>
+            <p class="indicator-summary-name">${t('fac.kpiFaculty')}</p>
         </div>
         <div class="indicator-summary-card">
             <h3>${summary.average_load_hours}</h3>
-            <p class="indicator-summary-name">Average load (hours/semester)</p>
+            <p class="indicator-summary-name">${t('fac.kpiAvgLoad')}</p>
         </div>
         <div class="indicator-summary-card">
             <h3>${summary.overloaded_count}</h3>
-            <p class="indicator-summary-name">Overloaded flags</p>
+            <p class="indicator-summary-name">${t('fac.kpiOverloaded')}</p>
         </div>
         <div class="indicator-summary-card">
             <h3>${summary.underloaded_count}</h3>
-            <p class="indicator-summary-name">Underloaded flags</p>
+            <p class="indicator-summary-name">${t('fac.kpiUnderloaded')}</p>
         </div>
         <div class="indicator-summary-card">
             <h3>${summary.specialization_gap_count}</h3>
-            <p class="indicator-summary-name">Specialization gaps</p>
+            <p class="indicator-summary-name">${t('fac.kpiGaps')}</p>
         </div>
     `;
 
@@ -223,18 +223,18 @@ async function loadDashboard() {
             <td>${escapeHtml(f.semester)}</td>
             <td>${f.total_hours}</td>
             <td>${f.z_score}</td>
-            <td><span class="badge badge-${f.flag === 'overloaded' ? 'missing' : 'partial'}">${f.flag}</span></td>
+            <td><span class="badge badge-${f.flag === 'overloaded' ? 'missing' : 'partial'}">${t('fac.' + f.flag)}</span></td>
         </tr>
-    `).join('') || '<tr><td colspan="5" class="section-desc">No load imbalance detected.</td></tr>';
+    `).join('') || `<tr><td colspan="5" class="section-desc">${t('fac.noImbalance')}</td></tr>`;
 
     document.getElementById('gaps-tbody').innerHTML = summary.specialization_gap_flags.map((g) => `
         <tr>
             <td>${escapeHtml(g.course_name)}</td>
             <td>${escapeHtml(g.semester)}</td>
             <td>${escapeHtml(g.faculty_name)}</td>
-            <td>${escapeHtml(g.faculty_specialization || 'Not set')}</td>
+            <td>${g.faculty_specialization ? escapeHtml(g.faculty_specialization) : t('fac.notSet')}</td>
         </tr>
-    `).join('') || '<tr><td colspan="4" class="section-desc">No specialization gaps detected.</td></tr>';
+    `).join('') || `<tr><td colspan="4" class="section-desc">${t('fac.noGaps')}</td></tr>`;
 }
 
 // --- Standard 5 indicators integration ---
@@ -245,12 +245,12 @@ async function loadStandard5Indicators() {
     container.innerHTML = rows.map((ind) => `
         <div class="indicator-summary-card">
             <p>${escapeHtml(ind.indicator_text)}</p>
-            <p class="indicator-summary-name">Status: <span class="badge badge-${ind.status}">${ind.status}</span></p>
+            <p class="indicator-summary-name">${t('ind.statusLabel')} <span class="badge badge-${ind.status}">${t('status.' + ind.status)}</span></p>
             <button type="button" class="btn-header btn-header-primary mark-complete-btn" data-id="${ind.id}">
-                Mark complete + note this dashboard as evidence
+                ${t('fac.markCompleteDashboard')}
             </button>
         </div>
-    `).join('') || '<p class="section-desc">No Standard 5 indicators found.</p>';
+    `).join('') || `<p class="section-desc">${t('ind.noneForStandard')}</p>`;
 
     container.querySelectorAll('.mark-complete-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -282,3 +282,4 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('i18n:applied', () => refreshAll());

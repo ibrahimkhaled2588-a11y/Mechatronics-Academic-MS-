@@ -49,12 +49,12 @@ function renderAlumniTable() {
             <td>${escapeHtml(a.current_role || '')}</td>
             <td>
                 ${a.surveyed_at
-                    ? `<span class="badge badge-complete">Yes</span>`
-                    : `<button type="button" class="btn-header btn-header-secondary mark-surveyed-btn" data-id="${a.id}">Mark surveyed</button>`}
+                    ? `<span class="badge badge-complete">${t('ind.yes')}</span>`
+                    : `<button type="button" class="btn-header btn-header-secondary mark-surveyed-btn" data-id="${a.id}">${t('ind.markSurveyed')}</button>`}
             </td>
-            <td><button type="button" class="btn-header btn-header-secondary delete-alum-btn" data-id="${a.id}">Delete</button></td>
+            <td><button type="button" class="btn-header btn-header-secondary delete-alum-btn" data-id="${a.id}">${t('common.delete')}</button></td>
         </tr>
-    `).join('') || '<tr><td colspan="7" class="section-desc">No alumni recorded yet.</td></tr>';
+    `).join('') || `<tr><td colspan="7" class="section-desc">${t('ind.noAlumni')}</td></tr>`;
 
     document.querySelectorAll('.mark-surveyed-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -74,7 +74,7 @@ function updateYearFilterOptions() {
     alumniList.forEach((a) => { if (a.graduation_year) knownGradYears.add(a.graduation_year); });
     const select = document.getElementById('filter-alum-year');
     const current = select.value;
-    select.innerHTML = '<option value="">All years</option>' +
+    select.innerHTML = `<option value="">${t('survey.allYears')}</option>` +
         [...knownGradYears].sort((a, b) => b - a).map((y) => `<option value="${y}">${y}</option>`).join('');
     select.value = current;
 }
@@ -87,7 +87,7 @@ function initAlumniForm() {
         const employer = document.getElementById('new-alum-employer').value.trim();
         const role = document.getElementById('new-alum-role').value.trim();
         if (!name) {
-            alert('Name is required.');
+            alert(t('ind.nameRequired'));
             return;
         }
         try {
@@ -118,15 +118,15 @@ async function loadAlumniSummary() {
     document.getElementById('alumni-kpi-grid').innerHTML = `
         <div class="indicator-summary-card">
             <h3>${summary.total_alumni}</h3>
-            <p class="indicator-summary-name">Alumni registered</p>
+            <p class="indicator-summary-name">${t('survey.kpiTotalAlumni')}</p>
         </div>
         <div class="indicator-summary-card">
             <h3>${summary.employment_rate}%</h3>
-            <p class="indicator-summary-name">Employment rate</p>
+            <p class="indicator-summary-name">${t('survey.kpiEmploymentRate')}</p>
         </div>
         <div class="indicator-summary-card">
             <h3>${summary.survey_participation_rate}%</h3>
-            <p class="indicator-summary-name">Survey participation rate</p>
+            <p class="indicator-summary-name">${t('survey.kpiParticipationRate')}</p>
         </div>
     `;
 }
@@ -137,12 +137,12 @@ async function loadStandard4Indicators() {
     container.innerHTML = rows.map((ind) => `
         <div class="indicator-summary-card">
             <p>${escapeHtml(ind.indicator_text)}</p>
-            <p class="indicator-summary-name">Status: <span class="badge badge-${ind.status}">${ind.status}</span></p>
+            <p class="indicator-summary-name">${t('ind.statusLabel')} <span class="badge badge-${ind.status}">${t('status.' + ind.status)}</span></p>
             <button type="button" class="btn-header btn-header-primary mark-complete-btn" data-id="${ind.id}">
-                Mark complete + note this page as evidence
+                ${t('ind.markCompleteGeneric')}
             </button>
         </div>
-    `).join('') || '<p class="section-desc">No Standard 4 indicators found.</p>';
+    `).join('') || `<p class="section-desc">${t('ind.noneForStandard')}</p>`;
 
     container.querySelectorAll('.mark-complete-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
@@ -172,3 +172,4 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('i18n:applied', () => refreshAll());

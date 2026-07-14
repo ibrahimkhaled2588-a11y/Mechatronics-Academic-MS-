@@ -24,15 +24,18 @@ async function loadStandards() {
     standards = await fetchJson(`${apiUrl}/api/indicators/standards`);
     const filterSelect = document.getElementById('filter-standard');
     const newSelect = document.getElementById('new-standard');
+    // Clear previously-appended <option>s (keeps the first placeholder option in filterSelect)
+    while (filterSelect.options.length > 1) filterSelect.remove(1);
+    newSelect.innerHTML = '';
     standards.forEach((s) => {
         const opt1 = document.createElement('option');
         opt1.value = s.standard_number;
-        opt1.textContent = `Standard ${s.standard_number} — ${s.standard_name}`;
+        opt1.textContent = `${t('ind.standardLabel').replace('{n}', s.standard_number)} — ${s.standard_name}`;
         filterSelect.appendChild(opt1);
 
         const opt2 = document.createElement('option');
         opt2.value = s.standard_number;
-        opt2.textContent = `Standard ${s.standard_number} — ${s.standard_name}`;
+        opt2.textContent = `${t('ind.standardLabel').replace('{n}', s.standard_number)} — ${s.standard_name}`;
         newSelect.appendChild(opt2);
     });
 }
@@ -44,15 +47,15 @@ async function loadSummary() {
         const pct = s.total > 0 ? Math.round((s.complete / s.total) * 100) : 0;
         return `
             <div class="indicator-summary-card">
-                <h3>Standard ${s.standard_number}</h3>
+                <h3>${t('ind.standardLabel').replace('{n}', s.standard_number)}</h3>
                 <p class="indicator-summary-name">${escapeHtml(s.standard_name)}</p>
                 <div class="indicator-progress-bar">
                     <div class="indicator-progress-fill" style="width:${pct}%"></div>
                 </div>
                 <p class="indicator-summary-counts">
-                    <span class="badge badge-complete">${s.complete} complete</span>
-                    <span class="badge badge-partial">${s.partial} partial</span>
-                    <span class="badge badge-missing">${s.missing} missing</span>
+                    <span class="badge badge-complete">${t('ind.badgeComplete').replace('{n}', s.complete)}</span>
+                    <span class="badge badge-partial">${t('ind.badgePartial').replace('{n}', s.partial)}</span>
+                    <span class="badge badge-missing">${t('ind.badgeMissing').replace('{n}', s.missing)}</span>
                 </p>
             </div>
         `;
@@ -87,7 +90,7 @@ function renderIndicators() {
 
     const numbers = Object.keys(byStandard).map(Number).sort((a, b) => a - b);
     if (numbers.length === 0) {
-        container.innerHTML = '<p class="section-desc">No indicators match the current filters.</p>';
+        container.innerHTML = `<p class="section-desc">${t('ind.noMatch')}</p>`;
         return;
     }
 
@@ -97,19 +100,19 @@ function renderIndicators() {
         return `
             <div class="dashboard-section section-collapsible">
                 <button type="button" class="section-toggle" aria-expanded="true" data-toggle-standard="${num}">
-                    <span class="section-title">Standard ${num} — ${escapeHtml(standardName)}</span>
+                    <span class="section-title">${t('ind.standardLabel').replace('{n}', num)} — ${escapeHtml(standardName)}</span>
                     <span class="toggle-icon">▼</span>
                 </button>
                 <div class="section-body">
                     <table class="data-table indicators-table">
                         <thead>
                             <tr>
-                                <th>Indicator</th>
-                                <th>Status</th>
-                                <th>Responsible</th>
-                                <th>Evidence link</th>
-                                <th>Due date</th>
-                                <th>Log</th>
+                                <th>${t('ind.colIndicator')}</th>
+                                <th>${t('common.status')}</th>
+                                <th>${t('ind.colResponsible')}</th>
+                                <th>${t('ind.colEvidence')}</th>
+                                <th>${t('ind.colDueDate')}</th>
+                                <th>${t('ind.colLog')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -131,18 +134,18 @@ function renderIndicatorRow(ind) {
             <td>${escapeHtml(ind.indicator_text)}</td>
             <td>
                 <select class="indicator-status-select" data-field="status" data-id="${ind.id}">
-                    <option value="missing" ${ind.status === 'missing' ? 'selected' : ''}>Missing</option>
-                    <option value="partial" ${ind.status === 'partial' ? 'selected' : ''}>Partial</option>
-                    <option value="complete" ${ind.status === 'complete' ? 'selected' : ''}>Complete</option>
+                    <option value="missing" ${ind.status === 'missing' ? 'selected' : ''}>${t('status.missing')}</option>
+                    <option value="partial" ${ind.status === 'partial' ? 'selected' : ''}>${t('status.partial')}</option>
+                    <option value="complete" ${ind.status === 'complete' ? 'selected' : ''}>${t('status.complete')}</option>
                 </select>
             </td>
             <td>
                 <input type="text" class="indicator-inline-input" data-field="responsible_person" data-id="${ind.id}"
-                       value="${escapeHtml(ind.responsible_person || '')}" placeholder="Unassigned">
+                       value="${escapeHtml(ind.responsible_person || '')}" placeholder="${t('ind.phUnassigned')}">
             </td>
             <td>
                 <input type="text" class="indicator-inline-input" data-field="evidence_link" data-id="${ind.id}"
-                       value="${escapeHtml(ind.evidence_link || '')}" placeholder="Path or URL">
+                       value="${escapeHtml(ind.evidence_link || '')}" placeholder="${t('ind.phPathUrl')}">
             </td>
             <td>
                 <input type="date" class="indicator-inline-input" data-field="due_date" data-id="${ind.id}"
@@ -150,7 +153,7 @@ function renderIndicatorRow(ind) {
             </td>
             <td>
                 <button type="button" class="btn-header btn-header-secondary indicator-log-toggle" data-id="${ind.id}">
-                    Log (${(ind.closing_the_loop_log || []).length || ''})
+                    ${t('ind.logButton').replace('{n}', (ind.closing_the_loop_log || []).length || '')}
                 </button>
             </td>
         </tr>
@@ -182,27 +185,27 @@ function renderLogPanel(indicatorId, entries) {
         ? entries.map((e) => `
             <li class="closing-loop-entry">
                 <strong>${escapeHtml(e.entry_date)}</strong>
-                — Weakness: ${escapeHtml(e.weakness_identified)}
-                ${e.action_taken ? `— Action: ${escapeHtml(e.action_taken)}` : ''}
+                — ${t('ind.weaknessLabel')}: ${escapeHtml(e.weakness_identified)}
+                ${e.action_taken ? `— ${t('ind.actionLabel')}: ${escapeHtml(e.action_taken)}` : ''}
                 ${e.entry_status ? `<span class="badge badge-${escapeHtml(e.entry_status)}">${escapeHtml(e.entry_status)}</span>` : ''}
             </li>
         `).join('')
-        : '<li class="section-desc">No closing-the-loop entries yet.</li>';
+        : `<li class="section-desc">${t('ind.noLogEntries')}</li>`;
 
     panel.innerHTML = `
         <ul class="closing-loop-list">${entriesHtml}</ul>
         <div class="closing-loop-form">
-            <input type="text" class="log-weakness-input" placeholder="Weakness identified">
-            <input type="text" class="log-action-input" placeholder="Action taken (optional)">
-            <input type="text" class="log-status-input" placeholder="Status note (optional)">
-            <button type="button" class="btn-header btn-header-primary log-submit-btn" data-id="${indicatorId}">Add entry</button>
+            <input type="text" class="log-weakness-input" placeholder="${t('ind.phWeakness')}">
+            <input type="text" class="log-action-input" placeholder="${t('ind.phAction')}">
+            <input type="text" class="log-status-input" placeholder="${t('ind.phStatusNote')}">
+            <button type="button" class="btn-header btn-header-primary log-submit-btn" data-id="${indicatorId}">${t('ind.addLogEntry')}</button>
         </div>
     `;
 
     panel.querySelector('.log-submit-btn').addEventListener('click', async () => {
         const weakness = panel.querySelector('.log-weakness-input').value.trim();
         if (!weakness) {
-            alert('Weakness identified is required.');
+            alert(t('ind.weaknessRequired'));
             return;
         }
         const action = panel.querySelector('.log-action-input').value.trim();
@@ -330,11 +333,11 @@ async function initSheetSync() {
     document.getElementById('sync-sheet-btn').addEventListener('click', async () => {
         const url = input.value.trim();
         if (!url) {
-            alert('Paste the Google Sheet link first.');
+            alert(t('ind.pasteSheetLink'));
             return;
         }
         localStorage.setItem(SHEET_URL_STORAGE_KEY, url);
-        statusEl.textContent = 'Syncing...';
+        statusEl.textContent = t('ind.syncing');
         try {
             const result = await fetchJson(`${apiUrl}/api/indicators/sync-sheet`, {
                 method: 'POST',
@@ -356,7 +359,7 @@ function initSsrGeneration() {
     btn.addEventListener('click', async () => {
         const originalText = btn.textContent;
         btn.disabled = true;
-        btn.textContent = 'Generating...';
+        btn.textContent = t('ind.generating');
         try {
             const res = await fetch(`${apiUrl}/export-ssr-docx`, {
                 method: 'POST',
@@ -395,3 +398,7 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('i18n:applied', async () => {
+    await loadStandards();
+    await Promise.all([loadSummary(), loadIndicators()]);
+});
