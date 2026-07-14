@@ -11,6 +11,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/*
 
+# matplotlib builds a font cache on first use; point it at a directory
+# that's always writable regardless of the container's user, rather than
+# relying on a home directory that may not exist/be writable.
+ENV MPLCONFIGDIR=/tmp/matplotlib
+
 WORKDIR /app
 
 COPY backend/requirements.txt backend/requirements.txt

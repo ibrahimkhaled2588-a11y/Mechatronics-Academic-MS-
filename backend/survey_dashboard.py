@@ -5,6 +5,9 @@ import zipfile
 from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
+import matplotlib
+matplotlib.use("Agg")  # headless/server-side rendering; must be set before pyplot is imported
+
 import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.gridspec import GridSpec
