@@ -6,9 +6,18 @@ FROM python:3.11-slim
 # fonts-noto is the broad meta-package (covers Arabic + everything else) --
 # more reliably present across base-image repo mirrors than the narrower
 # fonts-noto-naskh-arabic package name, which failed to resolve on Fly's builder.
+# libgomp1 is the GNU OpenMP runtime that scikit-learn's compiled wheel
+# dlopens at import time for parallelism. python:3.11-slim doesn't include
+# it, so pip install succeeds but `import sklearn` fails at runtime with
+# "libgomp.so.1: cannot open shared object file" -- this is the actual
+# cause of "the models problem" on a clean container that never showed up
+# in local dev (the library is already present on a full dev machine).
+# (numpy/scipy's own BLAS/LAPACK are vendored inside their PyPI wheels, so
+# no separate system package is needed for those.)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     fonts-noto \
     fonts-dejavu-core \
+    libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 # matplotlib builds a font cache on first use; point it at a directory
