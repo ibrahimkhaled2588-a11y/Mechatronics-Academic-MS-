@@ -1,4 +1,4 @@
-# Deployment (Render)
+# Deployment
 
 The app is a single FastAPI service (`backend/app.py`) that also serves the
 static frontend — one deploy gives you one public HTTPS URL that works from
@@ -8,11 +8,52 @@ It was **not** deployed to Vercel: Vercel's serverless functions have an
 ephemeral filesystem, and this app writes to a SQLite file
 (`backend/db.py`) and to disk for uploaded governance documents/survey
 exports — none of that survives between requests on Vercel without also
-swapping in an external database and object storage. Render (or Railway,
-which works the same way) gives a persistent disk and a long-running
-server, so the app runs basically unchanged.
+swapping in an external database and object storage.
 
-## Deploy via the Render Blueprint
+Two options are set up, both giving the app a persistent disk and a
+long-running server so it runs basically unchanged:
+
+| | Fly.io | Render |
+|---|---|---|
+| Cost | Free allowance (small always-on-ish VM + ~3GB volume) | Persistent disks need a **paid** plan |
+| Setup | Docker build via `flyctl` CLI | Native Python buildpack via Blueprint (no Docker knowledge needed) |
+| Config file | [`fly.toml`](fly.toml) + [`Dockerfile`](Dockerfile) | [`render.yaml`](render.yaml) |
+
+If cost is the deciding factor, use Fly.io. If you'd rather not deal with
+Docker/CLI at all and don't mind paying, Render's Blueprint flow is more
+hands-off.
+
+## Option A: Fly.io (free)
+
+1. Install `flyctl`: https://fly.io/docs/flyctl/install/, then `fly auth login`
+   (this asks for a credit card for identity verification — you won't be
+   charged while staying within the free allowance).
+2. From the repo root, create the app (pick a name if `mechatronics-academic-ms`
+   is taken — edit the `app = "..."` line in [`fly.toml`](fly.toml) to match):
+   ```
+   fly apps create mechatronics-academic-ms
+   ```
+3. Create the persistent volume `fly.toml` mounts at `/data` (same region as
+   `primary_region` in `fly.toml`, default `iad`):
+   ```
+   fly volumes create accreditation_data --region iad --size 1
+   ```
+4. Optional: set the Google Sheet default and any CORS origin before deploying:
+   ```
+   fly secrets set DEFAULT_INDICATORS_SHEET_URL="https://docs.google.com/spreadsheets/d/..."
+   ```
+5. Deploy:
+   ```
+   fly deploy
+   ```
+6. `fly open` (or visit `https://<your-app-name>.fly.dev`) once it's up.
+
+`fly.toml` sets `min_machines_running = 0`, so the app scales to zero and
+stops billing/using resources when idle, then cold-starts on the next
+request — a good fit for a low-traffic accreditation tool and it keeps you
+comfortably inside the free allowance.
+
+## Option B: Render (paid, for persistent disks)
 
 1. Push this repo to GitHub (or GitLab).
 2. In Render: **New > Blueprint**, point it at the repo. Render reads
@@ -32,10 +73,10 @@ server, so the app runs basically unchanged.
    into their own browser.
 6. Deploy. Render assigns a URL like `https://academic-analytics-accreditation.onrender.com`.
 
-## What's on the persistent disk
+## What's on the persistent disk/volume
 
-`render.yaml` points these at `/var/data` via env vars already read by
-`backend/config.py`:
+Both options point these at their persistent storage via env vars already
+read by `backend/config.py`:
 
 - `ACCREDITATION_DB_PATH` — the SQLite file backing indicators, curriculum
   mapping, governance, and faculty data.
@@ -56,5 +97,5 @@ matching rules.
 ## Local development is unaffected
 
 Running `uvicorn app:app` from `backend/` with no env vars set behaves
-exactly as before — `render.yaml` only changes behavior when those env
-vars are actually set.
+exactly as before — none of the files above change behavior unless their
+env vars are actually set.

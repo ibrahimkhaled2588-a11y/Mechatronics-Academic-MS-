@@ -1,0 +1,18 @@
+.git/
+.claude/
+__pycache__/
+*.pyc
+backend/exports/
+backend/data/
+backend/__pycache__/
+backend/tests/
+*.log
+.venv/
+venv/
+*.db
+
+# Reference/example files not read by the app at runtime
+# (the template docx IS needed and is copied explicitly in the Dockerfile)
+MECE Program Report 2024-2025 Final.docx
+probability course report 2025 (1).pdf
+*.xlsx

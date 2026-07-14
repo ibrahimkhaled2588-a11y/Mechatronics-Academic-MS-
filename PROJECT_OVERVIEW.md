@@ -76,8 +76,10 @@ frontend/            Static web UI served by the backend
   css/, js/               Styling and client-side logic (Chart.js-based visualizations)
 
 ARCHITECTURE.md            Detailed technical architecture (data flow, KPI formulas, component table)
-DEPLOYMENT.md               How to deploy publicly on Render (persistent disk for SQLite + uploaded files)
+DEPLOYMENT.md               How to deploy publicly on Fly.io (free) or Render (paid) — both give a
+                            persistent disk for the SQLite file + uploaded documents
 render.yaml                 Render Blueprint: web service + persistent disk config
+fly.toml, Dockerfile         Fly.io deploy config (free persistent volume) + the Docker image it builds
 Program_Analytics_Report.md Generated/example analytics report output
 SURVEY_DASHBOARD_README.md  How-to for the survey dashboard feature
 TODO.md                     Active work notes (currently: course-name normalization/matching layer)
@@ -115,4 +117,4 @@ Phase 7 (final integration) is done: `backend/ssr_report.py`, triggered by the "
 
 The indicators tracker also syncs against a team-facing Google Sheet (`backend/sheets_sync.py`): team members fill in status/evidence/responsible/due-date per indicator in a shared Sheet (one tab per standard), and the coordinator clicks "Sync from Google Sheet" on the tracker page to pull it in — the coordinator only ever needs to look at the site's roll-up progress view, not the raw Sheet. The sync also replaced the tracker's English placeholder indicator text with the real official Arabic wording the team had already written into the Sheet.
 
-The app is set up to deploy publicly on Render — see [DEPLOYMENT.md](DEPLOYMENT.md) and [render.yaml](render.yaml). Render (not Vercel) because this app needs a persistent SQLite file and disk storage for uploaded documents, which Vercel's serverless functions can't provide without swapping in an external database and object storage.
+The app is set up to deploy publicly on either Fly.io (free) or Render (paid) — see [DEPLOYMENT.md](DEPLOYMENT.md), [fly.toml](fly.toml)/[Dockerfile](Dockerfile), and [render.yaml](render.yaml). Not Vercel: this app needs a persistent SQLite file and disk storage for uploaded documents, which Vercel's serverless functions can't provide without swapping in an external database and object storage.

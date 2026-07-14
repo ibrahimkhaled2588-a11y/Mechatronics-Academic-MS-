@@ -1,0 +1,35 @@
+# Fly.io app config. Deploy steps are in DEPLOYMENT.md.
+# Before first deploy: edit `app` below to a name you've created with
+# `fly apps create <name>`, and create the volume it mounts to with
+# `fly volumes create accreditation_data --region <region> --size 1`.
+
+app = "mechatronics-academic-ms"
+primary_region = "iad"
+
+[build]
+
+[env]
+  ACCREDITATION_DB_PATH = "/data/accreditation.db"
+  EXPORTS_DIR = "/data/exports"
+
+[[mounts]]
+  source = "accreditation_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    path = "/api-info"
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
