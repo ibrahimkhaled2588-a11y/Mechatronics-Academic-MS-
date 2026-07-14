@@ -113,8 +113,9 @@ The system monitors **data quality**, detects **anomalies**, evaluates **reliabi
 - `backend/faculty_data.py` – Standard 5 faculty data: roster (specialization/degree/rank), teaching load per semester, research/publication log; load-imbalance flags (z-score, same statistical pattern as `quality.py`'s anomaly detection) and specialization-gap flags (course vs. instructor specialization token overlap, reusing `course_matching.py`'s normalization).  
 - `backend/resources.py` – Standard 6 resources & facilities: lab/equipment inventory with status + next maintenance date, library holdings counts, annual budget entries; a maintenance-due view (overdue/due-within-N-days) derived from the equipment table.  
 - `backend/alumni.py` – Standard 4 alumni registry: named graduate roster (student ID, graduation year, employer/role) with a per-alumnus survey-participation flag. Deliberately does **not** join against individual survey rows — `survey_dashboard.py`'s uploaded responses are anonymous/aggregate only (see `alumni.py`'s module docstring) — instead it surfaces roster stats (employment rate, survey participation rate) on the same `survey-dashboard.html` page as the aggregate satisfaction results.  
+- `backend/ssr_report.py` – Final integration: assembles the full Self-Study Report (one section per standard) by pulling directly from every module above — `governance.py` (Standard 1), `curriculum_mapping.py` (Standard 2), `program_report_docx.py`'s existing KPI-derivation helper for an optionally-supplied dashboard analysis (Standard 3), `alumni.py` (Standard 4), `faculty_data.py` (Standard 5), `resources.py` (Standard 6), and `indicators.py` including its closing-the-loop log (Standard 7). Built from scratch with python-docx, same helper pattern as `course_report_docx.py`/`curriculum_map_report.py` — there's no fixed NAQAAE SSR template to fill in, unlike `program_report_docx.py`'s XML-template approach.  
 - `frontend/` – Home, Dashboard, CSS (White + Blue + Orange), Chart.js, dashboard_logic.js.  
-- `frontend/indicators-tracker.html` + `frontend/js/indicators_tracker.js` – Accreditation indicators tracker UI (grouped by standard, inline edit, closing-the-loop log, Google Sheet sync button).  
+- `frontend/indicators-tracker.html` + `frontend/js/indicators_tracker.js` – Accreditation indicators tracker UI (grouped by standard, inline edit, closing-the-loop log, Google Sheet sync button, "Generate SSR" button).  
 - `frontend/curriculum-mapping.html` + `frontend/js/curriculum_mapping.js` – Curriculum mapping UI (ILOs, course list + Excel import, coverage matrix checkboxes, findings, Standard 2 indicator sync).  
 - `frontend/governance.html` + `frontend/js/governance.js` – Governance UI (mission version history, document register with upload/filter, stakeholder log, Standard 1 indicator sync).  
 - `frontend/faculty-dashboard.html` + `frontend/js/faculty_dashboard.js` – Faculty dashboard UI (roster, teaching load, publications, load-balance KPI cards, imbalance/specialization-gap flag tables, Standard 5 indicator sync).  
@@ -138,7 +139,7 @@ covered by `survey_dashboard.py`. New modules land per standard:
 | 5. Faculty & Supporting Staff | `backend/faculty_data.py` | Done (Phase 4) |
 | 6. Resources & Learning Facilities | `backend/resources.py` | Done (Phase 5) |
 | 4. Students & Graduates (alumni) | `backend/alumni.py` | Done (Phase 6) |
-| Final integration | `backend/ssr_report.py` (or extend `program_report_docx.py`) | Planned |
+| Final integration | `backend/ssr_report.py` | Done (Phase 7) |
 
 **Persistence**: unlike the core analytics pipeline (in-memory, request-scoped
 — see `_upload_history` in `app.py`), accreditation data must survive a

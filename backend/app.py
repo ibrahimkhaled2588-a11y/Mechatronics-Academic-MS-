@@ -42,6 +42,7 @@ import faculty_data
 import sheets_sync
 import resources
 import alumni
+import ssr_report
 
 logger = logging.getLogger(__name__)
 
@@ -458,6 +459,34 @@ async def export_program_docx(request: Request):
         io.BytesIO(docx_bytes),
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         headers={"Content-Disposition": 'attachment; filename="Program_Report.docx"'},
+    )
+
+
+@app.post("/export-ssr-docx")
+async def export_ssr_docx(request: Request):
+    """Assemble the full Self-Study Report (one section per standard) from
+    every accreditation-support module. The 'analysis' body key is optional
+    — pass the current Quality Dashboard analysis JSON to include Standard 3
+    KPI figures; without it, that section notes the data wasn't supplied."""
+    analysis: dict | None = None
+    body_bytes = await request.body()
+    if body_bytes:
+        try:
+            body = await request.json()
+            analysis = body.get("analysis") if isinstance(body, dict) else None
+        except Exception as exc:
+            raise HTTPException(status_code=400, detail="Invalid JSON body") from exc
+
+    try:
+        docx_bytes = ssr_report.build_ssr_docx(analysis)
+    except Exception as exc:
+        logger.exception("SSR generation failed")
+        raise HTTPException(status_code=500, detail="Report generation failed; check server logs") from exc
+
+    return StreamingResponse(
+        io.BytesIO(docx_bytes),
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={"Content-Disposition": 'attachment; filename="Self_Study_Report.docx"'},
     )
 
 

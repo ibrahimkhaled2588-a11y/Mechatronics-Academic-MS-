@@ -351,11 +351,46 @@ async function initSheetSync() {
     });
 }
 
+function initSsrGeneration() {
+    const btn = document.getElementById('generate-ssr-btn');
+    btn.addEventListener('click', async () => {
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Generating...';
+        try {
+            const res = await fetch(`${apiUrl}/export-ssr-docx`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({}),
+            });
+            if (!res.ok) {
+                const detail = await res.json().catch(() => ({}));
+                throw new Error(detail.detail || `Request failed (${res.status})`);
+            }
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Self_Study_Report.docx';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            alert(`Could not generate SSR: ${err.message}`);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    });
+}
+
 async function init() {
     await loadStandards();
     await Promise.all([loadSummary(), loadIndicators()]);
     initFilters();
     initAddIndicatorForm();
+    initSsrGeneration();
     await initSheetSync();
 }
 
