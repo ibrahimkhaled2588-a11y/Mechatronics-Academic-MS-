@@ -89,6 +89,7 @@ class ServerSettings:
         "governance.html",
         "faculty-dashboard.html",
         "resources.html",
+        "login.html",
     }))
     # SQLite database file for accreditation-support data (indicators, ILOs,
     # governance docs, faculty/resources/alumni registries). Separate from the
@@ -109,6 +110,10 @@ class ServerSettings:
     # indicators tracker for every visitor, not just whoever last typed it
     # into their own browser's localStorage.
     default_indicators_sheet_url: str = os.environ.get("DEFAULT_INDICATORS_SHEET_URL", "")
+    # Session cookie for the indicators-tracker team login (see auth.py).
+    # Secure=True requires HTTPS (Fly/Render both terminate TLS in front of
+    # the app) — disable only for local http:// testing via COOKIE_SECURE=false.
+    cookie_secure: bool = os.environ.get("COOKIE_SECURE", "true").lower() == "true"
 
 
 # ---------------------------------------------------------------------------

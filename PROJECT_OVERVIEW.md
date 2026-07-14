@@ -39,6 +39,8 @@ backend/            FastAPI application (Python)
                           status/evidence per accreditation indicator + append-only closing-the-loop log
   sheets_sync.py           Pulls status/responsible/evidence/due-date from a shared Google Sheet
                           (public XLSX export, no credentials) into the indicators tracker
+  auth.py                  Team login for the indicators tracker only: 7 per-standard member
+                          accounts + an admin account; stdlib password hashing + session cookies
   curriculum_mapping.py   Standard 2 (Program Design) curriculum mapping — ILOs CRUD, course list
                           (manual or de-duplicated Excel import via course_matching.py), coverage matrix,
                           zero/low-coverage and heavy-duplication analysis

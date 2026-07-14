@@ -3,6 +3,52 @@ const apiUrl = window.location.origin || '';
 let standards = [];
 let indicators = [];
 let openLogPanels = new Set();
+let currentUser = null;
+
+// --- Auth ---
+
+async function requireAuth() {
+    try {
+        const res = await fetch(`${apiUrl}/api/auth/me`);
+        if (!res.ok) throw new Error('not authenticated');
+        currentUser = await res.json();
+    } catch (err) {
+        window.location.href = `login.html?next=indicators-tracker.html`;
+        throw err;
+    }
+}
+
+function renderAuthBar() {
+    const bar = document.getElementById('auth-bar');
+    const roleLabel = currentUser.role === 'admin'
+        ? 'Admin'
+        : `Standard ${currentUser.standard_number}`;
+    bar.innerHTML = `${escapeHtml(currentUser.username)} <span class="badge">${escapeHtml(roleLabel)}</span>`;
+
+    const isAdmin = currentUser.role === 'admin';
+    document.getElementById('sheet-sync-section').hidden = !isAdmin;
+    document.getElementById('generate-ssr-btn').hidden = !isAdmin;
+    document.getElementById('team-access-section').hidden = !isAdmin;
+}
+
+function initLogout() {
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+        await fetch(`${apiUrl}/api/auth/logout`, { method: 'POST' });
+        window.location.href = 'login.html';
+    });
+}
+
+/** Members can only edit rows under their own standard; grey out + lock the rest. */
+function applyStandardAccessLocks() {
+    if (currentUser.role === 'admin') return;
+    document.querySelectorAll('tr[data-indicator-id]').forEach((row) => {
+        const ind = indicators.find((i) => i.id === Number(row.dataset.indicatorId));
+        if (ind && ind.standard_number !== currentUser.standard_number) {
+            row.classList.add('indicator-readonly');
+            row.querySelectorAll('input, select, button').forEach((el) => { el.disabled = true; });
+        }
+    });
+}
 
 /** Escape untrusted text before inserting into innerHTML. */
 function escapeHtml(str) {
@@ -13,6 +59,10 @@ function escapeHtml(str) {
 
 async function fetchJson(url, options) {
     const res = await fetch(url, options);
+    if (res.status === 401) {
+        window.location.href = `login.html?next=indicators-tracker.html`;
+        throw new Error('Session expired');
+    }
     if (!res.ok) {
         const detail = await res.json().catch(() => ({}));
         throw new Error(detail.detail || `Request failed (${res.status})`);
@@ -27,17 +77,23 @@ async function loadStandards() {
     // Clear previously-appended <option>s (keeps the first placeholder option in filterSelect)
     while (filterSelect.options.length > 1) filterSelect.remove(1);
     newSelect.innerHTML = '';
+    // Members can only add indicators under their own standard.
+    const visibleStandards = (currentUser && currentUser.role !== 'admin')
+        ? standards.filter((s) => s.standard_number === currentUser.standard_number)
+        : standards;
     standards.forEach((s) => {
         const opt1 = document.createElement('option');
         opt1.value = s.standard_number;
         opt1.textContent = `${t('ind.standardLabel').replace('{n}', s.standard_number)} — ${s.standard_name}`;
         filterSelect.appendChild(opt1);
-
+    });
+    visibleStandards.forEach((s) => {
         const opt2 = document.createElement('option');
         opt2.value = s.standard_number;
         opt2.textContent = `${t('ind.standardLabel').replace('{n}', s.standard_number)} — ${s.standard_name}`;
         newSelect.appendChild(opt2);
     });
+    if (currentUser && currentUser.role !== 'admin') newSelect.disabled = true;
 }
 
 async function loadSummary() {
@@ -125,6 +181,7 @@ function renderIndicators() {
     }).join('');
 
     attachRowHandlers();
+    applyStandardAccessLocks();
 }
 
 function renderIndicatorRow(ind) {
@@ -388,17 +445,108 @@ function initSsrGeneration() {
     });
 }
 
+// --- Team access management (admin only) ---
+
+async function loadUsers() {
+    if (currentUser.role !== 'admin') return;
+    const users = await fetchJson(`${apiUrl}/api/auth/users`);
+    document.getElementById('users-tbody').innerHTML = users.map((u) => `
+        <tr>
+            <td>${escapeHtml(u.username)}</td>
+            <td>${escapeHtml(u.role)}</td>
+            <td>${u.standard_number ? t('ind.standardLabel').replace('{n}', u.standard_number) : ''}</td>
+            <td>
+                <button type="button" class="btn-header btn-header-secondary reset-pw-btn" data-id="${u.id}">Reset password</button>
+                <button type="button" class="btn-header btn-header-secondary delete-user-btn" data-id="${u.id}">${t('common.delete')}</button>
+            </td>
+        </tr>
+    `).join('') || '<tr><td colspan="4" class="section-desc">No accounts yet.</td></tr>';
+
+    document.querySelectorAll('.reset-pw-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+            const pw = prompt('New temporary password (8+ characters):');
+            if (!pw) return;
+            try {
+                await fetchJson(`${apiUrl}/api/auth/users/${btn.dataset.id}/password`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: pw }),
+                });
+                alert('Password reset.');
+            } catch (err) {
+                alert(`Could not reset password: ${err.message}`);
+            }
+        });
+    });
+    document.querySelectorAll('.delete-user-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+            if (!confirm('Remove this account?')) return;
+            try {
+                await fetchJson(`${apiUrl}/api/auth/users/${btn.dataset.id}`, { method: 'DELETE' });
+                await loadUsers();
+            } catch (err) {
+                alert(`Could not remove account: ${err.message}`);
+            }
+        });
+    });
+}
+
+function initUserManagementForm() {
+    if (currentUser.role !== 'admin') return;
+
+    const standardSelect = document.getElementById('new-user-standard');
+    standardSelect.innerHTML = standards.map((s) =>
+        `<option value="${s.standard_number}">${t('ind.standardLabel').replace('{n}', s.standard_number)} — ${escapeHtml(s.standard_name)}</option>`
+    ).join('');
+
+    const roleSelect = document.getElementById('new-user-role');
+    roleSelect.addEventListener('change', () => {
+        standardSelect.disabled = roleSelect.value === 'admin';
+    });
+
+    document.getElementById('add-user-btn').addEventListener('click', async () => {
+        const username = document.getElementById('new-user-username').value.trim();
+        const password = document.getElementById('new-user-password').value;
+        const role = roleSelect.value;
+        const standardNumber = role === 'member' ? Number(standardSelect.value) : null;
+        if (!username || !password) {
+            alert('Username and password are required.');
+            return;
+        }
+        try {
+            await fetchJson(`${apiUrl}/api/auth/users`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password, role, standard_number: standardNumber }),
+            });
+            document.getElementById('new-user-username').value = '';
+            document.getElementById('new-user-password').value = '';
+            await loadUsers();
+        } catch (err) {
+            alert(`Could not create account: ${err.message}`);
+        }
+    });
+}
+
 async function init() {
+    await requireAuth();
+    renderAuthBar();
+    initLogout();
     await loadStandards();
     await Promise.all([loadSummary(), loadIndicators()]);
     initFilters();
     initAddIndicatorForm();
-    initSsrGeneration();
-    await initSheetSync();
+    if (currentUser.role === 'admin') {
+        initSsrGeneration();
+        await initSheetSync();
+        initUserManagementForm();
+        await loadUsers();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', init);
 document.addEventListener('i18n:applied', async () => {
+    if (!currentUser) return;
     await loadStandards();
     await Promise.all([loadSummary(), loadIndicators()]);
 });

@@ -38,15 +38,20 @@ hands-off.
    ```
    fly volumes create accreditation_data --region iad --size 1
    ```
-4. Optional: set the Google Sheet default and any CORS origin before deploying:
+4. **Required for the indicators tracker login** (see "Team login" below) —
+   set the coordinator/admin account before first deploy:
+   ```
+   fly secrets set ADMIN_USERNAME="coordinator" ADMIN_PASSWORD="choose-a-real-password"
+   ```
+5. Optional: set the Google Sheet default and any CORS origin before deploying:
    ```
    fly secrets set DEFAULT_INDICATORS_SHEET_URL="https://docs.google.com/spreadsheets/d/..."
    ```
-5. Deploy:
+6. Deploy:
    ```
    fly deploy
    ```
-6. `fly open` (or visit `https://<your-app-name>.fly.dev`) once it's up.
+7. `fly open` (or visit `https://<your-app-name>.fly.dev`) once it's up.
 
 `fly.toml` sets `min_machines_running = 0`, so the app scales to zero and
 stops billing/using resources when idle, then cold-starts on the next
@@ -63,15 +68,17 @@ comfortably inside the free allowance.
    `plan: starter`) — Render's free tier doesn't support them. Without a
    disk, the SQLite database and uploaded documents would be wiped on
    every redeploy.
-4. Set the `ALLOWED_ORIGINS` env var if you'll ever call the API from a
+4. **Required for the indicators tracker login** — set `ADMIN_USERNAME` and
+   `ADMIN_PASSWORD` env vars before first deploy (see "Team login" below).
+5. Set the `ALLOWED_ORIGINS` env var if you'll ever call the API from a
    different origin than the deployed site itself (same-origin page loads,
    which is how this app is normally used, don't need it — CORS only
    matters for cross-origin `fetch` calls).
-5. Optional: set `DEFAULT_INDICATORS_SHEET_URL` to your team's Google
+6. Optional: set `DEFAULT_INDICATORS_SHEET_URL` to your team's Google
    Sheet link so the "Sync from Google Sheet" box on the indicators
    tracker is pre-filled for every visitor, not just whoever last typed it
    into their own browser.
-6. Deploy. Render assigns a URL like `https://academic-analytics-accreditation.onrender.com`.
+7. Deploy. Render assigns a URL like `https://academic-analytics-accreditation.onrender.com`.
 
 ## What's on the persistent disk/volume
 
@@ -85,6 +92,29 @@ read by `backend/config.py`:
 
 Both default to paths under `backend/` when unset (unchanged local-dev
 behavior) — see `backend/config.py`.
+
+## Team login (indicators tracker only)
+
+The indicators tracker (`indicators-tracker.html`) is gated by a login,
+scoped so each of the 7 people working on the standards can only edit
+indicators under their own standard, while the admin (coordinator) can see
+and edit everything and manages accounts. The rest of the app (governance,
+faculty, resources, curriculum, alumni, uploads) stays open, unchanged.
+
+- **First deploy**: set `ADMIN_USERNAME` and `ADMIN_PASSWORD` before the
+  app starts for the first time (`fly secrets set ...` / Render env vars).
+  On startup, if no admin account exists yet, one is created from those
+  two values — this only happens once, so changing them later does
+  nothing (use the admin UI's "Reset password" instead).
+- **Team accounts**: sign in as the admin, open the "Manage Team Access"
+  section on the indicators tracker page, and create one account per
+  standard (username, temporary password, standard number 1-7). Each
+  member should change their own password after first login — that isn't
+  self-service yet, so for now use "Reset password" as the admin if
+  someone needs a new one.
+- No new dependencies: passwords are hashed with stdlib PBKDF2 and
+  sessions are random tokens stored server-side (hashed the same way), set
+  as an httpOnly cookie. See `backend/auth.py`.
 
 ## Google Sheet sync
 

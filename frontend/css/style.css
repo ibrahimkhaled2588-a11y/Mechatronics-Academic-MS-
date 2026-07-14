@@ -2405,3 +2405,80 @@ html[dir="rtl"] .curriculum-add-row,
 html[dir="rtl"] .governance-upload-form {
   direction: rtl;
 }
+
+/* Login page */
+.login-main {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.login-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-align: center;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.login-field input {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.75rem;
+  font-family: var(--font);
+  font-size: 0.95rem;
+}
+
+.login-submit {
+  margin-top: 0.4rem;
+  width: 100%;
+}
+
+.login-error {
+  color: var(--danger);
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 0;
+}
+
+/* Auth bar on the indicators tracker (user badge + logout) */
+.auth-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: #e5e7eb;
+}
+
+.auth-bar .badge {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.indicator-readonly {
+  opacity: 0.55;
+  pointer-events: none;
+}

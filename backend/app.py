@@ -12,7 +12,7 @@ import uuid
 
 from typing import List
 
-from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi import Cookie, Depends, FastAPI, File, Form, HTTPException, Request, Response, UploadFile
 from pydantic import BaseModel
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
@@ -43,6 +43,7 @@ import sheets_sync
 import resources
 import alumni
 import ssr_report
+import auth
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +81,7 @@ app.mount("/static", StaticFiles(directory=_frontend_dir), name="static")
 @app.on_event("startup")
 def _seed_accreditation_defaults() -> None:
     indicators.seed_defaults()
+    auth.bootstrap_admin()
 
 # ---------------------------------------------------------------------------
 # In-memory upload history  (bounded to prevent memory leak)
@@ -626,6 +628,111 @@ async def api_survey_template():
 
 
 # ---------------------------------------------------------------------------
+# Team login (indicators tracker only — see auth.py)
+# ---------------------------------------------------------------------------
+SESSION_COOKIE_NAME = "indicators_session"
+
+
+def get_current_user(indicators_session: str | None = Cookie(default=None)) -> dict:
+    user = auth.get_session_user(indicators_session)
+    if user is None:
+        raise HTTPException(status_code=401, detail="Login required")
+    return user
+
+
+def require_admin(user: dict = Depends(get_current_user)) -> dict:
+    if user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user
+
+
+def require_standard_write(indicator_id: int, user: dict = Depends(get_current_user)) -> dict:
+    """A member may only write to indicators under their own standard;
+    an admin may write to any."""
+    ind = indicators.get_indicator(indicator_id)
+    if ind is None:
+        raise HTTPException(status_code=404, detail="Indicator not found")
+    if not auth.can_edit_standard(user, ind["standard_number"]):
+        raise HTTPException(status_code=403, detail="You can only edit indicators under your own standard")
+    return user
+
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
+    role: str
+    standard_number: int | None = None
+
+
+class PasswordReset(BaseModel):
+    password: str
+
+
+@app.post("/api/auth/login")
+def api_auth_login(body: LoginRequest, response: Response):
+    user = auth.authenticate(body.username, body.password)
+    if user is None:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    token = auth.create_session(user["id"])
+    response.set_cookie(
+        SESSION_COOKIE_NAME, token,
+        httponly=True, secure=_server.cookie_secure, samesite="lax",
+        max_age=auth.SESSION_LIFETIME_DAYS * 24 * 3600,
+    )
+    return user
+
+
+@app.post("/api/auth/logout")
+def api_auth_logout(response: Response, indicators_session: str | None = Cookie(default=None)):
+    auth.delete_session(indicators_session)
+    response.delete_cookie(SESSION_COOKIE_NAME)
+    return {"ok": True}
+
+
+@app.get("/api/auth/me")
+def api_auth_me(user: dict = Depends(get_current_user)):
+    return user
+
+
+@app.get("/api/auth/users")
+def api_auth_list_users(_admin: dict = Depends(require_admin)):
+    return auth.list_users()
+
+
+@app.post("/api/auth/users")
+def api_auth_create_user(body: UserCreate, _admin: dict = Depends(require_admin)):
+    try:
+        return auth.create_user(body.username, body.password, body.role, body.standard_number)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.patch("/api/auth/users/{user_id}/password")
+def api_auth_reset_password(user_id: int, body: PasswordReset, _admin: dict = Depends(require_admin)):
+    try:
+        result = auth.reset_password(user_id, body.password)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    if result is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return result
+
+
+@app.delete("/api/auth/users/{user_id}")
+def api_auth_delete_user(user_id: int, admin: dict = Depends(require_admin)):
+    if user_id == admin["id"]:
+        raise HTTPException(status_code=422, detail="You cannot delete your own account")
+    if not auth.delete_user(user_id):
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"deleted": True}
+
+
+# ---------------------------------------------------------------------------
 # Accreditation — Standard 7 Indicators Tracker
 # ---------------------------------------------------------------------------
 class IndicatorCreate(BaseModel):
@@ -652,7 +759,7 @@ class LoopLogEntryCreate(BaseModel):
 
 
 @app.get("/api/indicators/sheet-config")
-def api_indicators_sheet_config():
+def api_indicators_sheet_config(_user: dict = Depends(get_current_user)):
     """Server-configured default Google Sheet URL (DEFAULT_INDICATORS_SHEET_URL),
     so the sync input is pre-filled for every visitor, not just whoever last
     typed it into their own browser."""
@@ -660,26 +767,26 @@ def api_indicators_sheet_config():
 
 
 @app.get("/api/indicators/standards")
-def api_indicators_standards():
+def api_indicators_standards(_user: dict = Depends(get_current_user)):
     """Return the 7 standard numbers/names for building the tracker UI."""
     return [{"standard_number": n, "standard_name": name} for n, name in indicators.STANDARDS.items()]
 
 
 @app.get("/api/indicators/summary")
-def api_indicators_summary():
+def api_indicators_summary(_user: dict = Depends(get_current_user)):
     """Per-standard status counts, for a progress overview."""
     return [s.__dict__ for s in indicators.summarize_by_standard()]
 
 
 @app.get("/api/indicators")
-def api_indicators_list(standard_number: int | None = None, status: str | None = None):
+def api_indicators_list(standard_number: int | None = None, status: str | None = None, _user: dict = Depends(get_current_user)):
     if status is not None and status not in indicators.VALID_STATUSES:
         raise HTTPException(status_code=422, detail=f"status must be one of {indicators.VALID_STATUSES}")
     return indicators.list_indicators(standard_number=standard_number, status=status)
 
 
 @app.get("/api/indicators/{indicator_id}")
-def api_indicators_get(indicator_id: int):
+def api_indicators_get(indicator_id: int, _user: dict = Depends(get_current_user)):
     result = indicators.get_indicator(indicator_id)
     if result is None:
         raise HTTPException(status_code=404, detail="Indicator not found")
@@ -687,7 +794,9 @@ def api_indicators_get(indicator_id: int):
 
 
 @app.post("/api/indicators")
-def api_indicators_create(body: IndicatorCreate):
+def api_indicators_create(body: IndicatorCreate, user: dict = Depends(get_current_user)):
+    if not auth.can_edit_standard(user, body.standard_number):
+        raise HTTPException(status_code=403, detail="You can only add indicators under your own standard")
     try:
         return indicators.create_indicator(
             standard_number=body.standard_number,
@@ -701,7 +810,7 @@ def api_indicators_create(body: IndicatorCreate):
 
 
 @app.patch("/api/indicators/{indicator_id}")
-def api_indicators_update(indicator_id: int, body: IndicatorUpdate):
+def api_indicators_update(indicator_id: int, body: IndicatorUpdate, _user: dict = Depends(require_standard_write)):
     try:
         result = indicators.update_indicator(indicator_id, **body.model_dump(exclude_unset=True))
     except ValueError as exc:
@@ -712,7 +821,7 @@ def api_indicators_update(indicator_id: int, body: IndicatorUpdate):
 
 
 @app.post("/api/indicators/{indicator_id}/log")
-def api_indicators_add_log(indicator_id: int, body: LoopLogEntryCreate):
+def api_indicators_add_log(indicator_id: int, body: LoopLogEntryCreate, _user: dict = Depends(require_standard_write)):
     try:
         result = indicators.add_log_entry(
             indicator_id,
@@ -733,10 +842,11 @@ class SheetSyncRequest(BaseModel):
 
 
 @app.post("/api/indicators/sync-sheet")
-def api_indicators_sync_sheet(body: SheetSyncRequest):
+def api_indicators_sync_sheet(body: SheetSyncRequest, _admin: dict = Depends(require_admin)):
     """Pull status/responsible/evidence/due-date (and official wording) from
     the team's shared Google Sheet into the indicators tracker. The sheet
-    must be shared as "Anyone with the link can view"."""
+    must be shared as "Anyone with the link can view". Admin-only since it
+    can overwrite indicators across every standard at once."""
     if not body.sheet_url or not body.sheet_url.strip():
         raise HTTPException(status_code=422, detail="sheet_url is required")
     try:

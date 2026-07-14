@@ -106,7 +106,8 @@ The system monitors **data quality**, detects **anomalies**, evaluates **reliabi
 - `backend/ml_models.py` – Quality prediction, course risk probabilities.  
 - `backend/alerts.py` – Alert generation from thresholds.  
 - `backend/db.py` – Shared SQLite connection helper for accreditation-support data (see below).  
-- `backend/indicators.py` – Standard 7 accreditation indicators tracker (list/status/evidence, closing-the-loop log); integration point for the other accreditation-support modules as they land.  
+- `backend/indicators.py` – Standard 7 accreditation indicators tracker (list/status/evidence, closing-the-loop log); integration point for the other accreditation-support modules as they land.
+- `backend/auth.py` – Team login scoped to the indicators tracker only: 7 member accounts (one per standard, can only edit their own standard's indicators) plus an admin account (sees/edits everything, manages accounts). Stdlib PBKDF2 password hashing + server-side session tokens in an httpOnly cookie — no new dependencies. Bootstraps the first admin account from `ADMIN_USERNAME`/`ADMIN_PASSWORD` on startup. The rest of the app is intentionally left open.  
 - `backend/curriculum_mapping.py` – Standard 2 curriculum mapping: ILOs CRUD, course list (manual entry or de-duplicated import via `course_matching.py`), courses x ILOs coverage matrix, and coverage-gap/duplication analysis.  
 - `backend/curriculum_map_report.py` – Curriculum map DOCX export (matrix + findings), built from scratch with python-docx following `course_report_docx.py`'s pattern.  
 - `backend/governance.py` – Standard 1 governance: versioned mission/goals text, a council/committee document register (files on disk under `backend/exports/governance_documents/`, metadata in SQLite), and an append-only stakeholder-participation log.  
