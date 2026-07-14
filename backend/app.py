@@ -41,6 +41,7 @@ import governance
 import faculty_data
 import sheets_sync
 import resources
+import alumni
 
 logger = logging.getLogger(__name__)
 
@@ -1146,6 +1147,75 @@ def api_resources_delete_budget(entry_id: int):
 @app.get("/api/resources/dashboard")
 def api_resources_dashboard(days_ahead: int = 30):
     return resources.get_dashboard_summary(days_ahead)
+
+
+# ---------------------------------------------------------------------------
+# Accreditation — Standard 4 Alumni Registry
+# ---------------------------------------------------------------------------
+class AlumnusCreate(BaseModel):
+    name: str
+    student_id: str | None = None
+    graduation_year: int | None = None
+    employer: str | None = None
+    current_role: str | None = None
+    contact_email: str | None = None
+
+
+class AlumnusUpdate(BaseModel):
+    student_id: str | None = None
+    name: str | None = None
+    graduation_year: int | None = None
+    employer: str | None = None
+    current_role: str | None = None
+    contact_email: str | None = None
+
+
+@app.get("/api/alumni")
+def api_alumni_list(graduation_year: int | None = None):
+    return alumni.list_alumni(graduation_year=graduation_year)
+
+
+@app.post("/api/alumni")
+def api_alumni_create(body: AlumnusCreate):
+    try:
+        return alumni.create_alumnus(
+            name=body.name,
+            student_id=body.student_id,
+            graduation_year=body.graduation_year,
+            employer=body.employer,
+            current_role=body.current_role,
+            contact_email=body.contact_email,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.patch("/api/alumni/{alumnus_id}")
+def api_alumni_update(alumnus_id: int, body: AlumnusUpdate):
+    result = alumni.update_alumnus(alumnus_id, **body.model_dump(exclude_unset=True))
+    if result is None:
+        raise HTTPException(status_code=404, detail="Alumnus not found")
+    return result
+
+
+@app.post("/api/alumni/{alumnus_id}/mark-surveyed")
+def api_alumni_mark_surveyed(alumnus_id: int):
+    result = alumni.mark_surveyed(alumnus_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Alumnus not found")
+    return result
+
+
+@app.delete("/api/alumni/{alumnus_id}")
+def api_alumni_delete(alumnus_id: int):
+    if not alumni.delete_alumnus(alumnus_id):
+        raise HTTPException(status_code=404, detail="Alumnus not found")
+    return {"deleted": True}
+
+
+@app.get("/api/alumni/summary")
+def api_alumni_summary():
+    return alumni.get_registry_summary()
 
 
 # ---------------------------------------------------------------------------

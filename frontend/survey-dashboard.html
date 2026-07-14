@@ -87,9 +87,52 @@
             <h3 class="section-title">Output Files</h3>
             <div id="surveyLinks" class="survey-links"></div>
         </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="alumni">
+                <span class="section-title">Alumni Registry</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <p class="section-desc">
+                    A named graduate roster alongside the survey results above. The uploaded survey
+                    responses stay anonymous/aggregate (no per-response identity to match against), so
+                    this tracks per-alumnus employment and whether they participated in a survey round —
+                    giving the coordinator both pieces of Standard 4 evidence on one page.
+                </p>
+                <div id="alumni-kpi-grid" class="indicators-summary-grid"></div>
+                <div class="curriculum-add-row">
+                    <input type="text" id="new-alum-name" placeholder="Name" class="curriculum-input-lg">
+                    <input type="text" id="new-alum-student-id" placeholder="Student ID" class="curriculum-input-sm">
+                    <input type="number" id="new-alum-year" placeholder="Graduation year" class="curriculum-input-sm">
+                    <input type="text" id="new-alum-employer" placeholder="Employer (optional)" class="curriculum-input-sm">
+                    <input type="text" id="new-alum-role" placeholder="Current role (optional)" class="curriculum-input-sm">
+                    <button type="button" id="add-alum-btn" class="btn-header btn-header-primary">+ Add</button>
+                </div>
+                <label>
+                    Filter by graduation year
+                    <select id="filter-alum-year"><option value="">All years</option></select>
+                </label>
+                <table class="data-table" id="alumni-table">
+                    <thead><tr><th>Name</th><th>Student ID</th><th>Grad Year</th><th>Employer</th><th>Role</th><th>Surveyed</th><th></th></tr></thead>
+                    <tbody id="alumni-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="dashboard-section section-collapsible">
+            <button type="button" class="section-toggle" aria-expanded="true" data-section="std4">
+                <span class="section-title">Standard 4 Indicators</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div class="section-body">
+                <div id="std4-indicators-container"></div>
+            </div>
+        </section>
     </main>
 
     <script src="/static/js/survey_dashboard.js"></script>
+    <script src="/static/js/alumni.js"></script>
     <script src="/static/js/chatbot.js"></script>
 </body>
 </html>

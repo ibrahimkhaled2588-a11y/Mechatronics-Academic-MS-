@@ -2331,6 +2331,12 @@ body.program-page .dashboard-section .section-title::after {
   margin-bottom: 1.25rem;
 }
 
+/* Alumni Registry (Standard 4, on survey-dashboard.html) */
+.survey-main .indicators-summary-grid,
+.survey-main .curriculum-add-row {
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 480px) {
   #cb-window { width: calc(100vw - 2rem); right: 1rem; bottom: 4.5rem; }
   #cb-toggle { right: 1rem; bottom: 1rem; }
