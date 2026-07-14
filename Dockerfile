@@ -1,5 +1,13 @@
 FROM python:3.11-slim
 
+# Arabic-capable fonts for server-side rendering (survey_dashboard.py builds
+# PNG/PPTX dashboards from Arabic survey text via matplotlib). Without these,
+# the base image has no font that can render Arabic glyphs at all.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    fonts-noto-naskh-arabic \
+    fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 COPY backend/requirements.txt backend/requirements.txt
