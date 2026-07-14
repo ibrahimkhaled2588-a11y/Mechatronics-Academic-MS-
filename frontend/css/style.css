@@ -676,6 +676,7 @@ body.program-page {
 }
 .section-collapsible .section-body {
   overflow: hidden;
+  overflow-x: auto;
   max-height: 3000px;
   transition: max-height 0.4s ease-out, opacity 0.25s;
 }

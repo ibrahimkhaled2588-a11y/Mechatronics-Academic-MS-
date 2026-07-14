@@ -312,11 +312,20 @@ function initAddIndicatorForm() {
 
 const SHEET_URL_STORAGE_KEY = 'indicatorsTrackerSheetUrl';
 
-function initSheetSync() {
+async function initSheetSync() {
     const input = document.getElementById('sheet-url-input');
     const statusEl = document.getElementById('sync-status-text');
     const saved = localStorage.getItem(SHEET_URL_STORAGE_KEY);
-    if (saved) input.value = saved;
+    if (saved) {
+        input.value = saved;
+    } else {
+        try {
+            const cfg = await fetchJson(`${apiUrl}/api/indicators/sheet-config`);
+            if (cfg.default_sheet_url) input.value = cfg.default_sheet_url;
+        } catch (err) {
+            // no server-configured default; leave blank
+        }
+    }
 
     document.getElementById('sync-sheet-btn').addEventListener('click', async () => {
         const url = input.value.trim();
@@ -347,7 +356,7 @@ async function init() {
     await Promise.all([loadSummary(), loadIndicators()]);
     initFilters();
     initAddIndicatorForm();
-    initSheetSync();
+    await initSheetSync();
 }
 
 document.addEventListener('DOMContentLoaded', init);

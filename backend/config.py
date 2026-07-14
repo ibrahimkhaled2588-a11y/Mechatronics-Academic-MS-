@@ -96,6 +96,18 @@ class ServerSettings:
         "ACCREDITATION_DB_PATH",
         os.path.join(os.path.dirname(__file__), "data", "accreditation.db"),
     )
+    # Base directory for generated/uploaded files (survey PPTX/PNG exports,
+    # governance document register). Point this at a persistent disk mount
+    # in production (see DEPLOYMENT.md) — without one, anything written here
+    # is lost on every redeploy.
+    exports_dir: str = os.environ.get(
+        "EXPORTS_DIR",
+        os.path.join(os.path.dirname(__file__), "exports"),
+    )
+    # Optional: pre-fills the "Sync from Google Sheet" input on the
+    # indicators tracker for every visitor, not just whoever last typed it
+    # into their own browser's localStorage.
+    default_indicators_sheet_url: str = os.environ.get("DEFAULT_INDICATORS_SHEET_URL", "")
 
 
 # ---------------------------------------------------------------------------

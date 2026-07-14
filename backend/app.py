@@ -463,8 +463,8 @@ async def export_program_docx(request: Request):
 # Survey dashboard routes
 # ---------------------------------------------------------------------------
 
-_SURVEY_EXPORTS_DIR = os.path.join(_base, "exports", "survey_dashboards")
-_GOVERNANCE_DOCS_DIR = os.path.join(_base, "exports", "governance_documents")
+_SURVEY_EXPORTS_DIR = os.path.join(_server.exports_dir, "survey_dashboards")
+_GOVERNANCE_DOCS_DIR = os.path.join(_server.exports_dir, "governance_documents")
 
 
 @app.post("/api/survey/dashboard")
@@ -618,6 +618,14 @@ class LoopLogEntryCreate(BaseModel):
     action_taken: str | None = None
     entry_status: str | None = None
     entry_date: str | None = None
+
+
+@app.get("/api/indicators/sheet-config")
+def api_indicators_sheet_config():
+    """Server-configured default Google Sheet URL (DEFAULT_INDICATORS_SHEET_URL),
+    so the sync input is pre-filled for every visitor, not just whoever last
+    typed it into their own browser."""
+    return {"default_sheet_url": _server.default_indicators_sheet_url}
 
 
 @app.get("/api/indicators/standards")
