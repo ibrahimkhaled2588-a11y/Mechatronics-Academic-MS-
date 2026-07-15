@@ -533,6 +533,11 @@ async function init() {
     renderAuthBar();
     initLogout();
     await loadStandards();
+    // Lead a member straight to their own standard's work instead of the
+    // full mixed list; admins keep seeing everything by default.
+    if (currentUser.role !== 'admin' && currentUser.standard_number) {
+        document.getElementById('filter-standard').value = String(currentUser.standard_number);
+    }
     await Promise.all([loadSummary(), loadIndicators()]);
     initFilters();
     initAddIndicatorForm();

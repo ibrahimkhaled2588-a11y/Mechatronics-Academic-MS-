@@ -136,9 +136,15 @@ async def _read_limited(f: UploadFile) -> bytes:
 
 @app.get("/")
 def root():
-    index_path = os.path.join(_frontend_dir, "index.html")
-    if os.path.isfile(index_path):
-        return FileResponse(index_path)
+    # The team login is the front door: opening the bare link leads
+    # straight to sign-in, and login.js redirects an already-signed-in
+    # visitor past the form into the indicators tracker automatically.
+    # The general tool hub is still reachable directly at /index.html
+    # (every page's "Home" link points there) — only the root path itself
+    # changed.
+    login_path = os.path.join(_frontend_dir, "login.html")
+    if os.path.isfile(login_path):
+        return FileResponse(login_path)
     return HTMLResponse(
         "<html><body><h1>Academic Analytics API</h1>"
         "<p><a href='/docs'>OpenAPI docs</a></p></body></html>"
