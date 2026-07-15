@@ -106,11 +106,18 @@ faculty, resources, curriculum, alumni, uploads) stays open, unchanged.
   On startup, if no admin account exists yet, one is created from those
   two values — this only happens once, so changing them later does
   nothing (use the admin UI's "Reset password" instead).
-- **Team accounts**: sign in as the admin, open the "Manage Team Access"
-  section on the indicators tracker page, and create one account per
-  standard (username, temporary password, standard number 1-7). Each
-  member should change their own password after first login — that isn't
-  self-service yet, so for now use "Reset password" as the admin if
+- **Team accounts**: either use the "Manage Team Access" section on the
+  indicators tracker page (sign in as admin, add one account per standard
+  by hand), or run `backend/scripts/seed_team_accounts.py` once to create
+  all 7 (`std1`..`std7`) in one go with freshly generated passwords,
+  printed to your terminal so you can hand them out:
+  ```
+  BASE_URL=https://your-app.fly.dev ADMIN_USERNAME=coordinator ADMIN_PASSWORD=... \
+      python backend/scripts/seed_team_accounts.py
+  ```
+  Safe to re-run — existing usernames are skipped, never overwritten.
+  Each member should change their own password after first login — that
+  isn't self-service yet, so for now use "Reset password" as the admin if
   someone needs a new one.
 - No new dependencies: passwords are hashed with stdlib PBKDF2 and
   sessions are random tokens stored server-side (hashed the same way), set
