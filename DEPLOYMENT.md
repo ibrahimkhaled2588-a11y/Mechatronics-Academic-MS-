@@ -93,13 +93,26 @@ read by `backend/config.py`:
 Both default to paths under `backend/` when unset (unchanged local-dev
 behavior) — see `backend/config.py`.
 
-## Team login (indicators tracker only)
+## Team login
 
-The indicators tracker (`indicators-tracker.html`) is gated by a login,
-scoped so each of the 7 people working on the standards can only edit
-indicators under their own standard, while the admin (coordinator) can see
-and edit everything and manages accounts. The rest of the app (governance,
-faculty, resources, curriculum, alumni, uploads) stays open, unchanged.
+The whole site now sits behind a login — opening the bare deployed link
+serves the sign-in page directly. Each of the 7 people working on the
+standards can only see and edit indicators under their own standard (not
+even the names/progress of the other 6), and can't navigate to any other
+page in the site (dashboard, reports, governance, faculty, resources,
+curriculum, alumni, QA chat) — every one of those redirects a member
+straight back to the indicators tracker. The admin (coordinator) can see
+and edit everything and manages the 7 accounts.
+
+**Known limitation**: the page-level lock above is enforced in the
+browser (redirects members away from pages/data they shouldn't see), and
+the indicators API itself is properly access-controlled server-side. But
+the *other* modules' APIs (governance, faculty, resources, curriculum,
+alumni, the upload/analytics pipeline) still have no login check at the
+API level — a member who bypassed the UI and called those endpoints
+directly (e.g. via browser dev tools) could still reach them. Ask if you
+want those locked down too; it's a larger change since each has its own
+set of endpoints with no auth today.
 
 - **First deploy**: set `ADMIN_USERNAME` and `ADMIN_PASSWORD` before the
   app starts for the first time (`fly secrets set ...` / Render env vars).

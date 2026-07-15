@@ -90,6 +90,7 @@ class ServerSettings:
         "faculty-dashboard.html",
         "resources.html",
         "login.html",
+        "qa-chat.html",
     }))
     # SQLite database file for accreditation-support data (indicators, ILOs,
     # governance docs, faculty/resources/alumni registries). Separate from the

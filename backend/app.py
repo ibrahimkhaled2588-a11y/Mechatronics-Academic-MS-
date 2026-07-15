@@ -773,28 +773,45 @@ def api_indicators_sheet_config(_user: dict = Depends(get_current_user)):
 
 
 @app.get("/api/indicators/standards")
-def api_indicators_standards(_user: dict = Depends(get_current_user)):
-    """Return the 7 standard numbers/names for building the tracker UI."""
-    return [{"standard_number": n, "standard_name": name} for n, name in indicators.STANDARDS.items()]
+def api_indicators_standards(user: dict = Depends(get_current_user)):
+    """Return standard numbers/names for building the tracker UI. A member
+    only sees their own standard — not even the name of the others."""
+    all_standards = [{"standard_number": n, "standard_name": name} for n, name in indicators.STANDARDS.items()]
+    if user["role"] == "admin":
+        return all_standards
+    return [s for s in all_standards if s["standard_number"] == user["standard_number"]]
 
 
 @app.get("/api/indicators/summary")
-def api_indicators_summary(_user: dict = Depends(get_current_user)):
-    """Per-standard status counts, for a progress overview."""
-    return [s.__dict__ for s in indicators.summarize_by_standard()]
+def api_indicators_summary(user: dict = Depends(get_current_user)):
+    """Per-standard status counts, for a progress overview. A member only
+    sees their own standard's progress, not everyone else's."""
+    summary = [s.__dict__ for s in indicators.summarize_by_standard()]
+    if user["role"] == "admin":
+        return summary
+    return [s for s in summary if s["standard_number"] == user["standard_number"]]
 
 
 @app.get("/api/indicators")
-def api_indicators_list(standard_number: int | None = None, status: str | None = None, _user: dict = Depends(get_current_user)):
+def api_indicators_list(standard_number: int | None = None, status: str | None = None, user: dict = Depends(get_current_user)):
     if status is not None and status not in indicators.VALID_STATUSES:
         raise HTTPException(status_code=422, detail=f"status must be one of {indicators.VALID_STATUSES}")
+    # A member's results are always scoped to their own standard, regardless
+    # of what standard_number they ask for — they can't browse other
+    # standards' indicators even read-only.
+    if user["role"] != "admin":
+        standard_number = user["standard_number"]
     return indicators.list_indicators(standard_number=standard_number, status=status)
 
 
 @app.get("/api/indicators/{indicator_id}")
-def api_indicators_get(indicator_id: int, _user: dict = Depends(get_current_user)):
+def api_indicators_get(indicator_id: int, user: dict = Depends(get_current_user)):
     result = indicators.get_indicator(indicator_id)
     if result is None:
+        raise HTTPException(status_code=404, detail="Indicator not found")
+    if user["role"] != "admin" and result["standard_number"] != user["standard_number"]:
+        # 404, not 403 -- a member shouldn't be able to tell other
+        # standards' indicators even exist.
         raise HTTPException(status_code=404, detail="Indicator not found")
     return result
 
