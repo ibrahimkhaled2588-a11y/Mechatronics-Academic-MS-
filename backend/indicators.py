@@ -31,44 +31,60 @@ STANDARDS: dict[int, str] = {
     7: "Quality Assurance & Program Evaluation",
 }
 
-# Placeholder indicator wording only — to be replaced with the official
-# NAQAAE indicator text. Kept generic on purpose (see prompt: "don't invent
-# official wording").
-_PLACEHOLDER_INDICATORS: dict[int, list[str]] = {
-    1: [
-        "[Placeholder] Documented program mission approved by the relevant council",
-        "[Placeholder] Program management structure and responsibilities defined",
-        "[Placeholder] Evidence of stakeholder participation in governance decisions",
+# Official NAQAAE 2022 modified accreditation-standards indicator wording
+# (34 indicators total, unevenly split 4/4/8/3/6/4/5 across the 7 standards
+# — that split is the real official structure, not an artifact worth
+# "balancing"). Replaced the original placeholder text once the official
+# document became available; see git history for the placeholder wording
+# this superseded.
+_SEED_INDICATORS: dict[int, list[str]] = {
+    1: [  # المعيار 1: رسالة وإدارة البرنامج (4 مؤشرات)
+        "للبرنامج رسالة واضحة ومعتمدة ومعلنة، تتسق مع رسالة المؤسسة ومع احتياجات المجتمع، اشترك في اعدادها الأطراف المعنية، وتتم مراجعتها وتحديثها بشكل دوري لمواكبة المستجدات",
+        "للبرنامج قيادة مؤهلة يتم اختيارها طبقًا لمعايير معتمدة ومعلنة ويتم تقييم أدائها دوريًا، تدير البرنامج بالاشتراك مع المجالس واللجان المعنية والمحددة الاختصاصات وفقًا للهيكل التنظيمي للمؤسسة",
+        "يستخدم البرنامج وسائل متنوعة لإتاحة معلومات شاملة عنه تبرز سماته التنافسية وتعمل على التسويق له محليًا وإقليميًا ودوليًا",
+        "في حالة وجود اتفاقيات أو شراكات للبرنامج مع مؤسسات دولية، يتم تحديد الأدوار والمسئوليات للطرفين، ويتم رصد أوجه الاستفادة",
     ],
-    2: [
-        "[Placeholder] Program Intended Learning Outcomes (ILOs) documented",
-        "[Placeholder] Curriculum map showing course coverage of ILOs",
-        "[Placeholder] Evidence of periodic curriculum review",
+    2: [  # المعيار 2: تصميم البرنامج (4 مؤشرات)
+        "يتبنى البرنامج المعايير الأكاديمية القومية المرجعية NARS أو أية معايير مرجعية أخرى، وفق إجراءات معتمدة من خلال المجالس الرسمية، ويتم التوعية بالمعايير المتبناة لجميع الأطراف المعنية",
+        "يحقق هيكل البرنامج: التكامل بين مكوناته من مقررات وأنشطة تتسق مع بعضها وتعكس المستجدات العلمية والمهنية في مجال التخصص، والتوازن بين المحتوى النظري والتطبيقي (التدريب العملي/الميداني)، والتوافق بين المتطلبات العامة ومتطلبات التخصص، بما يحقق أهداف البرنامج",
+        "للبرنامج توصيف معتمد ومعلن طبقًا للائحته المعتمدة",
+        "لمقررات البرنامج توصيف معتمد ومعلن طبقًا للائحته المعتمدة",
     ],
-    3: [
-        "[Placeholder] Assessment methods aligned with course ILOs",
-        "[Placeholder] Evidence of teaching quality monitoring",
-        "[Placeholder] Grade distribution and performance analytics reviewed periodically",
+    3: [  # المعيار 3: التعليم والتعلم والتقييم (8 مؤشرات)
+        "يطبق البرنامج طرقًا متنوعة للتعليم والتعلم تحقق المخرجات التعليمية للمقررات",
+        "يتم تطبيق طرق للتعليم والتعلم تشجع الطالب على أخذ دور فعال في عملية تعلمهم وتدعم التعلم الذاتي وتنمية مهارات التفكير العليا ومهارات التوظف وريادة الأعمال",
+        "يتم تنفيذ التدريب الميداني بالمشاركة مع الجهات المعنية وجهات التوظيف الملائمة لضمان تحقق التوجيه المهني للطالب، من خلال خطة وآليات وإجراءات واضحة ومعتمدة ومعلنة تنظم عملية التدريب والإشراف عليه وتقييمه",
+        "يتم تقييم الطالب باستخدام أساليب متنوعة (تحريري وعملي وشفهي وإكلينيكي وميداني، ومشروعات وتكليفات، ودراسات حالة وملف إنجاز وغيرها)، وتتوازن الدرجات المخصصة لأساليب التقييم المختلفة",
+        "للبرنامج آلية معتمدة لوضع الامتحانات المختلفة، وإجراءات للتحقق من تغطيتها للمحتوى العلمي للمقررات، ومن توافقها واستيفائها للمخرجات التعليمية/الجدارات للبرنامج التعليمي والمقررات الدراسية",
+        "للبرنامج آليات معتمدة ومعلنة للتأكد من عدالة تقييم الطالب من خلال: نظم إدارة وإجراءات التقييمات المختلفة، ونظم عمل الكنترول، وتوثيق نتائج الامتحانات، وقواعد ضمان السرية والعدالة",
+        "يتم تحليل نتائج تقييم الطالب، ومناقشتها في المجالس واللجان المختصة، والاستفادة منها في تطوير البرنامج",
+        "يتم تقديم التغذية الراجعة للطالب عن أدائهم في التعلم والتقييم بما يدعم تعلمهم",
     ],
-    4: [
-        "[Placeholder] Student admission and progression records maintained",
-        "[Placeholder] Graduate/alumni tracking and employment outcomes recorded",
-        "[Placeholder] Student satisfaction survey results reviewed",
+    4: [  # المعيار 4: الطلاب والخريجون (3 مؤشرات)
+        "يوجد نظام معلن ومفعل للدعم الأكاديمي لجميع الطلاب المقيدين بالبرنامج (الإرشاد الأكاديمي/الريادة العلمية)، يتضمن آليات وإجراءات لمتابعة تقدمهم الدراسي، وتحديد ودعم الطلاب المتفوقين والموهوبين والمتعثرين، ويتم تقييم فعاليته دوريًا وتطويره في ضوء نتائج التقييم",
+        "يشجع البرنامج اشتراك الطلاب في أنشطة طلابية متنوعة تتضمن فرص التعرض المبكر والمستمر لاكتسابهم خبرات بحثية ومجتمعية، وتتوافر بيانات عن أعداد الطلاب المشاركين بهذه الأنشطة، كما يوفر البرنامج خدمات الإرشاد والتوجيه المهني للطلاب",
+        "توجد إجراءات مفعلة للتواصل مع الخريجين ودعمهم ومتابعة تقدمهم المهني",
     ],
-    5: [
-        "[Placeholder] Faculty roster with qualifications and specialization on file",
-        "[Placeholder] Teaching load balance monitored per semester",
-        "[Placeholder] Faculty research/publication activity logged",
+    5: [  # المعيار 5: أعضاء هيئة التدريس والهيئة المعاونة (6 مؤشرات)
+        "يتوافر للبرنامج الأعداد الكافية من أعضاء هيئة التدريس التي تسمح بتنفيذ الأنشطة التعليمية بصورة فعالة لضمان جودة التعليم والاعتماد، وبما يسمح بعبء وظيفي مناسب تبعًا للوائح والقوانين",
+        "يتوافر للبرنامج الأعداد الكافية من الهيئة المعاونة التي تسمح بتنفيذ الأنشطة التعليمية بصورة فعالة طبقًا للمعدلات المرجعية للهيئة القومية للجودة، وبما يسمح بعبء وظيفي مناسب تبعًا للوائح والقوانين",
+        "تتناسب مؤهلات وخبرات وكفاءات أعضاء هيئة التدريس والهيئة المعاونة بالبرنامج، مع المقررات التي يقومون بتدريسها بالبرنامج",
+        "يوجد معايير معتمدة ومعلنة وإجراءات عادلة وشفافة لاختيار أعضاء هيئة التدريس والهيئة المعاونة وبما يضمن جذب الكفاءات، ويتم تحديد حالات الفائض أو العجز بصفة دورية واتخاذ الإجراءات الرسمية والمعتمدة للتعامل معها",
+        "يشارك أعضاء هيئة التدريس والهيئة المعاونة بالبرنامج بشكل دوري في أنشطة التنمية المهنية المستمرة وذلك لضمان مواكبة الاتجاهات الحديثة للتعليم والتعلم والتقييم والبحث العلمي ومستجدات التخصص المهني، ويتم توثيق ذلك في قواعد بيانات البرنامج",
+        "يشارك أعضاء الهيئة التدريسية بالبرنامج في الأنشطة البحثية (الإشراف على الرسائل العلمية/النشر المحلي والدولي/المؤتمرات والندوات/المشروعات البحثية/البعثات والمنح الدراسية/وغيرها) و/أو في الأنشطة المجتمعية والمهنية، ويتم توثيق ذلك في قواعد البيانات",
     ],
-    6: [
-        "[Placeholder] Lab/equipment inventory maintained with maintenance schedule",
-        "[Placeholder] Library holdings relevant to the program documented",
-        "[Placeholder] Annual budget allocation for the program recorded",
+    6: [  # المعيار 6: الموارد ومصادر التعلم والتسهيلات الداعمة (4 مؤشرات)
+        "تتوفر للبرنامج الموارد المالية الكافية والمتنوعة لتحقيق رسالته وأهدافه طبقًا لطبيعة نشاطه وأعداد الطلاب",
+        "تتوفر للبرنامج الأماكن والتسهيلات الداعمة الملائمة لطبيعة البرنامج ولأنشطة التدريس والتعلم المطبقة ولأعداد الطلاب، وذلك بما يتوافق مع المواصفات المرجعية للهيئة",
+        "تتوافر متطلبات وتجهيزات الأمن والصحة والسلامة المهنية بما يتوافق مع طبيعة البرنامج واحتياجات الطلاب، ويتم تطبيق الإجراءات الاحترازية تبعًا للظروف الطارئة",
+        "تتوفر للبرنامج بنية رقمية (تقنية/تكنولوجية) مناسبة وكافية لاحتياجاته ولأعداد الهيئة التدريسية وأعداد الطلاب",
     ],
-    7: [
-        "[Placeholder] Internal quality assurance committee meets on a defined cycle",
-        "[Placeholder] Self-study report process documented",
-        "[Placeholder] Closing-the-loop actions tracked for identified weaknesses",
+    7: [  # المعيار 7: ضمان الجودة وتقييم البرنامج (5 مؤشرات)
+        "توجد تغذية راجعة دورية من الطلاب والهيئة التدريسية لقياس رضاهم عن البرنامج والعملية التعليمية، يتم تحليلها والاستفادة منها في التطوير المستمر",
+        "توجد تغذية راجعة دورية من الخريجين وجهات التوظيف عن ملائمة البرنامج لتلبية متطلبات سوق العمل، يتم الاستفادة منها في تعديل وتحديث البرنامج",
+        "يوجد تقارير دورية للمقررات الدراسية توضح الالتزام بالتوصيف المعلن للمقررات، وتتضمن تحليل نتائج الامتحانات ونسب النجاح ودلالاتها وتحليل نتائج التغذية الراجعة من الطلاب وخطط للتحسين والتطوير",
+        "يوجد تقارير سنوية للبرنامج تتضمن: التحقق من تنفيذ توصيف البرنامج، قياس اكتساب الطلاب للمعارف والمهارات والجدارات المحددة بالبرنامج، الخطط السنوية للتعزيز والتطوير بمشاركة الأطراف المعنية",
+        "يتم مناقشة ومتابعة مردود عملية التعزيز والتحسين بالبرنامج وتحديد أوجه الاستفادة من عملية التقييم الذاتي بصفة دورية",
     ],
 }
 
@@ -107,9 +123,13 @@ def _now_iso() -> str:
 
 
 def seed_defaults(force: bool = False) -> int:
-    """Seed placeholder indicators per standard if the table is empty.
+    """Seed the 34 official indicators per standard if the table is empty.
 
     Returns the number of rows inserted. Idempotent unless force=True.
+    force=True wipes any existing indicators (and their closing-the-loop
+    log entries) first — see backend/scripts/migrate_to_real_indicators.py
+    for the one-off migration that decides whether that's safe to do
+    against a database that already has real work logged against it.
     """
     init_db()
     with get_connection() as conn:
@@ -124,7 +144,7 @@ def seed_defaults(force: bool = False) -> int:
         now = _now_iso()
         rows = [
             (standard_number, text, "missing", None, None, None, now)
-            for standard_number, texts in _PLACEHOLDER_INDICATORS.items()
+            for standard_number, texts in _SEED_INDICATORS.items()
             for text in texts
         ]
         conn.executemany(

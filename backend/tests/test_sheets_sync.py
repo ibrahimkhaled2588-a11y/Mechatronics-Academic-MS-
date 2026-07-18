@@ -83,8 +83,11 @@ std1 = indicators.list_indicators(standard_number=1)
 assert std1[0]["indicator_text"] == "Program mission is approved and documented"
 assert std1[1]["indicator_text"] == "Organizational structure is documented"
 assert std1[0]["status"] == "missing"
-# the 3rd seeded Standard 1 placeholder wasn't touched (sheet only had 2 rows)
-assert std1[2]["indicator_text"].startswith("[Placeholder]")
+# Standard 1 has 4 real seeded indicators; the sheet only synced 2 rows, so
+# the 3rd/4th must be untouched -- still the real official wording, not
+# overwritten with something from the sheet.
+assert std1[2]["indicator_text"] == indicators._SEED_INDICATORS[1][2]
+assert std1[3]["indicator_text"] == indicators._SEED_INDICATORS[1][3]
 
 std2 = indicators.list_indicators(standard_number=2)
 assert std2[0]["indicator_text"] == "Program specification matches national reference standards"
@@ -98,8 +101,8 @@ assert std2[1]["responsible_person"] is None, "blank sheet cell must not overwri
 # --- re-sync is idempotent (positional matching against the same existing rows) ---
 result2 = sheets_sync.sync_from_sheet("https://docs.google.com/spreadsheets/d/FAKE_ID/edit")
 assert result2["updated"] == 4
-assert len(indicators.list_indicators(standard_number=1)) == 3, "re-sync must not create duplicate rows"
-assert len(indicators.list_indicators(standard_number=2)) == 3
+assert len(indicators.list_indicators(standard_number=1)) == 4, "re-sync must not create duplicate rows"
+assert len(indicators.list_indicators(standard_number=2)) == 4
 
 os.remove(_tmp_db)
 print("All sheets_sync.py tests passed.")

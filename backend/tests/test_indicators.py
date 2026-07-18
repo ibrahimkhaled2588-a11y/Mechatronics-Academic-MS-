@@ -20,17 +20,17 @@ import indicators  # noqa: E402
 
 # --- seed ---
 inserted = indicators.seed_defaults()
-assert inserted == 21, f"expected 21 seeded placeholder indicators (3 per standard x 7), got {inserted}"
+assert inserted == 34, f"expected 34 seeded official indicators (4/4/8/3/6/4/5 across the 7 standards), got {inserted}"
 assert indicators.seed_defaults() == 0, "seed_defaults should be a no-op once the table is populated"
 
 # --- list / filter ---
 all_rows = indicators.list_indicators()
-assert len(all_rows) == 21
+assert len(all_rows) == 34
 std2_rows = indicators.list_indicators(standard_number=2)
 assert all(r["standard_number"] == 2 for r in std2_rows)
-assert len(std2_rows) == 3
+assert len(std2_rows) == 4
 missing_rows = indicators.list_indicators(status="missing")
-assert len(missing_rows) == 21, "all seeded rows start as 'missing'"
+assert len(missing_rows) == 34, "all seeded rows start as 'missing'"
 
 # --- create ---
 created = indicators.create_indicator(
@@ -85,7 +85,7 @@ except ValueError:
 summary = indicators.summarize_by_standard()
 assert len(summary) == 7
 std3 = next(s for s in summary if s.standard_number == 3)
-assert std3.total == 4, "3 seeded + 1 custom for Standard 3"
+assert std3.total == 9, "8 seeded + 1 custom for Standard 3"
 assert std3.partial == 1
 
 # --- get_indicator round-trip ---
