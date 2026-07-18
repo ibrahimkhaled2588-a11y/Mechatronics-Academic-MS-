@@ -31,6 +31,23 @@ function renderAuthBar() {
     document.getElementById('team-access-section').hidden = !isAdmin;
 }
 
+/** Big unmistakable "You are working on Standard N: Name" banner for
+ * members only -- admins work across every standard, so it doesn't apply
+ * to them. Call after loadStandards() so the standard's name is available
+ * (loadStandards() already scopes a member's own request to just their
+ * standard, so `standards[0]` is exactly the right one here). */
+function renderMyStandardBanner() {
+    const banner = document.getElementById('my-standard-banner');
+    if (currentUser.role === 'admin' || !standards.length) {
+        banner.hidden = true;
+        return;
+    }
+    const mine = standards.find((s) => s.standard_number === currentUser.standard_number) || standards[0];
+    document.getElementById('my-standard-text').textContent =
+        `${t('ind.standardLabel').replace('{n}', mine.standard_number)} — ${mine.standard_name}`;
+    banner.hidden = false;
+}
+
 function initLogout() {
     document.getElementById('logout-btn').addEventListener('click', async () => {
         await fetch(`${apiUrl}/api/auth/logout`, { method: 'POST' });
@@ -533,6 +550,7 @@ async function init() {
     renderAuthBar();
     initLogout();
     await loadStandards();
+    renderMyStandardBanner();
     // Lead a member straight to their own standard's work instead of the
     // full mixed list; admins keep seeing everything by default.
     if (currentUser.role !== 'admin' && currentUser.standard_number) {
@@ -553,5 +571,6 @@ document.addEventListener('DOMContentLoaded', init);
 document.addEventListener('i18n:applied', async () => {
     if (!currentUser) return;
     await loadStandards();
+    renderMyStandardBanner();
     await Promise.all([loadSummary(), loadIndicators()]);
 });

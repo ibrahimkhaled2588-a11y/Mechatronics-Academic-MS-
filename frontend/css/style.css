@@ -2482,3 +2482,30 @@ html[dir="rtl"] .governance-upload-form {
   opacity: 0.55;
   pointer-events: none;
 }
+
+/* "You are working on Standard N" banner — shown to members only, so
+   there's zero ambiguity about which standard they're on. */
+.my-standard-banner {
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 1.25rem 1.75rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.my-standard-eyebrow {
+  margin: 0 0 0.15rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.my-standard-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
