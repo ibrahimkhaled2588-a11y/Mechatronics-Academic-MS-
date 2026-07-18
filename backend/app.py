@@ -860,6 +860,16 @@ def api_indicators_add_log(indicator_id: int, body: LoopLogEntryCreate, _user: d
     return result
 
 
+@app.post("/api/indicators/migrate-real-indicators")
+def api_migrate_real_indicators(_admin: dict = Depends(require_admin)):
+    """TEMPORARY one-off endpoint: runs migrate_to_real_indicators.run_migration()
+    over HTTP, for deployments where `fly ssh console` isn't reachable from the
+    operator's network. Admin-only. Safe to call more than once (idempotent).
+    Remove this route once the live database has been migrated."""
+    from scripts.migrate_to_real_indicators import run_migration
+    return {"result": run_migration()}
+
+
 class SheetSyncRequest(BaseModel):
     sheet_url: str
 
