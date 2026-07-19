@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Access Diagnostic</title>
+<style>
+  body { font-family: monospace; background: #111; color: #eee; padding: 20px; font-size: 15px; }
+  h1 { color: #fff; }
+  .line { margin: 6px 0; padding: 8px; border-radius: 4px; white-space: pre-wrap; word-break: break-all; }
+  .ok { background: #143d14; }
+  .bad { background: #4a1414; }
+  .info { background: #222; }
+  button { font-size: 16px; padding: 10px 20px; margin-top: 15px; cursor: pointer; }
+</style>
+</head>
+<body>
+<h1>Access Diagnostic</h1>
+<p>This page checks your login/session step by step. Take a screenshot of everything below after it finishes.</p>
+<div id="out"></div>
+<button id="run">Run diagnostic again</button>
+
+<script>
+const out = document.getElementById('out');
+function log(label, ok, detail) {
+    const div = document.createElement('div');
+    div.className = 'line ' + (ok === null ? 'info' : ok ? 'ok' : 'bad');
+    div.textContent = `${label}: ${detail}`;
+    out.appendChild(div);
+}
+
+async function run() {
+    out.innerHTML = '';
+    log('Page URL', null, window.location.href);
+    log('Time', null, new Date().toString());
+
+    // Step 1: raw fetch to /api/auth/me, no retries, show exact status
+    let meStatus, meBody;
+    try {
+        const res = await fetch('/api/auth/me', { cache: 'no-store' });
+        meStatus = res.status;
+        meBody = await res.text();
+        log('Step 1: GET /api/auth/me status', res.status === 200, meStatus);
+        log('Step 1: response body', res.status === 200, meBody);
+    } catch (err) {
+        log('Step 1: GET /api/auth/me', false, 'network error: ' + err.message);
+        return;
+    }
+
+    if (meStatus !== 200) {
+        log('DIAGNOSIS', false, 'Not logged in (or session invalid/expired). Log in again and re-run this page.');
+        return;
+    }
+
+    let user;
+    try {
+        user = JSON.parse(meBody);
+    } catch (err) {
+        log('Step 1: parse user JSON', false, 'could not parse: ' + err.message);
+        return;
+    }
+
+    log('Step 2: username', true, user.username);
+    log('Step 2: role', true, user.role);
+    log('Step 2: standard_number', true, JSON.stringify(user.standard_number));
+
+    const targetPage = 'curriculum-mapping.html';
+    const expectedOwner = { 1: 'governance.html', 2: 'curriculum-mapping.html', 5: 'faculty-dashboard.html', 6: 'resources.html' };
+    const shouldBeAllowed = user.role === 'admin' || expectedOwner[user.standard_number] === targetPage;
+    log('Step 3: should this account reach ' + targetPage + '?', shouldBeAllowed, shouldBeAllowed ? 'YES' : 'NO (standard_number is ' + user.standard_number + ', not 2)');
+
+    // Step 4: hit the actual curriculum API the page depends on
+    try {
+        const res2 = await fetch('/api/curriculum/ilos', { cache: 'no-store' });
+        const body2 = await res2.text();
+        log('Step 4: GET /api/curriculum/ilos status', res2.status === 200, res2.status);
+        log('Step 4: response body (first 300 chars)', res2.status === 200, body2.slice(0, 300));
+    } catch (err) {
+        log('Step 4: GET /api/curriculum/ilos', false, 'network error: ' + err.message);
+    }
+
+    // Step 5: fetch the actual page HTML to make sure it's reachable at all
+    try {
+        const res3 = await fetch('/curriculum-mapping.html', { cache: 'no-store' });
+        log('Step 5: GET /curriculum-mapping.html status', res3.status === 200, res3.status);
+    } catch (err) {
+        log('Step 5: GET /curriculum-mapping.html', false, 'network error: ' + err.message);
+    }
+
+    log('DONE', true, 'Screenshot this whole page and send it back.');
+}
+
+document.getElementById('run').addEventListener('click', run);
+run();
+</script>
+</body>
+</html>
