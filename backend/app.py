@@ -77,12 +77,17 @@ app.add_middleware(
 
 @app.middleware("http")
 async def _no_cache_static(request: Request, call_next):
-    """Force browsers to revalidate every static asset on each load (still
-    fast via ETag/304) instead of silently reusing a stale cached copy --
-    without this, a redeployed page_guard.js/indicators_tracker.js can sit
-    cached in a user's browser and keep enforcing old access rules."""
+    """Force browsers to revalidate every static asset AND page on each
+    load (still fast via ETag/304) instead of silently reusing a stale
+    cached copy. This has to cover the page HTML itself, not just
+    /static/js|css/* -- a page is served from '/{page}.html' (and '/' for
+    login.html), a separate route from the /static/ mount, so without this
+    a browser could keep an old cached curriculum-mapping.html around
+    (with old script tags / old access-control logic baked in) even after
+    every JS file it references was correctly revalidated as fresh."""
     response = await call_next(request)
-    if request.url.path.startswith("/static/"):
+    path = request.url.path
+    if path.startswith("/static/") or path.endswith(".html") or path == "/":
         response.headers["Cache-Control"] = "no-cache"
     return response
 
