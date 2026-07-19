@@ -9,9 +9,7 @@ let currentUser = null;
 
 async function requireAuth() {
     try {
-        const res = await fetch(`${apiUrl}/api/auth/me`);
-        if (!res.ok) throw new Error('not authenticated');
-        currentUser = await res.json();
+        currentUser = await fetchCurrentUser();
     } catch (err) {
         window.location.href = `login.html?next=indicators-tracker.html`;
         throw err;

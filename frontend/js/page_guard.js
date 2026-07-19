@@ -16,9 +16,7 @@
  */
 (async () => {
     try {
-        const res = await fetch(`${window.location.origin}/api/auth/me`);
-        if (!res.ok) throw new Error('not authenticated');
-        const user = await res.json();
+        const user = await fetchCurrentUser();
         const here = window.location.pathname.split('/').pop();
         if (!pageAllowedForUser(user, here)) {
             window.location.replace('indicators-tracker.html');
