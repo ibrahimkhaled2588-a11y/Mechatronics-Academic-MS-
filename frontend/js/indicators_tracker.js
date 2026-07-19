@@ -29,6 +29,7 @@ function renderAuthBar() {
     document.getElementById('sheet-sync-section').hidden = !isAdmin;
     document.getElementById('generate-ssr-btn').hidden = !isAdmin;
     document.getElementById('team-access-section').hidden = !isAdmin;
+    filterNavForUser(currentUser);
 }
 
 /** Big unmistakable "You are working on Standard N: Name" banner for
