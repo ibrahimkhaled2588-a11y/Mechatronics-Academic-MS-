@@ -253,11 +253,51 @@ async function refreshAll() {
     await Promise.all([loadFindings(), loadStandard2Indicators()]);
 }
 
-async function init() {
+const PAGE_STANDARD_NUMBER = 2;
+
+/** Blocking access check that never auto-redirects. A member who lands
+ * here without Standard 2 access sees a static "access denied" message
+ * with a manual link back to the indicators tracker -- there is no
+ * automatic navigation for a slow/failed check to loop through, unlike
+ * the old page_guard.js redirect-on-failure approach. */
+async function initAccessGate() {
+    const gate = document.getElementById('access-gate');
+    const messageEl = document.getElementById('access-gate-message');
+    const linkEl = document.getElementById('access-gate-link');
+    const header = document.getElementById('page-header');
+    const main = document.getElementById('page-main');
+
+    let user;
+    try {
+        user = await fetchCurrentUser();
+    } catch (err) {
+        messageEl.textContent = 'Could not verify your session. Please refresh this page, or log in again if that keeps failing.';
+        linkEl.textContent = 'Go to Login';
+        linkEl.href = 'login.html?next=curriculum-mapping.html';
+        linkEl.hidden = false;
+        gate.classList.add('access-denied');
+        return;
+    }
+
+    const allowed = user.role === 'admin' || user.standard_number === PAGE_STANDARD_NUMBER;
+    if (!allowed) {
+        messageEl.textContent = `This page belongs to Standard ${PAGE_STANDARD_NUMBER} (Curriculum Mapping). ` +
+            `Your account is assigned to ${user.standard_number ? 'Standard ' + user.standard_number : 'no standard'}.`;
+        linkEl.hidden = false;
+        gate.classList.add('access-denied');
+        return;
+    }
+
+    gate.hidden = true;
+    header.hidden = false;
+    main.hidden = false;
+    filterNavForUser(user);
     initSectionToggles();
     initAddForms();
     await refreshAll();
 }
 
-document.addEventListener('DOMContentLoaded', init);
-document.addEventListener('i18n:applied', () => refreshAll());
+document.addEventListener('DOMContentLoaded', initAccessGate);
+document.addEventListener('i18n:applied', () => {
+    if (!document.getElementById('page-main').hidden) refreshAll();
+});

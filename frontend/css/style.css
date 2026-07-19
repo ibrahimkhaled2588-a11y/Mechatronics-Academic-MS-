@@ -2483,6 +2483,30 @@ html[dir="rtl"] .governance-upload-form {
   pointer-events: none;
 }
 
+/* Blocking access-gate shown on standard-specific pages (Curriculum Map,
+   Governance, Faculty, Resources) while the login/authorization check runs.
+   Never auto-redirects -- shows a static message instead, so a slow/failed
+   check reads as "checking" or "denied", not as being bounced around. */
+.access-gate {
+  max-width: 640px;
+  margin: 4rem auto;
+  padding: 2rem;
+  text-align: center;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+}
+
+.access-gate p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.access-gate.access-denied p {
+  color: #b42318;
+  font-weight: 600;
+}
+
 /* "You are working on Standard N" banner — shown to members only, so
    there's zero ambiguity about which standard they're on. */
 .my-standard-banner {

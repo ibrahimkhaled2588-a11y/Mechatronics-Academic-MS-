@@ -11,8 +11,11 @@
 </head>
 <body class="dashboard-page resources-page">
     <script src="/static/js/access_control.js"></script>
-    <script src="/static/js/page_guard.js"></script>
-    <header class="dashboard-header">
+    <div id="access-gate" class="access-gate">
+        <p id="access-gate-message">Checking your access…</p>
+        <a id="access-gate-link" href="indicators-tracker.html" class="btn-header btn-header-primary" hidden>Go to Indicators Tracker</a>
+    </div>
+    <header class="dashboard-header" id="page-header" hidden>
         <div class="header-inner">
             <div class="header-top-row">
                 <a href="index.html" class="back-home" data-i18n="common.backHome" title="Home">← Home</a>
@@ -37,7 +40,7 @@
             </nav>
         </div>
     </header>
-    <main class="dashboard-main">
+    <main class="dashboard-main" id="page-main" hidden>
         <section class="indicators-summary-section">
             <h2 class="section-label" data-i18n="res.sectionOverview">Overview</h2>
             <div id="kpi-grid" class="indicators-summary-grid"></div>

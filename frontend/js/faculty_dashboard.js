@@ -273,7 +273,42 @@ async function refreshAll() {
     await Promise.all([loadTeachingLoad(), loadPublications(), loadDashboard(), loadStandard5Indicators()]);
 }
 
-async function init() {
+const PAGE_STANDARD_NUMBER = 5;
+
+/** Blocking access check that never auto-redirects -- see the identical
+ * pattern in curriculum_mapping.js for why. */
+async function initAccessGate() {
+    const gate = document.getElementById('access-gate');
+    const messageEl = document.getElementById('access-gate-message');
+    const linkEl = document.getElementById('access-gate-link');
+    const header = document.getElementById('page-header');
+    const main = document.getElementById('page-main');
+
+    let user;
+    try {
+        user = await fetchCurrentUser();
+    } catch (err) {
+        messageEl.textContent = 'Could not verify your session. Please refresh this page, or log in again if that keeps failing.';
+        linkEl.textContent = 'Go to Login';
+        linkEl.href = 'login.html?next=faculty-dashboard.html';
+        linkEl.hidden = false;
+        gate.classList.add('access-denied');
+        return;
+    }
+
+    const allowed = user.role === 'admin' || user.standard_number === PAGE_STANDARD_NUMBER;
+    if (!allowed) {
+        messageEl.textContent = `This page belongs to Standard ${PAGE_STANDARD_NUMBER} (Faculty & Supporting Staff). ` +
+            `Your account is assigned to ${user.standard_number ? 'Standard ' + user.standard_number : 'no standard'}.`;
+        linkEl.hidden = false;
+        gate.classList.add('access-denied');
+        return;
+    }
+
+    gate.hidden = true;
+    header.hidden = false;
+    main.hidden = false;
+    filterNavForUser(user);
     initSectionToggles();
     initFacultyForm();
     initLoadForm();
@@ -281,5 +316,7 @@ async function init() {
     await refreshAll();
 }
 
-document.addEventListener('DOMContentLoaded', init);
-document.addEventListener('i18n:applied', () => refreshAll());
+document.addEventListener('DOMContentLoaded', initAccessGate);
+document.addEventListener('i18n:applied', () => {
+    if (!document.getElementById('page-main').hidden) refreshAll();
+});

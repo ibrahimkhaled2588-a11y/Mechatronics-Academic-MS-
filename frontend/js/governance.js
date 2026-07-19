@@ -220,7 +220,44 @@ async function loadStandard1Indicators() {
     });
 }
 
-async function init() {
+const PAGE_STANDARD_NUMBER = 1;
+
+/** Blocking access check that never auto-redirects -- see the identical
+ * pattern in curriculum_mapping.js for why (avoids the login/page bounce
+ * loop a redirect-on-failure guard could produce during a slow session
+ * check). Shows a static loading/denied message instead of navigating. */
+async function initAccessGate() {
+    const gate = document.getElementById('access-gate');
+    const messageEl = document.getElementById('access-gate-message');
+    const linkEl = document.getElementById('access-gate-link');
+    const header = document.getElementById('page-header');
+    const main = document.getElementById('page-main');
+
+    let user;
+    try {
+        user = await fetchCurrentUser();
+    } catch (err) {
+        messageEl.textContent = 'Could not verify your session. Please refresh this page, or log in again if that keeps failing.';
+        linkEl.textContent = 'Go to Login';
+        linkEl.href = 'login.html?next=governance.html';
+        linkEl.hidden = false;
+        gate.classList.add('access-denied');
+        return;
+    }
+
+    const allowed = user.role === 'admin' || user.standard_number === PAGE_STANDARD_NUMBER;
+    if (!allowed) {
+        messageEl.textContent = `This page belongs to Standard ${PAGE_STANDARD_NUMBER} (Governance). ` +
+            `Your account is assigned to ${user.standard_number ? 'Standard ' + user.standard_number : 'no standard'}.`;
+        linkEl.hidden = false;
+        gate.classList.add('access-denied');
+        return;
+    }
+
+    gate.hidden = true;
+    header.hidden = false;
+    main.hidden = false;
+    filterNavForUser(user);
     initSectionToggles();
     initMissionForm();
     initDocumentForm();
@@ -228,7 +265,9 @@ async function init() {
     await Promise.all([loadMission(), loadDocuments(), loadStakeholderLog(), loadStandard1Indicators()]);
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', initAccessGate);
 document.addEventListener('i18n:applied', () => {
-    Promise.all([loadMission(), loadDocuments(), loadStakeholderLog(), loadStandard1Indicators()]);
+    if (!document.getElementById('page-main').hidden) {
+        Promise.all([loadMission(), loadDocuments(), loadStakeholderLog(), loadStandard1Indicators()]);
+    }
 });
