@@ -934,12 +934,12 @@ class MappingSet(BaseModel):
 
 
 @app.get("/api/curriculum/ilos")
-def api_curriculum_list_ilos(_user: dict = Depends(require_standard_lead(2))):
+def api_curriculum_list_ilos():
     return curriculum_mapping.list_ilos()
 
 
 @app.post("/api/curriculum/ilos")
-def api_curriculum_create_ilo(body: IloCreate, _user: dict = Depends(require_standard_lead(2))):
+def api_curriculum_create_ilo(body: IloCreate):
     try:
         return curriculum_mapping.create_ilo(body.ilo_text, body.ilo_code)
     except ValueError as exc:
@@ -947,7 +947,7 @@ def api_curriculum_create_ilo(body: IloCreate, _user: dict = Depends(require_sta
 
 
 @app.patch("/api/curriculum/ilos/{ilo_id}")
-def api_curriculum_update_ilo(ilo_id: int, body: IloUpdate, _user: dict = Depends(require_standard_lead(2))):
+def api_curriculum_update_ilo(ilo_id: int, body: IloUpdate):
     try:
         result = curriculum_mapping.update_ilo(ilo_id, ilo_text=body.ilo_text, ilo_code=body.ilo_code)
     except ValueError as exc:
@@ -958,19 +958,19 @@ def api_curriculum_update_ilo(ilo_id: int, body: IloUpdate, _user: dict = Depend
 
 
 @app.delete("/api/curriculum/ilos/{ilo_id}")
-def api_curriculum_delete_ilo(ilo_id: int, _user: dict = Depends(require_standard_lead(2))):
+def api_curriculum_delete_ilo(ilo_id: int):
     if not curriculum_mapping.delete_ilo(ilo_id):
         raise HTTPException(status_code=404, detail="ILO not found")
     return {"deleted": True}
 
 
 @app.get("/api/curriculum/courses")
-def api_curriculum_list_courses(_user: dict = Depends(require_standard_lead(2))):
+def api_curriculum_list_courses():
     return curriculum_mapping.list_courses()
 
 
 @app.post("/api/curriculum/courses")
-def api_curriculum_create_course(body: CourseCreate, _user: dict = Depends(require_standard_lead(2))):
+def api_curriculum_create_course(body: CourseCreate):
     try:
         return curriculum_mapping.create_course(body.course_name)
     except ValueError as exc:
@@ -978,19 +978,19 @@ def api_curriculum_create_course(body: CourseCreate, _user: dict = Depends(requi
 
 
 @app.delete("/api/curriculum/courses/{course_id}")
-def api_curriculum_delete_course(course_id: int, _user: dict = Depends(require_standard_lead(2))):
+def api_curriculum_delete_course(course_id: int):
     if not curriculum_mapping.delete_course(course_id):
         raise HTTPException(status_code=404, detail="Course not found")
     return {"deleted": True}
 
 
 @app.post("/api/curriculum/courses/import")
-def api_curriculum_import_courses(body: CoursesImportBulk, _user: dict = Depends(require_standard_lead(2))):
+def api_curriculum_import_courses(body: CoursesImportBulk):
     return curriculum_mapping.import_courses_bulk(body.course_names, source="import")
 
 
 @app.post("/api/curriculum/courses/import-excel")
-async def api_curriculum_import_courses_excel(file: UploadFile = File(...), _user: dict = Depends(require_standard_lead(2))):
+async def api_curriculum_import_courses_excel(file: UploadFile = File(...)):
     """Extract a clean, de-duplicated course list from an uploaded grades workbook."""
     _validate_file(file)
     contents = await _read_limited(file)
@@ -1005,23 +1005,23 @@ async def api_curriculum_import_courses_excel(file: UploadFile = File(...), _use
 
 
 @app.get("/api/curriculum/matrix")
-def api_curriculum_matrix(_user: dict = Depends(require_standard_lead(2))):
+def api_curriculum_matrix():
     return curriculum_mapping.get_matrix()
 
 
 @app.post("/api/curriculum/matrix")
-def api_curriculum_set_mapping(body: MappingSet, _user: dict = Depends(require_standard_lead(2))):
+def api_curriculum_set_mapping(body: MappingSet):
     curriculum_mapping.set_mapping(body.course_id, body.ilo_id, body.mapped)
     return {"ok": True}
 
 
 @app.get("/api/curriculum/summary")
-def api_curriculum_summary(_user: dict = Depends(require_standard_lead(2))):
+def api_curriculum_summary():
     return curriculum_mapping.compute_coverage_summary()
 
 
 @app.get("/export-curriculum-map-docx")
-def export_curriculum_map_docx(_user: dict = Depends(require_standard_lead(2))):
+def export_curriculum_map_docx():
     try:
         from curriculum_map_report import build_curriculum_map_docx
         data = curriculum_mapping.get_export_data()
