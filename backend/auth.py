@@ -11,9 +11,13 @@ opaque random tokens (secrets.token_urlsafe) stored server-side, hashed
 the same way passwords are so a stolen database dump doesn't hand over
 live sessions. Sent to the browser as an httpOnly cookie.
 
-Deliberately scoped to the indicators tracker only, per the request — the
-rest of the app (governance, faculty, resources, curriculum, alumni)
-stays open, same as before.
+The same login also gates the rest of the app now: governance (standard
+1), curriculum mapping (standard 2), faculty (standard 5), and resources
+(standard 6) each require their owning standard's lead (or an admin) via
+require_standard_lead() in app.py — mirroring STANDARD_OWN_PAGE in
+access_control.js so API access matches page access. Alumni is used from
+the shared survey-dashboard page rather than a standard-specific one, so
+it only requires login, same as the other shared pages.
 """
 from __future__ import annotations
 

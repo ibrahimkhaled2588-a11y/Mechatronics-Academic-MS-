@@ -675,6 +675,19 @@ def require_standard_write(indicator_id: int, user: dict = Depends(get_current_u
     return user
 
 
+def require_standard_lead(standard_number: int):
+    """Dependency factory gating an entire module's API (governance,
+    curriculum, faculty, resources) to its owning standard's lead plus
+    admins — mirrors STANDARD_OWN_PAGE in access_control.js so the pages a
+    member can reach and the API calls they can make agree with each
+    other."""
+    def _dep(user: dict = Depends(get_current_user)) -> dict:
+        if not auth.can_edit_standard(user, standard_number):
+            raise HTTPException(status_code=403, detail="This page belongs to a different standard")
+        return user
+    return _dep
+
+
 class LoginRequest(BaseModel):
     username: str
     password: str
@@ -921,12 +934,12 @@ class MappingSet(BaseModel):
 
 
 @app.get("/api/curriculum/ilos")
-def api_curriculum_list_ilos():
+def api_curriculum_list_ilos(_user: dict = Depends(require_standard_lead(2))):
     return curriculum_mapping.list_ilos()
 
 
 @app.post("/api/curriculum/ilos")
-def api_curriculum_create_ilo(body: IloCreate):
+def api_curriculum_create_ilo(body: IloCreate, _user: dict = Depends(require_standard_lead(2))):
     try:
         return curriculum_mapping.create_ilo(body.ilo_text, body.ilo_code)
     except ValueError as exc:
@@ -934,7 +947,7 @@ def api_curriculum_create_ilo(body: IloCreate):
 
 
 @app.patch("/api/curriculum/ilos/{ilo_id}")
-def api_curriculum_update_ilo(ilo_id: int, body: IloUpdate):
+def api_curriculum_update_ilo(ilo_id: int, body: IloUpdate, _user: dict = Depends(require_standard_lead(2))):
     try:
         result = curriculum_mapping.update_ilo(ilo_id, ilo_text=body.ilo_text, ilo_code=body.ilo_code)
     except ValueError as exc:
@@ -945,19 +958,19 @@ def api_curriculum_update_ilo(ilo_id: int, body: IloUpdate):
 
 
 @app.delete("/api/curriculum/ilos/{ilo_id}")
-def api_curriculum_delete_ilo(ilo_id: int):
+def api_curriculum_delete_ilo(ilo_id: int, _user: dict = Depends(require_standard_lead(2))):
     if not curriculum_mapping.delete_ilo(ilo_id):
         raise HTTPException(status_code=404, detail="ILO not found")
     return {"deleted": True}
 
 
 @app.get("/api/curriculum/courses")
-def api_curriculum_list_courses():
+def api_curriculum_list_courses(_user: dict = Depends(require_standard_lead(2))):
     return curriculum_mapping.list_courses()
 
 
 @app.post("/api/curriculum/courses")
-def api_curriculum_create_course(body: CourseCreate):
+def api_curriculum_create_course(body: CourseCreate, _user: dict = Depends(require_standard_lead(2))):
     try:
         return curriculum_mapping.create_course(body.course_name)
     except ValueError as exc:
@@ -965,19 +978,19 @@ def api_curriculum_create_course(body: CourseCreate):
 
 
 @app.delete("/api/curriculum/courses/{course_id}")
-def api_curriculum_delete_course(course_id: int):
+def api_curriculum_delete_course(course_id: int, _user: dict = Depends(require_standard_lead(2))):
     if not curriculum_mapping.delete_course(course_id):
         raise HTTPException(status_code=404, detail="Course not found")
     return {"deleted": True}
 
 
 @app.post("/api/curriculum/courses/import")
-def api_curriculum_import_courses(body: CoursesImportBulk):
+def api_curriculum_import_courses(body: CoursesImportBulk, _user: dict = Depends(require_standard_lead(2))):
     return curriculum_mapping.import_courses_bulk(body.course_names, source="import")
 
 
 @app.post("/api/curriculum/courses/import-excel")
-async def api_curriculum_import_courses_excel(file: UploadFile = File(...)):
+async def api_curriculum_import_courses_excel(file: UploadFile = File(...), _user: dict = Depends(require_standard_lead(2))):
     """Extract a clean, de-duplicated course list from an uploaded grades workbook."""
     _validate_file(file)
     contents = await _read_limited(file)
@@ -992,23 +1005,23 @@ async def api_curriculum_import_courses_excel(file: UploadFile = File(...)):
 
 
 @app.get("/api/curriculum/matrix")
-def api_curriculum_matrix():
+def api_curriculum_matrix(_user: dict = Depends(require_standard_lead(2))):
     return curriculum_mapping.get_matrix()
 
 
 @app.post("/api/curriculum/matrix")
-def api_curriculum_set_mapping(body: MappingSet):
+def api_curriculum_set_mapping(body: MappingSet, _user: dict = Depends(require_standard_lead(2))):
     curriculum_mapping.set_mapping(body.course_id, body.ilo_id, body.mapped)
     return {"ok": True}
 
 
 @app.get("/api/curriculum/summary")
-def api_curriculum_summary():
+def api_curriculum_summary(_user: dict = Depends(require_standard_lead(2))):
     return curriculum_mapping.compute_coverage_summary()
 
 
 @app.get("/export-curriculum-map-docx")
-def export_curriculum_map_docx():
+def export_curriculum_map_docx(_user: dict = Depends(require_standard_lead(2))):
     try:
         from curriculum_map_report import build_curriculum_map_docx
         data = curriculum_mapping.get_export_data()
@@ -1040,12 +1053,12 @@ class StakeholderEntryCreate(BaseModel):
 
 
 @app.get("/api/governance/mission")
-def api_governance_list_mission():
+def api_governance_list_mission(_user: dict = Depends(require_standard_lead(1))):
     return governance.list_mission_versions()
 
 
 @app.get("/api/governance/mission/current")
-def api_governance_current_mission():
+def api_governance_current_mission(_user: dict = Depends(require_standard_lead(1))):
     current = governance.get_current_mission()
     if current is None:
         raise HTTPException(status_code=404, detail="No mission text has been saved yet")
@@ -1053,7 +1066,7 @@ def api_governance_current_mission():
 
 
 @app.post("/api/governance/mission")
-def api_governance_create_mission(body: MissionVersionCreate):
+def api_governance_create_mission(body: MissionVersionCreate, _user: dict = Depends(require_standard_lead(1))):
     try:
         return governance.create_mission_version(body.mission_text)
     except ValueError as exc:
@@ -1061,7 +1074,7 @@ def api_governance_create_mission(body: MissionVersionCreate):
 
 
 @app.get("/api/governance/documents")
-def api_governance_list_documents(committee_name: str | None = None):
+def api_governance_list_documents(committee_name: str | None = None, _user: dict = Depends(require_standard_lead(1))):
     return governance.list_documents(committee_name=committee_name)
 
 
@@ -1071,6 +1084,7 @@ async def api_governance_upload_document(
     title: str = Form(...),
     committee_name: str | None = Form(None),
     document_date: str | None = Form(None),
+    _user: dict = Depends(require_standard_lead(1)),
 ):
     contents = await file.read()
     try:
@@ -1087,7 +1101,7 @@ async def api_governance_upload_document(
 
 
 @app.get("/api/governance/documents/{doc_id}/file")
-def api_governance_get_document_file(doc_id: int):
+def api_governance_get_document_file(doc_id: int, _user: dict = Depends(require_standard_lead(1))):
     doc = governance.get_document(doc_id)
     if doc is None:
         raise HTTPException(status_code=404, detail="Document not found")
@@ -1098,19 +1112,19 @@ def api_governance_get_document_file(doc_id: int):
 
 
 @app.delete("/api/governance/documents/{doc_id}")
-def api_governance_delete_document(doc_id: int):
+def api_governance_delete_document(doc_id: int, _user: dict = Depends(require_standard_lead(1))):
     if not governance.delete_document(doc_id, _GOVERNANCE_DOCS_DIR):
         raise HTTPException(status_code=404, detail="Document not found")
     return {"deleted": True}
 
 
 @app.get("/api/governance/stakeholder-log")
-def api_governance_list_stakeholder_log():
+def api_governance_list_stakeholder_log(_user: dict = Depends(require_standard_lead(1))):
     return governance.list_stakeholder_log()
 
 
 @app.post("/api/governance/stakeholder-log")
-def api_governance_add_stakeholder_entry(body: StakeholderEntryCreate):
+def api_governance_add_stakeholder_entry(body: StakeholderEntryCreate, _user: dict = Depends(require_standard_lead(1))):
     try:
         return governance.add_stakeholder_entry(
             stakeholder_name=body.stakeholder_name,
@@ -1149,12 +1163,12 @@ class PublicationCreate(BaseModel):
 
 
 @app.get("/api/faculty/members")
-def api_faculty_list_members():
+def api_faculty_list_members(_user: dict = Depends(require_standard_lead(5))):
     return faculty_data.list_faculty()
 
 
 @app.post("/api/faculty/members")
-def api_faculty_create_member(body: FacultyCreate):
+def api_faculty_create_member(body: FacultyCreate, _user: dict = Depends(require_standard_lead(5))):
     try:
         return faculty_data.create_faculty(body.name, body.specialization, body.degree, body.rank)
     except ValueError as exc:
@@ -1162,19 +1176,19 @@ def api_faculty_create_member(body: FacultyCreate):
 
 
 @app.delete("/api/faculty/members/{faculty_id}")
-def api_faculty_delete_member(faculty_id: int):
+def api_faculty_delete_member(faculty_id: int, _user: dict = Depends(require_standard_lead(5))):
     if not faculty_data.delete_faculty(faculty_id):
         raise HTTPException(status_code=404, detail="Faculty member not found")
     return {"deleted": True}
 
 
 @app.get("/api/faculty/teaching-load")
-def api_faculty_list_load(semester: str | None = None):
+def api_faculty_list_load(semester: str | None = None, _user: dict = Depends(require_standard_lead(5))):
     return faculty_data.list_teaching_load(semester=semester)
 
 
 @app.post("/api/faculty/teaching-load")
-def api_faculty_create_load(body: TeachingLoadCreate):
+def api_faculty_create_load(body: TeachingLoadCreate, _user: dict = Depends(require_standard_lead(5))):
     try:
         return faculty_data.create_teaching_load(body.faculty_id, body.semester, body.course_name, body.hours)
     except ValueError as exc:
@@ -1182,19 +1196,19 @@ def api_faculty_create_load(body: TeachingLoadCreate):
 
 
 @app.delete("/api/faculty/teaching-load/{load_id}")
-def api_faculty_delete_load(load_id: int):
+def api_faculty_delete_load(load_id: int, _user: dict = Depends(require_standard_lead(5))):
     if not faculty_data.delete_teaching_load(load_id):
         raise HTTPException(status_code=404, detail="Teaching load entry not found")
     return {"deleted": True}
 
 
 @app.get("/api/faculty/publications")
-def api_faculty_list_publications():
+def api_faculty_list_publications(_user: dict = Depends(require_standard_lead(5))):
     return faculty_data.list_publications()
 
 
 @app.post("/api/faculty/publications")
-def api_faculty_create_publication(body: PublicationCreate):
+def api_faculty_create_publication(body: PublicationCreate, _user: dict = Depends(require_standard_lead(5))):
     try:
         return faculty_data.create_publication(body.faculty_id, body.title, body.venue, body.year, body.pub_type)
     except ValueError as exc:
@@ -1202,14 +1216,14 @@ def api_faculty_create_publication(body: PublicationCreate):
 
 
 @app.delete("/api/faculty/publications/{pub_id}")
-def api_faculty_delete_publication(pub_id: int):
+def api_faculty_delete_publication(pub_id: int, _user: dict = Depends(require_standard_lead(5))):
     if not faculty_data.delete_publication(pub_id):
         raise HTTPException(status_code=404, detail="Publication not found")
     return {"deleted": True}
 
 
 @app.get("/api/faculty/dashboard")
-def api_faculty_dashboard():
+def api_faculty_dashboard(_user: dict = Depends(require_standard_lead(5))):
     return faculty_data.get_dashboard_summary()
 
 
@@ -1246,12 +1260,12 @@ class BudgetEntryCreate(BaseModel):
 
 
 @app.get("/api/resources/equipment")
-def api_resources_list_equipment(status: str | None = None):
+def api_resources_list_equipment(status: str | None = None, _user: dict = Depends(require_standard_lead(6))):
     return resources.list_equipment(status=status)
 
 
 @app.post("/api/resources/equipment")
-def api_resources_create_equipment(body: EquipmentCreate):
+def api_resources_create_equipment(body: EquipmentCreate, _user: dict = Depends(require_standard_lead(6))):
     try:
         return resources.create_equipment(
             body.name, body.category, body.location, body.status, body.next_maintenance_date
@@ -1261,7 +1275,7 @@ def api_resources_create_equipment(body: EquipmentCreate):
 
 
 @app.patch("/api/resources/equipment/{equipment_id}")
-def api_resources_update_equipment(equipment_id: int, body: EquipmentUpdate):
+def api_resources_update_equipment(equipment_id: int, body: EquipmentUpdate, _user: dict = Depends(require_standard_lead(6))):
     try:
         result = resources.update_equipment(equipment_id, **body.model_dump(exclude_unset=True))
     except ValueError as exc:
@@ -1272,19 +1286,19 @@ def api_resources_update_equipment(equipment_id: int, body: EquipmentUpdate):
 
 
 @app.delete("/api/resources/equipment/{equipment_id}")
-def api_resources_delete_equipment(equipment_id: int):
+def api_resources_delete_equipment(equipment_id: int, _user: dict = Depends(require_standard_lead(6))):
     if not resources.delete_equipment(equipment_id):
         raise HTTPException(status_code=404, detail="Equipment not found")
     return {"deleted": True}
 
 
 @app.get("/api/resources/library")
-def api_resources_list_library():
+def api_resources_list_library(_user: dict = Depends(require_standard_lead(6))):
     return resources.list_library_holdings()
 
 
 @app.post("/api/resources/library")
-def api_resources_create_library(body: LibraryHoldingCreate):
+def api_resources_create_library(body: LibraryHoldingCreate, _user: dict = Depends(require_standard_lead(6))):
     try:
         return resources.create_library_holding(body.title, body.count, body.subject_area)
     except ValueError as exc:
@@ -1292,19 +1306,19 @@ def api_resources_create_library(body: LibraryHoldingCreate):
 
 
 @app.delete("/api/resources/library/{holding_id}")
-def api_resources_delete_library(holding_id: int):
+def api_resources_delete_library(holding_id: int, _user: dict = Depends(require_standard_lead(6))):
     if not resources.delete_library_holding(holding_id):
         raise HTTPException(status_code=404, detail="Library holding not found")
     return {"deleted": True}
 
 
 @app.get("/api/resources/budget")
-def api_resources_list_budget(fiscal_year: str | None = None):
+def api_resources_list_budget(fiscal_year: str | None = None, _user: dict = Depends(require_standard_lead(6))):
     return resources.list_budget_entries(fiscal_year=fiscal_year)
 
 
 @app.post("/api/resources/budget")
-def api_resources_create_budget(body: BudgetEntryCreate):
+def api_resources_create_budget(body: BudgetEntryCreate, _user: dict = Depends(require_standard_lead(6))):
     try:
         return resources.create_budget_entry(body.fiscal_year, body.category, body.amount, body.notes)
     except ValueError as exc:
@@ -1312,14 +1326,14 @@ def api_resources_create_budget(body: BudgetEntryCreate):
 
 
 @app.delete("/api/resources/budget/{entry_id}")
-def api_resources_delete_budget(entry_id: int):
+def api_resources_delete_budget(entry_id: int, _user: dict = Depends(require_standard_lead(6))):
     if not resources.delete_budget_entry(entry_id):
         raise HTTPException(status_code=404, detail="Budget entry not found")
     return {"deleted": True}
 
 
 @app.get("/api/resources/dashboard")
-def api_resources_dashboard(days_ahead: int = 30):
+def api_resources_dashboard(days_ahead: int = 30, _user: dict = Depends(require_standard_lead(6))):
     return resources.get_dashboard_summary(days_ahead)
 
 
@@ -1345,12 +1359,12 @@ class AlumnusUpdate(BaseModel):
 
 
 @app.get("/api/alumni")
-def api_alumni_list(graduation_year: int | None = None):
+def api_alumni_list(graduation_year: int | None = None, _user: dict = Depends(get_current_user)):
     return alumni.list_alumni(graduation_year=graduation_year)
 
 
 @app.post("/api/alumni")
-def api_alumni_create(body: AlumnusCreate):
+def api_alumni_create(body: AlumnusCreate, _user: dict = Depends(get_current_user)):
     try:
         return alumni.create_alumnus(
             name=body.name,
@@ -1365,7 +1379,7 @@ def api_alumni_create(body: AlumnusCreate):
 
 
 @app.patch("/api/alumni/{alumnus_id}")
-def api_alumni_update(alumnus_id: int, body: AlumnusUpdate):
+def api_alumni_update(alumnus_id: int, body: AlumnusUpdate, _user: dict = Depends(get_current_user)):
     result = alumni.update_alumnus(alumnus_id, **body.model_dump(exclude_unset=True))
     if result is None:
         raise HTTPException(status_code=404, detail="Alumnus not found")
@@ -1373,7 +1387,7 @@ def api_alumni_update(alumnus_id: int, body: AlumnusUpdate):
 
 
 @app.post("/api/alumni/{alumnus_id}/mark-surveyed")
-def api_alumni_mark_surveyed(alumnus_id: int):
+def api_alumni_mark_surveyed(alumnus_id: int, _user: dict = Depends(get_current_user)):
     result = alumni.mark_surveyed(alumnus_id)
     if result is None:
         raise HTTPException(status_code=404, detail="Alumnus not found")
@@ -1381,14 +1395,14 @@ def api_alumni_mark_surveyed(alumnus_id: int):
 
 
 @app.delete("/api/alumni/{alumnus_id}")
-def api_alumni_delete(alumnus_id: int):
+def api_alumni_delete(alumnus_id: int, _user: dict = Depends(get_current_user)):
     if not alumni.delete_alumnus(alumnus_id):
         raise HTTPException(status_code=404, detail="Alumnus not found")
     return {"deleted": True}
 
 
 @app.get("/api/alumni/summary")
-def api_alumni_summary():
+def api_alumni_summary(_user: dict = Depends(get_current_user)):
     return alumni.get_registry_summary()
 
 
