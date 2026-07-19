@@ -62,14 +62,14 @@ docx_bytes = ssr_report.build_ssr_docx(analysis=None)
 assert isinstance(docx_bytes, bytes) and len(docx_bytes) > 0
 text = _all_docx_text(docx_bytes)
 
-assert "Self-Study Report" in text
+assert "تقرير الدراسة الذاتية" in text
 assert "Prepare graduates for mechatronics engineering practice." in text, "Standard 1 mission text missing"
 assert "Ahmed Ibrahim" in text, "Standard 1 stakeholder log missing"
 assert "Apply engineering fundamentals" in text, "Standard 2 ILO missing"
-assert "No analytics data was supplied" in text, "Standard 3 should note missing analysis"
+assert "لم يتم توفير بيانات تحليلية" in text, "Standard 3 should note missing analysis"
 assert "Sara Mostafa" not in text, "alumni names aren't listed individually, only aggregate stats"
 assert "Delta Electronics" not in text  # aggregate only, not a name/employer table
-assert "1" in text and "Faculty members" in text, "Standard 5 KPI table missing"
+assert "1" in text and "عدد أعضاء هيئة التدريس" in text, "Standard 5 KPI table missing"
 assert "CNC Machine" in text, "Standard 6 maintenance-due table missing"
 assert "No self-study report existed" in text, "Standard 7 closing-the-loop entry missing"
 assert "Built the SSR generator" in text
@@ -87,9 +87,9 @@ analysis = {
 }
 docx_bytes2 = ssr_report.build_ssr_docx(analysis=analysis)
 text2 = _all_docx_text(docx_bytes2)
-assert "No analytics data was supplied" not in text2
-assert "Average GPA" in text2
-assert "Courses analyzed" in text2
+assert "لم يتم توفير بيانات تحليلية" not in text2
+assert "متوسط المعدل التراكمي" in text2
+assert "عدد المقررات التي تم تحليلها" in text2
 
 os.remove(_tmp_db)
 print("All ssr_report.py tests passed.")
