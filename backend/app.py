@@ -75,6 +75,18 @@ app.add_middleware(
     allow_headers=["Content-Type"],
 )
 
+@app.middleware("http")
+async def _no_cache_static(request: Request, call_next):
+    """Force browsers to revalidate every static asset on each load (still
+    fast via ETag/304) instead of silently reusing a stale cached copy --
+    without this, a redeployed page_guard.js/indicators_tracker.js can sit
+    cached in a user's browser and keep enforcing old access rules."""
+    response = await call_next(request)
+    if request.url.path.startswith("/static/"):
+        response.headers["Cache-Control"] = "no-cache"
+    return response
+
+
 app.mount("/static", StaticFiles(directory=_frontend_dir), name="static")
 
 
