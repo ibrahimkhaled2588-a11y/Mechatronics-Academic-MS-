@@ -151,8 +151,14 @@ async function loadFindings() {
 // --- Standard 2 indicators integration ---
 
 async function loadStandard2Indicators() {
-    const rows = await fetchJson(`${apiUrl}/api/indicators?standard_number=2`);
     const container = document.getElementById('std2-indicators-container');
+    let rows;
+    try {
+        rows = await fetchJson(`${apiUrl}/api/indicators?standard_number=2`);
+    } catch (err) {
+        container.innerHTML = `<p class="section-desc">Log in to see and update Standard 2 indicators here.</p>`;
+        return;
+    }
     container.innerHTML = rows.map((ind) => `
         <div class="indicator-summary-card">
             <p>${escapeHtml(ind.indicator_text)}</p>
