@@ -15,7 +15,6 @@ const MEMBER_ALLOWED_PAGES = new Set([
 // Standard-specific pages, keyed by the standard_number they belong to.
 const STANDARD_OWN_PAGE = {
     1: 'governance.html',
-    2: 'curriculum-mapping.html',
     5: 'faculty-dashboard.html',
     6: 'resources.html',
 };
