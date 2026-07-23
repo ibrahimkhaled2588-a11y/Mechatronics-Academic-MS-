@@ -9,7 +9,7 @@
 const MEMBER_ALLOWED_PAGES = new Set([
     'index.html', '', 'dashboard.html', 'course-report.html',
     'program-report.html', 'survey-dashboard.html', 'qa-chat.html',
-    'indicators-tracker.html',
+    'indicators-tracker.html', 'curriculum-mapping.html',
 ]);
 
 // Standard-specific pages, keyed by the standard_number they belong to.

@@ -85,6 +85,7 @@ class ServerSettings:
         "program-report.html",
         "survey-dashboard.html",
         "indicators-tracker.html",
+        "curriculum-mapping.html",
         "governance.html",
         "faculty-dashboard.html",
         "resources.html",

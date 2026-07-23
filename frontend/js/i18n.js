@@ -166,6 +166,7 @@ const TRANSLATIONS = {
     'curr.sectionFindings': 'Findings',
     'curr.sectionStd2': 'Standard 2 Indicators',
     'curr.std2Desc': 'Mark Standard 2 indicators complete once the curriculum map is in good shape, and attach this export as evidence.',
+    'curr.std2LoginHint': 'Log in to see and update Standard 2 indicators here.',
 
     'gov.title': 'Program Governance',
     'gov.sectionMission': 'Program Mission & Goals',
@@ -509,6 +510,7 @@ const TRANSLATIONS = {
     'curr.sectionFindings': 'النتائج',
     'curr.sectionStd2': 'مؤشرات المعيار الثاني',
     'curr.std2Desc': 'علّم مؤشرات المعيار الثاني كمكتملة بمجرد أن تكون خريطة المنهج بحالة جيدة، وأرفق هذا التصدير كدليل.',
+    'curr.std2LoginHint': 'سجّل الدخول لعرض وتحديث مؤشرات المعيار الثاني هنا.',
 
     'gov.title': 'حوكمة البرنامج',
     'gov.sectionMission': 'رسالة وأهداف البرنامج',
